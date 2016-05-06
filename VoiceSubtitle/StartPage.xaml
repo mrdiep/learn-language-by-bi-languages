@@ -43,23 +43,17 @@
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <Grid Height="Auto"
+                                  Background="#22003766"
                                   Margin="5">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="80" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
                                 <StackPanel Grid.Column="1">
                                     <TextBlock Text="{Binding VideoName}"
                                                TextTrimming="CharacterEllipsis" />
-                                    <!--<TextBlock Text="{Binding PrimaryCaption}"
-                                           TextTrimming="CharacterEllipsis" />
-                                <TextBlock Text="{Binding TranslatedCaption}"
-                                           TextTrimming="CharacterEllipsis" />-->
                                     <Button Content="Open"
+                                            HorizontalAlignment="Right"
                                             Command="{Binding PlayerViewModel.SwitchSource,Source={StaticResource Locator}}"
-                                            CommandParameter="{Binding}" />
+                                            CommandParameter="{Binding}"
+                                            Template="{DynamicResource LinkButton}" />
                                 </StackPanel>
-                                <TextBlock />
                             </Grid>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
@@ -89,14 +83,26 @@
                                 <StackPanel Grid.Column="1">
                                     <TextBlock Text="{Binding VideoName}"
                                                TextTrimming="CharacterEllipsis" />
-                                    <!--<TextBlock Text="{Binding PrimaryCaption}"
-                                           TextTrimming="CharacterEllipsis" />
-                                <TextBlock Text="{Binding TranslatedCaption}"
-                                           TextTrimming="CharacterEllipsis" />-->
-
                                     <Button Content="Open"
                                             Command="{Binding PlayerViewModel.SwitchSource,Source={StaticResource Locator}}"
-                                            CommandParameter="{Binding}" />
+                                            CommandParameter="{Binding}">
+                                        <Button.Style>
+                                            <Style>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}},Path=IsSelected}"
+                                                                 Value="True">
+                                                        <Setter Property="Button.Visibility"
+                                                                Value="Visible" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}},Path=IsSelected}"
+                                                                 Value="False">
+                                                        <Setter Property="Button.Visibility"
+                                                                Value="Collapsed" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
                                 </StackPanel>
                                 <TextBlock />
                             </Grid>

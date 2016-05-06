@@ -5,6 +5,8 @@ namespace VoiceSubtitle.Model
 {
     public class SourcePath : ViewModelBase
     {
+        public string Path { get; set; }
+
         private string videoName;
 
         public string VideoName
@@ -22,14 +24,6 @@ namespace VoiceSubtitle.Model
             set
             {
                 Set(ref video, value);
-
-                //string videoName = string.Empty;
-                //if (!string.IsNullOrWhiteSpace(value))
-                //{
-                //    videoName = Path.GetFileName(value);
-                //}
-
-                //RaisePropertyChanged("VideoName");
             }
         }
 

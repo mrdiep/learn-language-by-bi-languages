@@ -5,9 +5,166 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:local="clr-namespace:VoiceSubtitle"
              mc:Ignorable="d"
-             DataContext="{Binding PlayerViewModel, Source={StaticResource Locator}}"
-             d:Height="350"
-             d:Width="525">
+             DataContext="{Binding PlayerViewModel, Source={StaticResource Locator}}">
+    <UserControl.Resources>
+        <Style x:Key="FocusVisual">
+            <Setter Property="Control.Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Rectangle Margin="2"
+                                   SnapsToDevicePixels="true"
+                                   Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"
+                                   StrokeThickness="1"
+                                   StrokeDashArray="1 2" />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <SolidColorBrush x:Key="Item.MouseOver.Background"
+                         Color="#1F26A0DA" />
+        <SolidColorBrush x:Key="Item.MouseOver.Border"
+                         Color="#a826A0Da" />
+        <SolidColorBrush x:Key="Item.SelectedInactive.Background"
+                         Color="#3DDADADA" />
+        <SolidColorBrush x:Key="Item.SelectedInactive.Border"
+                         Color="#FFDADADA" />
+        <SolidColorBrush x:Key="Item.SelectedActive.Background"
+                         Color="#3D26A0DA" />
+        <SolidColorBrush x:Key="Item.SelectedActive.Border"
+                         Color="#FF26A0DA" />
+        <Style x:Key="ListBoxItemStyle1"
+               TargetType="{x:Type ListBoxItem}">
+            <Setter Property="SnapsToDevicePixels"
+                    Value="True" />
+            <Setter Property="Padding"
+                    Value="4,1" />
+            <Setter Property="HorizontalContentAlignment"
+                    Value="Stretch" />
+            <Setter Property="VerticalContentAlignment"
+                    Value="Stretch" />
+            <Setter Property="Background"
+                    Value="Transparent" />
+            <Setter Property="BorderBrush"
+                    Value="Transparent" />
+            <Setter Property="BorderThickness"
+                    Value="1" />
+            <Setter Property="FocusVisualStyle"
+                    Value="{StaticResource FocusVisual}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                        <Border x:Name="Bd"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Background="{TemplateBinding Background}"
+                                Padding="{TemplateBinding Padding}"
+                                SnapsToDevicePixels="true">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsMouseOver"
+                                               Value="True" />
+                                </MultiTrigger.Conditions>
+                                <Setter Property="Background"
+                                        TargetName="Bd"
+                                        Value="{StaticResource Item.MouseOver.Background}" />
+                                <Setter Property="BorderBrush"
+                                        TargetName="Bd"
+                                        Value="{StaticResource Item.MouseOver.Border}" />
+                            </MultiTrigger>
+
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsSelected"
+                                               Value="True" />
+                                </MultiTrigger.Conditions>
+                                <!--<Setter Property="Template"
+                                        Value="{StaticResource DataTemplate2}" />-->
+                            </MultiTrigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsSelected"
+                                               Value="False" />
+                                </MultiTrigger.Conditions>
+                                <!--<Setter Property="Template"
+                                        Value="{StaticResource DataTemplate1}" />-->
+                            </MultiTrigger>
+                            <!--<MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="Selector.IsSelectionActive"
+                                               Value="False" />
+                                    <Condition Property="IsSelected"
+                                               Value="True" />
+                                </MultiTrigger.Conditions>
+                                <Setter Property="Background"
+                                        TargetName="Bd"
+                                        Value="{StaticResource Item.SelectedInactive.Background}" />
+                                <Setter Property="BorderBrush"
+                                        TargetName="Bd"
+                                        Value="{StaticResource Item.SelectedInactive.Border}" />
+                            </MultiTrigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="Selector.IsSelectionActive"
+                                               Value="True" />
+                                    <Condition Property="IsSelected"
+                                               Value="True" />
+                                </MultiTrigger.Conditions>
+                                <Setter Property="Background"
+                                        TargetName="Bd"
+                                        Value="{StaticResource Item.SelectedActive.Background}" />
+                                <Setter Property="BorderBrush"
+                                        TargetName="Bd"
+                                        Value="{StaticResource Item.SelectedActive.Border}" />
+                            </MultiTrigger>
+                            <Trigger Property="IsEnabled"
+                                     Value="False">
+                                <Setter Property="TextElement.Foreground"
+                                        TargetName="Bd"
+                                        Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
+                            </Trigger>-->
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <DataTemplate x:Key="DataTemplate1">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid>
+                    <TextBlock Text="{Binding Text}" />
+                </Grid>
+            </Grid>
+        </DataTemplate>
+        <DataTemplate x:Key="DataTemplate2">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid>
+                    <TextBlock Text="{Binding Text}" />
+                </Grid>
+
+                <Grid x:Name="detailGrid"
+                      Grid.Row="1"
+                      Background="#FF4EA2F7"
+                      DataContext="{Binding PlayerViewModel.LanguageDetail, Source={StaticResource Locator}}">
+                    <TextBlock Margin="0,10,0,0"
+                               Text="{Binding PrononciationSentence}" />
+                </Grid>
+            </Grid>
+        </DataTemplate>
+        
+
+    </UserControl.Resources>
     <Grid>
         <ScrollViewer>
             <Grid>
@@ -25,58 +182,9 @@
                 </Grid>
                 <ListBox Grid.Column="0"
                          ItemsSource="{Binding PrimaryCaption}"
-                         SelectedItem="{Binding SelectedPrimaryCaption}">
-
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <Grid>
-                                
-
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-                                <Grid>
-                                    <TextBlock Text="{Binding Text}" />
-                                </Grid>
-
-                                <Grid x:Name="detailGrid"
-                                      Grid.Row="1"
-                                      Background="#FF4EA2F7"
-                                      DataContext="{Binding PlayerViewModel.LanguageDetail, Source={StaticResource Locator}}">
-                                    <Grid.Style>
-                                        <Style>
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}},Path=IsSelected}"
-                                                             Value="True">
-                                                    <Setter Property="Grid.Visibility"
-                                                            Value="Visible" />
-                                                </DataTrigger>
-                                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}},Path=IsSelected}"
-                                                             Value="False">
-                                                    <Setter Property="Grid.Visibility"
-                                                            Value="Collapsed" />
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </Grid.Style>
-                                    <TextBlock Margin="0,10,0,0"
-                                               Text="{Binding PrononciationSentence}" />
-                                    <!--<ListBox Margin="20,0,0,0" ItemsSource="{Binding Prononciations}">
-                                        <ListBox.ItemTemplate>
-                                            <DataTemplate>
-                                                <StackPanel Orientation="Horizontal">
-                                                    <TextBlock Text="{Binding Text}"/>
-                                                    <TextBlock Text="{Binding US}" Margin="10,0,0,0"/>
-                                                </StackPanel>
-                                            </DataTemplate>
-                                        </ListBox.ItemTemplate>
-                                    </ListBox>-->
-                                </Grid>
-                            </Grid>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
+                         SelectedItem="{Binding SelectedPrimaryCaption}"
+                         ItemContainerStyle="{DynamicResource ListBoxItemStyle1}"
+                         ItemTemplate="{DynamicResource DataTemplate1}" />
 
                 <ListBox Grid.Column="2"
                          ItemsSource="{Binding TranslateCaption}"

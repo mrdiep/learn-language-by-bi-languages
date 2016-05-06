@@ -28,6 +28,7 @@ namespace VoiceSubtitle.ViewModel
                 var lines = File.ReadAllLines(filepath);
                 var source = new SourcePath()
                 {
+                    Path = filepath,
                     VideoName =  lines[0],
                     Video = lines[1],
                     PrimaryCaption = lines[2],

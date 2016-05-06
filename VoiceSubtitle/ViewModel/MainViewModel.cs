@@ -21,27 +21,5 @@ namespace VoiceSubtitle.ViewModel
 
         public ObservableCollection<SourcePath> SourcePaths { get; set; }
 
-        private SourcePath current;
-
-        public SourcePath Current
-        {
-            get { return current; }
-            set { Set(ref current, value); }
-        }
-
-        private ICommand chooseSource;
-
-        public ICommand ChooseSource
-        {
-            get
-            {
-                return chooseSource ?? (chooseSource = new ActionCommand(
-                    (source) =>
-                    {
-                        SourcePath current = source as SourcePath;
-                        Current = current;
-                    }));
-            }
-        }
     }
 }

@@ -17,6 +17,7 @@ namespace VoiceSubtitle.ViewModel
     {
         public CambridgeDictionaryViewModel()
         {
+            return;
             SQLiteConnection connection = new SQLiteConnection(@"Data Source=C:\Users\diepnguyenv\Downloads\anh_viet\anh_viet\anh_viet.db;Version=3;");
             List<string> words = new List<string>();
             Regex regex = new Regex(@"^[a-zA-Z]*$");
