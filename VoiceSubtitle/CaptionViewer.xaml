@@ -1,0 +1,87 @@
+﻿<UserControl x:Class="VoiceSubtitle.CaptionViewer"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:VoiceSubtitle"
+             mc:Ignorable="d"
+             DataContext="{Binding PlayerViewModel, Source={StaticResource Locator}}"
+             d:Height="350"
+             d:Width="525">
+    <Grid>
+        <ScrollViewer>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="2" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <GridSplitter Width="2"
+                              Background="Gray"
+                              Grid.Column="1"
+                              HorizontalAlignment="Stretch"
+                              d:IsHidden="True" />
+                <Grid x:Name="primaryCaptionGrid">
+                </Grid>
+                <ListBox Grid.Column="0"
+                         ItemsSource="{Binding PrimaryCaption}"
+                         SelectedItem="{Binding SelectedPrimaryCaption}">
+
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                
+
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid>
+                                    <TextBlock Text="{Binding Text}" />
+                                </Grid>
+
+                                <Grid x:Name="detailGrid"
+                                      Grid.Row="1"
+                                      Background="#FF4EA2F7"
+                                      DataContext="{Binding PlayerViewModel.LanguageDetail, Source={StaticResource Locator}}">
+                                    <Grid.Style>
+                                        <Style>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}},Path=IsSelected}"
+                                                             Value="True">
+                                                    <Setter Property="Grid.Visibility"
+                                                            Value="Visible" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}},Path=IsSelected}"
+                                                             Value="False">
+                                                    <Setter Property="Grid.Visibility"
+                                                            Value="Collapsed" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Grid.Style>
+                                    <TextBlock Margin="0,10,0,0"
+                                               Text="{Binding PrononciationSentence}" />
+                                    <!--<ListBox Margin="20,0,0,0" ItemsSource="{Binding Prononciations}">
+                                        <ListBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="{Binding Text}"/>
+                                                    <TextBlock Text="{Binding US}" Margin="10,0,0,0"/>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </ListBox.ItemTemplate>
+                                    </ListBox>-->
+                                </Grid>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+
+                <ListBox Grid.Column="2"
+                         ItemsSource="{Binding TranslateCaption}"
+                         SelectedItem="{Binding SelectedTranslateCaption}" />
+            </Grid>
+        </ScrollViewer>
+    </Grid>
+</UserControl>
