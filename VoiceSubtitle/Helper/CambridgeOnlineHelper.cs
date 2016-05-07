@@ -7,6 +7,7 @@ using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Web;
 using VoiceSubtitle.Model;
 
 namespace VoiceSubtitle.Helper
@@ -60,6 +61,7 @@ namespace VoiceSubtitle.Helper
                     {
                         using (var transaction = conn.BeginTransaction())
                         {
+                            var e2 = listItems.Where(x => x != null).ToList();
                             // 100,000 inserts
                             foreach (var item in e2)
                             {

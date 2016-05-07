@@ -1,4 +1,9 @@
 ﻿using MahApps.Metro.Controls;
+using Microsoft.Practices.ServiceLocation;
+using System.Windows;
+using System.Windows.Controls;
+using VoiceSubtitle.Model;
+using VoiceSubtitle.ViewModel;
 
 namespace VoiceSubtitle
 {
@@ -14,9 +19,48 @@ namespace VoiceSubtitle
             LeftFlyout.IsOpen = true;
         }
 
-        private void OpenPropertyFlyout(object sender, System.Windows.RoutedEventArgs e)
+        private void StartSub(object sender, RoutedEventArgs e)
         {
-            PropertyFlyout.IsOpen = true;
+            Button button = sender as Button;
+
+            if (string.IsNullOrWhiteSpace(newCaption.VideoName))
+            {
+                MessageBox.Show("Please enter Video Name", App.AppTitle);
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(newCaption.VideoPath))
+            {
+                MessageBox.Show("Please drop Video Path", App.AppTitle);
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(newCaption.SubEngPath))
+            {
+                MessageBox.Show("Please drop English Subtitle", App.AppTitle);
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(newCaption.SubOtherPath))
+            {
+                MessageBox.Show("Please drop Other Subtitle", App.AppTitle);
+                return;
+            }
+
+            string content = $"{newCaption.VideoName}\r\n{newCaption.VideoPath}\r\n{newCaption.SubEngPath}\r\n{newCaption.SubOtherPath}";
+            var source = new SourcePath()
+            {
+                VideoName = newCaption.VideoName,
+                PrimaryCaption = newCaption.SubEngPath,
+                TranslatedCaption = newCaption.SubOtherPath,
+                Video = newCaption.VideoPath
+            };
+            ServiceLocator.Current.GetInstance<MainViewModel>().AddNewSource(ref source);
+
+            if ((button.Tag as string) == "play")
+            {
+                ServiceLocator.Current.GetInstance<PlayerViewModel>().SwitchSource.Execute(source);
+            }
         }
     }
 }

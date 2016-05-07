@@ -3,85 +3,268 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="Windo"
              xmlns:local="clr-namespace:VoiceSubtitle"
              mc:Ignorable="d"
-             DataContext="{Binding PlayerViewModel, Source={StaticResource Locator}}"
-             d:Height="350"
-             d:Width="525">
-    <Grid>
-        <ScrollViewer>
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="2" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <GridSplitter Width="2"
-                              Background="Gray"
-                              Grid.Column="1"
-                              HorizontalAlignment="Stretch"
-                              d:IsHidden="True" />
-                <Grid x:Name="primaryCaptionGrid">
-                </Grid>
-                <ListBox Grid.Column="0"
-                         ItemsSource="{Binding PrimaryCaption}"
-                         SelectedItem="{Binding SelectedPrimaryCaption}">
+             DataContext="{Binding PlayerViewModel, Source={StaticResource Locator}}">
+    <UserControl.Resources>
 
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <Grid>
-                                
+        <Style x:Key="PronounceListBoxItemStyle"
+               TargetType="{x:Type ListViewItem}">
 
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-                                <Grid>
-                                    <TextBlock Text="{Binding Text}" />
-                                </Grid>
+            <Setter Property="SnapsToDevicePixels"
+                    Value="True" />
+            <Setter Property="Padding"
+                    Value="4,1" />
+            <Setter Property="HorizontalContentAlignment"
+                    Value="Stretch" />
+            <Setter Property="VerticalContentAlignment"
+                    Value="Stretch" />
+            <Setter Property="Background"
+                    Value="Transparent" />
+            <Setter Property="BorderBrush"
+                    Value="Transparent" />
+            <Setter Property="BorderThickness"
+                    Value="1" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
-                                <Grid x:Name="detailGrid"
-                                      Grid.Row="1"
-                                      Background="#FF4EA2F7"
-                                      DataContext="{Binding PlayerViewModel.LanguageDetail, Source={StaticResource Locator}}">
-                                    <Grid.Style>
-                                        <Style>
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}},Path=IsSelected}"
-                                                             Value="True">
-                                                    <Setter Property="Grid.Visibility"
-                                                            Value="Visible" />
-                                                </DataTrigger>
-                                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}},Path=IsSelected}"
-                                                             Value="False">
-                                                    <Setter Property="Grid.Visibility"
-                                                            Value="Collapsed" />
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </Grid.Style>
+        <Style x:Key="ListBoxItemStyle1"
+               TargetType="{x:Type ListBoxItem}">
+            <Setter Property="SnapsToDevicePixels"
+                    Value="True" />
+            <Setter Property="Padding"
+                    Value="4,1" />
+            <Setter Property="HorizontalContentAlignment"
+                    Value="Stretch" />
+            <Setter Property="VerticalContentAlignment"
+                    Value="Stretch" />
+            <Setter Property="Background"
+                    Value="Transparent" />
+            <Setter Property="BorderBrush"
+                    Value="Transparent" />
+            <Setter Property="BorderThickness"
+                    Value="1" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                        <Border x:Name="Bd"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Background="{TemplateBinding Background}"
+                                Padding="{TemplateBinding Padding}"
+                                SnapsToDevicePixels="true">
+                            <StackPanel>
+                                <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+
+                                <StackPanel x:Name="detailGrid"
+                                            Grid.Row="1"
+                                            Visibility="Collapsed">
                                     <TextBlock Margin="0,10,0,0"
-                                               Text="{Binding PrononciationSentence}" />
-                                    <!--<ListBox Margin="20,0,0,0" ItemsSource="{Binding Prononciations}">
-                                        <ListBox.ItemTemplate>
+                                               Text="{Binding PrononciationSentence}"
+                                               FontStyle="Italic"
+                                               Foreground="#FF4F4F4F"
+                                               FontSize="10.667" />
+                                    <StackPanel Orientation="Horizontal"
+                                                Margin="4">
+                                        <Button Content="1"
+                                                Width="60"
+                                                Margin="3"
+                                                Command="{Binding PlayerViewModel.Listen, Source={StaticResource Locator}}"
+                                                CommandParameter="1" />
+                                        <Button Content="2+"
+                                                Width="60"
+                                                Margin="3"
+                                                Command="{Binding PlayerViewModel.Listen, Source={StaticResource Locator}}"
+                                                CommandParameter="2" />
+                                        <Button Content="3+"
+                                                Width="60"
+                                                Margin="3"
+                                                Command="{Binding PlayerViewModel.Listen, Source={StaticResource Locator}}"
+                                                CommandParameter="3" />
+                                        <Button Content="5+"
+                                                Width="60"
+                                                Margin="3"
+                                                Command="{Binding PlayerViewModel.Listen, Source={StaticResource Locator}}"
+                                                CommandParameter="5" />
+                                        <Button Content="10+"
+                                                Width="60"
+                                                Margin="3"
+                                                Command="{Binding PlayerViewModel.Listen, Source={StaticResource Locator}}"
+                                                CommandParameter="50" 
+                                                />
+                                        <Button Content="20+"
+                                                Width="60"
+                                                Margin="3"
+                                                Command="{Binding PlayerViewModel.Listen, Source={StaticResource Locator}}"
+                                                CommandParameter="20" />
+                                    </StackPanel>
+                                    <ListView ItemsSource="{Binding Prononciations}"
+                                              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                              ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                              ScrollViewer.CanContentScroll="False"
+                                              SelectionMode="Single"
+                                              SelectionChanged="ListView_SelectionChanged"
+                                              ItemContainerStyle="{StaticResource PronounceListBoxItemStyle}"
+                                              Margin="0,20,0,0"
+                                              Background="#22DEB887"
+                                              Focusable="False"
+                                              Foreground="#FF034564">
+
+                                        <ListView.ItemTemplate>
                                             <DataTemplate>
-                                                <StackPanel Orientation="Horizontal">
-                                                    <TextBlock Text="{Binding Text}"/>
-                                                    <TextBlock Text="{Binding US}" Margin="10,0,0,0"/>
+                                                <StackPanel Margin="8"
+                                                            Orientation="Horizontal">
+
+                                                    <TextBlock Grid.Row="0"
+                                                               Margin="16,-5,10,5"
+                                                               Text="{Binding Text}"
+                                                               FontSize="14" />
+
+                                                    <Button Content="UK"
+                                                            IsHitTestVisible="True"
+                                                            Margin="16,-5,10,5"
+                                                            Command="{Binding PlayerViewModel.PlayVoice, Source={StaticResource Locator}}"
+                                                            CommandParameter="{Binding UKVoiceLink}" />
+
+                                                    <TextBlock Text="{Binding UK}"
+                                                               FontSize="14"
+                                                               Margin="0,-5,0,5" />
+
+                                                    <Button Content="US"
+                                                            Margin="20,-5,10,5"
+                                                            Command="{Binding PlayerViewModel.PlayVoice, Source={StaticResource Locator}}"
+                                                            CommandParameter="{Binding USVoiceLink}" />
+                                                    <TextBlock Text="{Binding US}"
+                                                               FontSize="14"
+                                                               Margin="0,-5,0,5" />
                                                 </StackPanel>
                                             </DataTemplate>
-                                        </ListBox.ItemTemplate>
-                                    </ListBox>-->
-                                </Grid>
-                            </Grid>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
+                                        </ListView.ItemTemplate>
+                                    </ListView>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsMouseOver"
+                                               Value="True" />
+                                </MultiTrigger.Conditions>
+                                <Setter Property="Background"
+                                        TargetName="Bd"
+                                        Value="#1F26A0DA" />
+                                <Setter Property="BorderBrush"
+                                        TargetName="Bd"
+                                        Value="#a826A0Da" />
+                            </MultiTrigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsSelected"
+                                               Value="True" />
+                                </MultiTrigger.Conditions>
+                                <Setter Property="Background"
+                                        TargetName="Bd"
+                                        Value="#2226A0DA" />
+                                <Setter Property="BorderBrush"
+                                        TargetName="Bd"
+                                        Value="#FF26A0DA" />
+                                <Setter Property="DataContext"
+                                        TargetName="detailGrid"
+                                        Value="{Binding PlayerViewModel.LanguageDetail, Source={StaticResource Locator}}" />
 
-                <ListBox Grid.Column="2"
+                                <Setter Property="Visibility"
+                                        TargetName="detailGrid"
+                                        Value="Visible" />
+                            </MultiTrigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsSelected"
+                                               Value="False" />
+                                </MultiTrigger.Conditions>
+                            </MultiTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <DataTemplate x:Key="DataTemplate1">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid>
+                    <TextBlock Text="{Binding Text}"
+                               TextWrapping="Wrap" />
+                </Grid>
+            </Grid>
+        </DataTemplate>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="25" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="2"
+              Background="#FFB6049D">
+        </Grid>
+        <Border Background="#FF024F7C">
+        <TextBlock Text="{Binding VideoName}"
+                   FontSize="18"
+                   HorizontalAlignment="Left"
+                   Margin="30,8,8,8"
+                   VerticalAlignment="Center"
+                       Foreground="White" />
+        </Border>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="6" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <GridSplitter Width="6"
+                          Background="Gray"
+                          Grid.Column="1"
+                          HorizontalAlignment="Stretch"
+                          d:IsHidden="True" />
+            <Grid x:Name="primaryCaptionGrid">
+            </Grid>
+            <ListBox Grid.Column="0"
+                     SelectionChanged="ScrollToSelected"
+                     ItemsSource="{Binding PrimaryCaption}"
+                     SelectedItem="{Binding SelectedPrimaryCaption}"
+                     ItemContainerStyle="{DynamicResource ListBoxItemStyle1}"
+                     ItemTemplate="{DynamicResource DataTemplate1}" />
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition Height="6" />
+                    <RowDefinition Height="300" />
+                </Grid.RowDefinitions>
+                <GridSplitter Height="6"
+                              Grid.Row="1"
+                              HorizontalContentAlignment="Stretch"
+                              HorizontalAlignment="Stretch"
+                              Background="Gray">
+                </GridSplitter>
+                <ListBox Grid.Row="0"
+                         SelectionChanged="ScrollToSelected"
                          ItemsSource="{Binding TranslateCaption}"
                          SelectedItem="{Binding SelectedTranslateCaption}" />
+                <local:VideoViewer Grid.Row="2" />
             </Grid>
-        </ScrollViewer>
+        </Grid>
     </Grid>
 </UserControl>
