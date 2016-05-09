@@ -11,7 +11,7 @@ namespace VoiceSubtitle.ViewModel
 {
     public class VideoViewModel : ViewModelBase
     {
-        private MediaElement playVoiceMedia = new MediaElement();
+        private MediaElement playVoiceMedia;
         private DispatchService dispatchService;
         private CancellationTokenSource videoLoopTokenSource;
         private SettingViewModel settingViewModel;
@@ -22,7 +22,7 @@ namespace VoiceSubtitle.ViewModel
         {
             this.dispatchService = dispatchService;
             this.settingViewModel = settingViewModel;
-
+            playVoiceMedia = new MediaElement();
             playVoiceMedia.LoadedBehavior = MediaState.Manual;
             playVoiceMedia.UnloadedBehavior = MediaState.Manual;
 

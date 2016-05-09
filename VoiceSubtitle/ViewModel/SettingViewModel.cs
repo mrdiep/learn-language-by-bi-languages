@@ -2,35 +2,36 @@
 using System;
 using System.IO;
 using System.Reflection;
-using System.Linq;
+using VoiceSubtitle.Helper;
 
 namespace VoiceSubtitle.ViewModel
 {
     public class SettingViewModel : ViewModelBase
     {
         private readonly string FileSetting;
+        private IniFile settings;
+
         public SettingViewModel()
         {
-            FileSetting = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + @"\settings.txt";
+            FileSetting = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + @"\settings.ini";
             Load();
         }
 
         private void Load()
-        {
-            
-            if (!File.Exists(FileSetting))
-            {
+        {            
+            settings = new IniFile(FileSetting);
+            if (!settings.HasFile)
                 Save();
-            }
 
-            var settings = File.ReadLines(FileSetting).ToList();
-            PlayAfterEndingLoop = Convert.ToBoolean(settings[0]);
+            PlayAfterEndingLoop = Convert.ToBoolean(settings["PlayAfterEndingLoop"]);            
         }
 
         private void Save()
         {
-            File.WriteAllText(FileSetting, $"{PlayAfterEndingLoop}");
+            settings["PlayAfterEndingLoop"] = PlayAfterEndingLoop.ToString();
+            settings.Save();
         }
+
         private bool playAfterEndingLoop;
 
         public bool PlayAfterEndingLoop
