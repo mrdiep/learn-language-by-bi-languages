@@ -27,7 +27,7 @@
                     <TextBlock Text="{Binding VideoName}"
                                TextTrimming="CharacterEllipsis" />
                     <StackPanel Orientation="Horizontal"
-                                FlowDirection="RightToLeft">
+                                FlowDirection="LeftToRight">
                         <StackPanel.Style>
                             <Style>
                                 <Style.Triggers>
@@ -99,15 +99,35 @@
                              Position="Right"
                              x:Name="SettingFlyout"
                              Width="300">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
 
-                <StackPanel Margin="20"
-                            Orientation="Vertical">
+                    <StackPanel Margin="20"
+                                Orientation="Vertical">
 
-                    <Controls:ToggleSwitch Header="Continue play ending loop"
-                                           IsChecked="{Binding PlayAfterEndingLoop}"
-                                           OnLabel="Yes"
-                                           OffLabel="No" />
-                </StackPanel>
+                        <Controls:ToggleSwitch Header="Continue play ending loop"
+                                               IsChecked="{Binding PlayAfterEndingLoop}"
+                                               OnLabel="Yes"
+                                               OffLabel="No" />
+                    </StackPanel>
+
+                    <Grid Grid.Row="1">
+                        <StackPanel Margin="20,5,20,0">
+                            <TextBlock Text="Developer"
+                                       Foreground="#FFEEEEEE"
+                                       FontWeight="Bold" />
+                            <TextBlock Text="mr.vdiep@gmail.com"
+                                       Margin="20,0,0,0"
+                                       Foreground="#FFE2E2E2" />
+
+                            <TextBlock Text="Software version: Beta 1.0.1"
+                                       Foreground="#FFE2E2E2" />
+                        </StackPanel>
+                    </Grid>
+                </Grid>
             </Controls:Flyout>
         </Controls:FlyoutsControl>
     </Controls:MetroWindow.Flyouts>

@@ -15,9 +15,15 @@
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="VIDEO NAME" />
-                <TextBox Grid.Column="1"
-                         Margin="10,0"
-                         Text="{Binding VideoName, ElementName=userControl}" />
+                <Grid Margin="10,0" Grid.Column="1"
+                      HorizontalAlignment="Left">
+                <TextBox 
+                         MaxWidth="640"
+                         MinWidth="200"
+                         
+                         Text="{Binding VideoName, ElementName=userControl}"
+                         HorizontalAlignment="Stretch" />
+                </Grid>
             </Grid>
             <Grid Margin="10"
                   HorizontalAlignment="Stretch">
@@ -28,121 +34,38 @@
                 <TextBlock Text="FILE PATH" />
 
                 <WrapPanel Grid.Column="1">
-                    <Border BorderThickness="3"
-                    Margin="10"
-                            Height="200"
-                            Width="200"
-                            BorderBrush="#FFAAAAAA">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <TextBlock Grid.Row="0"
-                                       Visibility="Collapsed"
-                                       Text="VIDEO"
-                                       HorizontalAlignment="Center"
-                                       VerticalAlignment="Center"
-                                       Margin="0,10,0,7"
-                                       FontSize="16"
-                                       FontFamily="Segoe UI Light"
-                                       FontWeight="Bold"
-                                       Foreground="#FF3C3C3C" />
-                            <Button Content="Drag &amp; drop&#xD;&#xA;video file here"
-                                    Grid.Row="1"
-                                    Style="{DynamicResource FIleBrow}"
-                                    Drop="TextBox_Drop"
-                                    AllowDrop="True"
-                                    VerticalContentAlignment="Stretch"
-                                    Tag="video" />
-                            <TextBlock Text="{Binding ElementName=userControl,Path=VideoPath}"
-                                       Grid.RowSpan="3"
-                                       TextWrapping="Wrap"
-                                       Margin="5"
-                                       Foreground="#FF515151"
-                                       VerticalAlignment="Bottom"
-                                       HorizontalAlignment="Stretch" />
-                        </Grid>
-                    </Border>
-
-                    <Border BorderThickness="3"
-                            Height="200"
+                    <Button Tag="{Binding ElementName=userControl,Path=VideoPath,Mode=OneWay}"
+                            Content="Drag &amp; drop&#xD;&#xA;video file here"
                             Margin="10"
                             Width="200"
-                            BorderBrush="#FFAAAAAA">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <TextBlock Grid.Row="0"
-                                       Visibility="Collapsed"
-                                       Text="VIDEO"
-                                       HorizontalAlignment="Center"
-                                       VerticalAlignment="Center"
-                                       Margin="0,10,0,7"
-                                       FontSize="16"
-                                       FontFamily="Segoe UI Light"
-                                       FontWeight="Bold"
-                                       Foreground="#FF3C3C3C" />
-                            <Button Content="Drag &amp; drop&#xA;english srt file &#xD;&#xA;to here..."
-                                    Grid.Row="1"
-                                    Style="{DynamicResource FIleBrow}"
-                                    Drop="TextBox_Drop"
-                                    AllowDrop="True"
-                                    VerticalContentAlignment="Stretch"
-                                    Tag="englishsub" />
-                            <TextBlock Text="{Binding ElementName=userControl,Path=SubEngPath}"
-                                       Grid.RowSpan="3"
-                                       TextWrapping="Wrap"
-                                       Margin="5"
-                                       Foreground="#FF515151"
-                                       VerticalAlignment="Bottom"
-                                       HorizontalAlignment="Stretch" />
-                        </Grid>
-                    </Border>
+                            Height="150"
+                            Style="{DynamicResource FIleBrow}"
+                            Drop="TextBox_Drop"
+                            AllowDrop="True"
+                            VerticalContentAlignment="Stretch"
+                            x:Name="video" />
 
-                    <Border BorderThickness="3"
-                            Height="200"
+                    <Button Tag="{Binding ElementName=userControl,Path=SubEngPath,Mode=OneWay}"
+                            Content="Drag &amp; drop&#xD;&#xA;english caption file here"
                             Margin="10"
                             Width="200"
-                            BorderBrush="#FFAAAAAA">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <TextBlock Grid.Row="0"
-                                       Visibility="Collapsed"
-                                       Text="VIDEO"
-                                       HorizontalAlignment="Center"
-                                       VerticalAlignment="Center"
-                                       Margin="0,10,0,7"
-                                       FontSize="16"
-                                       FontFamily="Segoe UI Light"
-                                       FontWeight="Bold"
-                                       Foreground="#FF3C3C3C" />
-                            <Button Content="Drag &amp; drop&#xA;other srt file &#xD;&#xA;to here..."
-                                    Grid.Row="1"
-                                    Style="{DynamicResource FIleBrow}"
-                                    Drop="TextBox_Drop"
-                                    AllowDrop="True"
-                                    VerticalContentAlignment="Stretch"
-                                    Tag="othersub" />
-                            <TextBlock Text="{Binding ElementName=userControl,Path=SubOtherPath}"
-                                       Grid.RowSpan="3"
-                                       TextWrapping="Wrap"
-                                       Margin="5"
-                                       Foreground="#FF515151"
-                                       VerticalAlignment="Bottom"
-                                       HorizontalAlignment="Stretch" />
-                        </Grid>
-                    </Border>
+                            Height="150"
+                            Style="{DynamicResource FIleBrow}"
+                            Drop="TextBox_Drop"
+                            AllowDrop="True"
+                            VerticalContentAlignment="Stretch"
+                            x:Name="englishsub" />
 
-
+                    <Button Tag="{Binding ElementName=userControl,Path=SubOtherPath,Mode=OneWay}"
+                            Content="Drag &amp; drop&#xD;&#xA;other caption file here"
+                            Margin="10"
+                            Width="200"
+                            Height="150"
+                            Style="{DynamicResource FIleBrow}"
+                            Drop="TextBox_Drop"
+                            AllowDrop="True"
+                            VerticalContentAlignment="Stretch"
+                            x:Name="othersub" />
                 </WrapPanel>
             </Grid>
         </StackPanel>

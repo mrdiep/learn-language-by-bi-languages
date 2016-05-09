@@ -34,7 +34,9 @@
             <converter:BoolToVisibleConverter x:Key="BoolToVisibleConverter" />
             <converter:VisibleInvertConverter x:Key="VisibleInvertConverter" />
             <converter:BoolToCollapsedConverter x:Key="BoolToCollapsedConverter" />
-
+            <converter:IntGreaterZeroToVisibleConverter x:Key="IntGreaterZeroToVisibleConverter" />
+            <converter:IntGreaterZeroToCollapsedConverter x:Key="IntGreaterZeroToCollapsedConverter" />
+            
             <ControlTemplate x:Key="LinkButton"
                              TargetType="{x:Type ButtonBase}">
                 <Border x:Name="border"
@@ -69,22 +71,16 @@
 
             <Style x:Key="FIleBrow"
                    TargetType="{x:Type Button}">
-                <Setter Property="Custom:ControlsHelper.ContentCharacterCasing"
-                        Value="Upper" />
-                <Setter Property="Custom:ControlsHelper.CornerRadius"
-                        Value="3" />
+               
                 <Setter Property="MinHeight"
                         Value="25" />
                 <Setter Property="FontWeight"
                         Value="Bold" />
                 <Setter Property="FontSize"
-                        Value="18" />
+                        Value="15" />
                 <Setter Property="FontFamily"
                         Value="{DynamicResource DefaultFont}" />
-                <Setter Property="Background"
-                        Value="{DynamicResource GrayBrush10}" />
-                <Setter Property="BorderBrush"
-                        Value="{DynamicResource TextBoxBorderBrush}" />
+        
                 <Setter Property="Foreground"
                         Value="#FF005180" />
                 <Setter Property="Padding"
@@ -94,13 +90,36 @@
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type Button}">
-                            <Border>
+                            <Border BorderThickness="1">
+                                <Border.BorderBrush>
+                                    <DrawingBrush Viewport="0,0,8,8"
+                                                  ViewportUnits="Absolute"
+                                                  TileMode="Tile">
+                                        <DrawingBrush.Drawing>
+                                            <DrawingGroup>
+                                                <GeometryDrawing Brush="#FF8F8F8F">
+                                                    <GeometryDrawing.Geometry>
+                                                        <GeometryGroup>
+                                                            <RectangleGeometry Rect="0,0,50,50" />
+                                                            <RectangleGeometry Rect="50,50,50,50" />
+                                                        </GeometryGroup>
+                                                    </GeometryDrawing.Geometry>
+                                                </GeometryDrawing>
+                                            </DrawingGroup>
+                                        </DrawingBrush.Drawing>
+                                    </DrawingBrush>
+                                </Border.BorderBrush>
+                                <Grid Background="Transparent">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition />
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
                                 <Custom:ContentControlEx x:Name="PART_ContentPresenter"
                                                          ContentCharacterCasing="{Binding (Custom:ControlsHelper.ContentCharacterCasing), RelativeSource={RelativeSource TemplatedParent}}"
                                                          ContentTemplate="{TemplateBinding ContentTemplate}"
                                                          Content="{TemplateBinding Content}"
                                                          ContentStringFormat="{TemplateBinding ContentStringFormat}"
-                                                         HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                         HorizontalContentAlignment="Center"
                                                          Padding="{TemplateBinding Padding}"
                                                          RecognizesAccessKey="True"
                                                          SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
@@ -109,6 +128,16 @@
                                                          Background="{x:Null}"
                                                          HorizontalAlignment="Center"
                                                          VerticalAlignment="Top" />
+
+                                    <TextBlock Text="{TemplateBinding Tag}"
+                                               TextWrapping="Wrap"
+                                               VerticalAlignment="Bottom"
+                                               HorizontalAlignment="Center"
+                                               FontSize="11"
+                                               FontFamily="Segoe UI Light"
+                                               Margin="0,0,0,5" />
+
+                                </Grid>
                             </Border>
                         </ControlTemplate>
                     </Setter.Value>

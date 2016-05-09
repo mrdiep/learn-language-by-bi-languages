@@ -50,14 +50,14 @@ namespace VoiceSubtitle
         private void TextBox_Drop(object sender, DragEventArgs e)
         {
             Button button = sender as Button;
-            string type = button.Tag as string;
+            string name = button.Name as string;
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
                 string file = files[0];
                 string ext = Path.GetExtension(file);
 
-                if (ext == ".mp4" || ext == ".mkv")
+                if (ext == ".mp4" || ext == ".mkv" || ext==".mp3")
                 {
                     VideoPath = file;
                     if(string.IsNullOrEmpty(VideoName))
@@ -65,11 +65,11 @@ namespace VoiceSubtitle
                         VideoName = Path.GetFileName(file);
                     }
                 }
-                else if (type == "englishsub" && ext == ".srt")
+                else if (name == "englishsub" && ext == ".srt")
                 {
                     SubEngPath = file;
                 }
-                else if (type == "othersub" && ext == ".srt")
+                else if (name == "othersub" && ext == ".srt")
                 {
                     SubOtherPath = file;
                 }

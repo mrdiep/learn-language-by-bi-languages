@@ -145,6 +145,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Converter\BoolToCollapsedConverter.cs" />
+    <Compile Include="Converter\IntGreaterZeroToCollapsedConverter.cs" />
+    <Compile Include="Converter\IntGreaterZeroToVisibleConverter.cs" />
     <Compile Include="Converter\VisibleInvertConverter.cs" />
     <Compile Include="Converter\NullToVisibleConverter.cs" />
     <Compile Include="Converter\NullToCollapsedConverter.cs" />

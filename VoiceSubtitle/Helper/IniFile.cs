@@ -38,6 +38,10 @@ namespace VoiceSubtitle.Helper
                 var indexSpliter = line.IndexOf("=");
                 string key = line.Substring(0, indexSpliter);
                 string value = line.Substring(indexSpliter + 1, line.Length - indexSpliter - 1);
+                if (dictData.ContainsKey(key))
+                    continue;
+
+                dictData.Add(key, value);
             }
         }
 

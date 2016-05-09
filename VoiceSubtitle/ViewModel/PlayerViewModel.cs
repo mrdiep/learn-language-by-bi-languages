@@ -36,6 +36,7 @@ namespace VoiceSubtitle.ViewModel
         public ICommand SwitchSource { get; }
         public ICommand SearchBack { get; }
         public ICommand SearchNext { get; }
+        private SourcePath currentSource;
 
         public PlayerViewModel(DispatchService dispatchService, CambridgeDictionaryViewModel cambridgeDictionaryViewModel, VideoViewModel videoViewModel)
         {
@@ -76,8 +77,12 @@ namespace VoiceSubtitle.ViewModel
             SwitchSource = new ActionCommand(async x =>
             {
                 var source = x as SourcePath;
+                currentSource = source;
+
                 if (source == null)
+                {
                     return;
+                }
                 List<PartialCaption> primaryCaption = null, translatedCaption = null;
 
                 var task1 = Task.Factory.StartNew(() => { primaryCaption = LoadSubFormFile(source.PrimaryCaption); });
@@ -87,11 +92,8 @@ namespace VoiceSubtitle.ViewModel
 
                 dispatchService.Invoke(() =>
                 {
-                    PrimaryCaption.Clear();
-                    TranslateCaption.Clear();
-
-                    primaryCaption.ForEach(c => { PrimaryCaption.Add(c); });
-                    translatedCaption.ForEach(c => { TranslateCaption.Add(c); });
+                    LoadPrimaryCaption(primaryCaption);
+                    LoadTranslateCaption(translatedCaption);
 
                     VideoPath = source.Video;
                     VideoName = source.VideoName;
@@ -103,6 +105,40 @@ namespace VoiceSubtitle.ViewModel
             });
         }
 
+        private void LoadPrimaryCaption(List<PartialCaption> caption)
+        {
+            PrimaryCaption.Clear();
+            caption.ForEach(c => { PrimaryCaption.Add(c); });
+        }
+
+        private void LoadTranslateCaption(List<PartialCaption> caption)
+        {
+            TranslateCaption.Clear();
+            caption.ForEach(c => { TranslateCaption.Add(c); });
+        }
+
+        public void UpdatePrivateCaption(string fileCaption)
+        {
+            var primaryCaption = LoadSubFormFile(fileCaption);
+            LoadPrimaryCaption(primaryCaption);
+            currentSource.PrimaryCaption = fileCaption;
+            currentSource.Save();
+        }
+
+        public void UpdateTranslatedCaption(string fileCaption)
+        {
+            var translateCaption = LoadSubFormFile(fileCaption);
+            LoadTranslateCaption(translateCaption);
+            currentSource.TranslatedCaption = fileCaption;
+            currentSource.Save();
+        }
+        public void UpdateVideoPath(string fileVideo)
+        {
+            videoViewModel.LoadVideo(VideoPath);
+
+            currentSource.Video = fileVideo;
+            currentSource.Save();
+        }
         public ObservableCollection<PartialCaption> PrimaryCaption { get; private set; }
         public ObservableCollection<PartialCaption> TranslateCaption { get; private set; }
 
@@ -329,7 +365,8 @@ namespace VoiceSubtitle.ViewModel
                 if (searchTime > matchCount)
                     searchTime = 0;
             }
-            else {
+            else
+            {
                 searchTime--;
                 if (searchTime < 0)
                     searchTime = matchCount - 1;

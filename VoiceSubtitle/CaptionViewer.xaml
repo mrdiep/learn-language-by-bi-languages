@@ -9,7 +9,23 @@
              mc:Ignorable="d"
              DataContext="{Binding PlayerViewModel, Source={StaticResource Locator}}">
     <UserControl.Resources>
-
+        <DrawingBrush x:Key="DashBorder"
+                      Viewport="0,0,8,8"
+                      ViewportUnits="Absolute"
+                      TileMode="Tile">
+            <DrawingBrush.Drawing>
+                <DrawingGroup>
+                    <GeometryDrawing Brush="#FF6C6C6C">
+                        <GeometryDrawing.Geometry>
+                            <GeometryGroup>
+                                <RectangleGeometry Rect="0,0,50,50" />
+                                <RectangleGeometry Rect="50,50,50,50" />
+                            </GeometryGroup>
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                </DrawingGroup>
+            </DrawingBrush.Drawing>
+        </DrawingBrush>
         <Style x:Key="PronounceListBoxItemStyle"
                TargetType="{x:Type ListViewItem}">
 
@@ -220,7 +236,7 @@
         <Grid Grid.Row="2"
               Background="#FF0771A2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
@@ -236,7 +252,8 @@
                            Margin="20,0,0,0" />
             </StackPanel>
 
-            <StackPanel Grid.Column="2" Orientation="Horizontal"
+            <StackPanel Grid.Column="2"
+                        Orientation="Horizontal"
                         VerticalAlignment="Center">
 
                 <TextBlock Text="{Binding VideoName}"
@@ -267,19 +284,56 @@
                           Grid.Column="1"
                           HorizontalAlignment="Stretch"
                           d:IsHidden="True" />
-            <Grid x:Name="primaryCaptionGrid">
-            </Grid>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="ENGLISH CAPTION"
+                           Margin="5"
+                           FontFamily="Segoe UI Light"
+                           FontSize="16" />
+
+                <Border AllowDrop="True"
+                        Drop="PrimaryCaptionDrop"
+                        Visibility="{Binding PrimaryCaption.Count,Converter={StaticResource IntGreaterZeroToVisibleConverter}}"
+                        BorderThickness="1"
+                        Margin="20,5,2,2"
+                        VerticalAlignment="Top"
+                        BorderBrush="{StaticResource DashBorder}">
+
+                    <TextBlock Text="Drop file to change source..."
+                               Margin="5" />
+                </Border>
+            </StackPanel>
 
             <ListBox Grid.Column="0"
+                     Margin="5,40,0,0"
                      SelectionChanged="ScrollToSelected"
                      ItemsSource="{Binding PrimaryCaption}"
                      SelectedItem="{Binding SelectedPrimaryCaption}"
                      ItemContainerStyle="{DynamicResource ListBoxItemStyle1}"
                      ItemTemplate="{DynamicResource DataTemplate1}" />
+
+            <Border AllowDrop="True"
+                    Drop="PrimaryCaptionDrop"
+                    BorderBrush="{StaticResource DashBorder}"
+                    Visibility="{Binding PrimaryCaption.Count,Converter={StaticResource IntGreaterZeroToCollapsedConverter}}"
+                    BorderThickness="1"
+                    Margin="20,100,20,20"
+                    VerticalAlignment="Top"
+                    Height="120">
+
+                <TextBlock Text="No source...Drop other caption file here to load..."
+                           Margin="5"
+                           Foreground="#FF535353"
+                           FontSize="15"
+                           FontFamily="Segoe UI Light"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center" />
+            </Border>
+
             <Grid HorizontalAlignment="Right"
                   VerticalAlignment="Top"
                   Opacity="0.4"
-                  Margin="0,0,20,0"
+                  Visibility="{Binding PrimaryCaption.Count,Converter={StaticResource IntGreaterZeroToVisibleConverter}}"
+                  Margin="0,0,0,0"
                   Background="#FF8F8F8F">
                 <StackPanel Orientation="Horizontal"
                             Margin="5">
@@ -326,13 +380,64 @@
                               Grid.Row="1"
                               HorizontalContentAlignment="Stretch"
                               HorizontalAlignment="Stretch"
-                              Background="Gray">
-                </GridSplitter>
+                              Background="Gray" />
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="CAPTION 2"
+                               Margin="5"
+                               FontFamily="Segoe UI Light"
+                               FontSize="16" />
+
+                    <Border AllowDrop="True"
+                            Drop="TranslatedCaptionDrop"
+                            Visibility="{Binding TranslateCaption.Count,Converter={StaticResource IntGreaterZeroToVisibleConverter}}"
+                            BorderThickness="1"
+                            Margin="20,5,2,2"
+                            VerticalAlignment="Top"
+                            BorderBrush="{StaticResource DashBorder}">
+
+                        <TextBlock Text="Drop file to change source..."
+                                   Margin="5" />
+                    </Border>
+                </StackPanel>
                 <ListBox Grid.Row="0"
+                         Margin="5,40,0,0"
                          SelectionChanged="ScrollToSelected"
                          ItemsSource="{Binding TranslateCaption}"
                          SelectedItem="{Binding SelectedTranslateCaption}" />
+
+                <Border AllowDrop="True"
+                        Drop="TranslatedCaptionDrop"
+                        Visibility="{Binding TranslateCaption.Count,Converter={StaticResource IntGreaterZeroToCollapsedConverter}}"
+                        BorderThickness="1"
+                        Margin="20,100,20,20"
+                        VerticalAlignment="Top"
+                        Height="120"
+                        BorderBrush="{StaticResource DashBorder}">
+
+                    <TextBlock Text="No source...Drop other caption file here to load..."
+                               Margin="5"
+                               Foreground="#FF535353"
+                               FontSize="15"
+                               FontFamily="Segoe UI Light"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center" />
+                </Border>
+
                 <local:VideoViewer Grid.Row="2" />
+                <Border AllowDrop="True"
+                        Grid.Row="2"
+                        Drop="VideoPathDrop"
+                        BorderThickness="1"
+                        Margin="5"
+                        VerticalAlignment="Top"
+                        HorizontalAlignment="Right"
+                        Height="50"
+                        BorderBrush="{StaticResource DashBorder}">
+
+                    <TextBlock Text="Drop here to load new video..."
+                               Margin="5"
+                               Foreground="#FF575757" />
+                </Border>
             </Grid>
         </Grid>
     </Grid>

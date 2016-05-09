@@ -86,12 +86,7 @@ namespace VoiceSubtitle.ViewModel
 
         public void AddNewSource(ref SourcePath source)
         {
-            string content = $"{source.VideoName}\r\n{source.Video}\r\n{source.PrimaryCaption}\r\n{source.TranslatedCaption}";
-
-            string folder = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + @"\captions";
-            string file = folder + $@"\{DateTime.Now.Ticks}.cap";
-            File.WriteAllText(file, content);
-            source.Path = file;
+            source.Save();
             SourcePaths.Add(source);
         }
     }
