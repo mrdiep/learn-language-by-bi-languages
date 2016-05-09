@@ -14,12 +14,14 @@ namespace VoiceSubtitle.ViewModel
         private MediaElement playVoiceMedia = new MediaElement();
         private DispatchService dispatchService;
         private CancellationTokenSource videoLoopTokenSource;
+        private SettingViewModel settingViewModel;
         private MediaElement MediaPlayer => VideoViewer.MediaPlayer;
         public ICommand PlayPauseVideoCommand { get; }
 
-        public VideoViewModel(DispatchService dispatchService)
+        public VideoViewModel(DispatchService dispatchService, SettingViewModel settingViewModel)
         {
             this.dispatchService = dispatchService;
+            this.settingViewModel = settingViewModel;
 
             playVoiceMedia.LoadedBehavior = MediaState.Manual;
             playVoiceMedia.UnloadedBehavior = MediaState.Manual;
@@ -104,6 +106,7 @@ namespace VoiceSubtitle.ViewModel
             {
                 for (int i = 0; i < loop; i++)
                 {
+                    VideoStatus = $"Listen loop {i + 1}/{loop}";
                     ct.ThrowIfCancellationRequested();
                     dispatchService.Invoke(() =>
                     {
@@ -114,7 +117,10 @@ namespace VoiceSubtitle.ViewModel
                     ct.ThrowIfCancellationRequested();
                     await Task.Delay(to - from);
                     ct.ThrowIfCancellationRequested();
-                    dispatchService.Invoke(() => MediaPlayer.Pause());
+                    if (i == loop - 1 && !settingViewModel.PlayAfterEndingLoop)
+                    {
+                        dispatchService.Invoke(() => MediaPlayer.Pause());
+                    }
 
                     await Task.Delay(TimeSpan.FromSeconds(0));
                 }
@@ -122,6 +128,7 @@ namespace VoiceSubtitle.ViewModel
             finally
             {
                 videoLoopTokenSource = null;
+                VideoStatus = string.Empty;
             }
         }
 

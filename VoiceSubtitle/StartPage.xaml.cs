@@ -62,5 +62,10 @@ namespace VoiceSubtitle
                 ServiceLocator.Current.GetInstance<PlayerViewModel>().SwitchSource.Execute(source);
             }
         }
+
+        private void OpenSettingFlyout(object sender, RoutedEventArgs e)
+        {
+            SettingFlyout.IsOpen = true;
+        }
     }
 }

@@ -1,5 +1,7 @@
-﻿using System.Windows.Controls;
+﻿using Microsoft.Practices.ServiceLocation;
+using System.Windows.Controls;
 using VoiceSubtitle.Helper;
+using VoiceSubtitle.ViewModel;
 
 namespace VoiceSubtitle
 {
@@ -24,6 +26,13 @@ namespace VoiceSubtitle
         {
             ListView listView = sender as ListView;
             listView.SelectedItem = null;
+        }
+
+
+        private void PrimarySearch_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if(e.Key==System.Windows.Input.Key.Enter)
+                ServiceLocator.Current.GetInstance<PlayerViewModel>().SearchPrimaryCaption((sender as TextBox).Text);
         }
     }
 }

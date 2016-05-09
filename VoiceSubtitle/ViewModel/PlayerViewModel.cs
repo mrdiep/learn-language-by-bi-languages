@@ -10,24 +10,32 @@ using System.Windows.Input;
 using VoiceSubtitle.Model;
 using System.Linq;
 using VoiceSubtitle.Helper;
+using System.Windows;
 
 namespace VoiceSubtitle.ViewModel
 {
     public class PlayerViewModel : ViewModelBase
     {
-        private static Regex Unit = new Regex(
+        private static Regex pattern_1 = new Regex(
             @"(?<sequence>\d+)\r\n(?<start>\d{2}\:\d{2}\:\d{2},\d{3}) --\> (?<end>\d{2}\:\d{2}\:\d{2},\d{3})\r\n(?<text>[\s\S]*?\r\n\r\n)",
+            RegexOptions.Compiled | RegexOptions.ECMAScript);
+
+        private static Regex pattern_2 = new Regex(
+            @"(?<sequence>\d+)\n(?<start>\d{2}\:\d{2}\:\d{2},\d{3}) --\> (?<end>\d{2}\:\d{2}\:\d{2},\d{3})\n(?<text>[\s\S]*?\n\n)",
             RegexOptions.Compiled | RegexOptions.ECMAScript);
 
         private static readonly string FormatTime = @"hh\:mm\:ss\,fff";
 
         private DispatchService dispatchService;
+
         private CambridgeDictionaryViewModel cambridgeDictionaryViewModel;
         private VideoViewModel videoViewModel;
 
         public ICommand Listen { get; }
         public ICommand PlayVoice { get; }
         public ICommand SwitchSource { get; }
+        public ICommand SearchBack { get; }
+        public ICommand SearchNext { get; }
 
         public PlayerViewModel(DispatchService dispatchService, CambridgeDictionaryViewModel cambridgeDictionaryViewModel, VideoViewModel videoViewModel)
         {
@@ -38,6 +46,15 @@ namespace VoiceSubtitle.ViewModel
             PrimaryCaption = new ObservableCollection<PartialCaption>();
             TranslateCaption = new ObservableCollection<PartialCaption>();
 
+            SearchBack = new ActionCommand((text) =>
+            {
+                SearchPrimaryCaption(text as string, false);
+            });
+
+            SearchNext = new ActionCommand((text) =>
+            {
+                SearchPrimaryCaption(text as string);
+            });
             PlayVoice = new ActionCommand((link) =>
             {
                 string url = link as string;
@@ -88,6 +105,17 @@ namespace VoiceSubtitle.ViewModel
 
         public ObservableCollection<PartialCaption> PrimaryCaption { get; private set; }
         public ObservableCollection<PartialCaption> TranslateCaption { get; private set; }
+
+        private string status;
+
+        public string Status
+        {
+            get { return status; }
+            set
+            {
+                Set(ref status, value);
+            }
+        }
 
         private string videoPath;
 
@@ -245,13 +273,17 @@ namespace VoiceSubtitle.ViewModel
 
             var textSource = File.ReadAllText(filePath);
             var captions = new List<PartialCaption>();
-            var matches = Unit.Matches(textSource);
+            var matches = pattern_1.Matches(textSource);
+            if (matches.Count == 0)
+                matches = pattern_2.Matches(textSource);
             foreach (Match e in matches)
             {
                 var index = Convert.ToInt32(e.Groups[1].Value);
                 var from = TimeSpan.ParseExact(e.Groups[2].Value, FormatTime, CultureInfo.InvariantCulture);
                 var to = TimeSpan.ParseExact(e.Groups[3].Value, FormatTime, CultureInfo.InvariantCulture);
                 var text = e.Groups[4].Value.Replace("\r\n", " ").Replace("  ", " ");
+                text = text.Replace("\n", " ").Replace("  ", " ");
+                text = text.Trim();
 
                 text = WebHelper.InnerHtmlText(text);
                 var caption = new PartialCaption(index, from, to, text);
@@ -260,5 +292,65 @@ namespace VoiceSubtitle.ViewModel
 
             return captions;
         }
+
+        #region Search Text
+
+        private string lastSearch = string.Empty;
+        private int searchTime;
+
+        public void SearchPrimaryCaption(string text, bool searchDown = true, bool restart = false)
+        {
+            Status = $"No matching";
+
+            if (text == string.Empty)
+            {
+                lastSearch = string.Empty;
+                return;
+            }
+
+            if (restart)
+            {
+                lastSearch = string.Empty;
+            }
+
+            if (lastSearch != text)
+            {
+                searchTime = -1;
+            }
+
+            lastSearch = text;
+            text = text.ToLower();
+            var matches = PrimaryCaption.Where(x => x.Text.ToLower().Contains(text));
+            int matchCount = matches.Count();
+
+            if (searchDown)
+            {
+                searchTime++;
+                if (searchTime > matchCount)
+                    searchTime = 0;
+            }
+            else {
+                searchTime--;
+                if (searchTime < 0)
+                    searchTime = matchCount - 1;
+            }
+
+            var caption = matches.Skip(searchTime).Take(1)?.FirstOrDefault();
+            if (caption == null)
+            {
+                searchTime = 0;
+                caption = matches.Take(1)?.FirstOrDefault();
+            }
+
+            if (caption == null)
+            {
+                MessageBox.Show("No word found", App.AppTitle);
+                return;
+            }
+            Status = $"Search {matchCount} Matches";
+            SelectedPrimaryCaption = caption;
+        }
+
+        #endregion Search Text
     }
 }

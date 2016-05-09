@@ -5,6 +5,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:controls="Windo"
              xmlns:local="clr-namespace:VoiceSubtitle"
+             xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
              mc:Ignorable="d"
              DataContext="{Binding PlayerViewModel, Source={StaticResource Locator}}">
     <UserControl.Resources>
@@ -101,8 +102,7 @@
                                                 Width="60"
                                                 Margin="3"
                                                 Command="{Binding PlayerViewModel.Listen, Source={StaticResource Locator}}"
-                                                CommandParameter="50" 
-                                                />
+                                                CommandParameter="10" />
                                         <Button Content="20+"
                                                 Width="60"
                                                 Margin="3"
@@ -218,14 +218,42 @@
             <RowDefinition Height="25" />
         </Grid.RowDefinitions>
         <Grid Grid.Row="2"
-              Background="#FFB6049D">
+              Background="#FF0771A2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Orientation="Horizontal"
+                        VerticalAlignment="Center">
+                <TextBlock Text="{Binding Status}"
+                           Foreground="#FFE2E2E2"
+                           Margin="20,0,0,0" />
+
+                <TextBlock Text="{Binding SelectedPrimaryCaption.Text}"
+                           Foreground="#FFE2E2E2"
+                           Margin="20,0,0,0" />
+            </StackPanel>
+
+            <StackPanel Grid.Column="2" Orientation="Horizontal"
+                        VerticalAlignment="Center">
+
+                <TextBlock Text="{Binding VideoName}"
+                           Foreground="#FFF9F9F9"
+                           Margin="0,0,20,0" />
+
+                <TextBlock Text="{Binding  VideoViewModel.VideoStatus,Source={StaticResource Locator}}"
+                           Foreground="#FFF9F9F9"
+                           Margin="0,0,20,0" />
+            </StackPanel>
         </Grid>
         <Border Background="#FF024F7C">
-        <TextBlock Text="{Binding VideoName}"
-                   FontSize="18"
-                   HorizontalAlignment="Left"
-                   Margin="30,8,8,8"
-                   VerticalAlignment="Center"
+            <TextBlock Text="{Binding VideoName}"
+                       FontSize="18"
+                       HorizontalAlignment="Left"
+                       Margin="30,8,8,8"
+                       VerticalAlignment="Center"
                        Foreground="White" />
         </Border>
         <Grid Grid.Row="1">
@@ -241,12 +269,53 @@
                           d:IsHidden="True" />
             <Grid x:Name="primaryCaptionGrid">
             </Grid>
+
             <ListBox Grid.Column="0"
                      SelectionChanged="ScrollToSelected"
                      ItemsSource="{Binding PrimaryCaption}"
                      SelectedItem="{Binding SelectedPrimaryCaption}"
                      ItemContainerStyle="{DynamicResource ListBoxItemStyle1}"
                      ItemTemplate="{DynamicResource DataTemplate1}" />
+            <Grid HorizontalAlignment="Right"
+                  VerticalAlignment="Top"
+                  Opacity="0.4"
+                  Margin="0,0,20,0"
+                  Background="#FF8F8F8F">
+                <StackPanel Orientation="Horizontal"
+                            Margin="5">
+                    <TextBox x:Name="searchBox"
+                             KeyDown="PrimarySearch_KeyDown"
+                             MinWidth="120"
+                             Controls:TextBoxHelper.SelectAllOnFocus="True"
+                             Controls:TextBoxHelper.Watermark="Search..."
+                             Controls:TextBoxHelper.ClearTextButton="True" />
+                    <Button Command="{Binding SearchBack}"
+                            CommandParameter="{Binding ElementName=searchBox,Path=Text}">
+                        <Button.Content>
+                            <Rectangle Fill="#FF006595"
+                                       Height="13"
+                                       Width="9">
+                                <Rectangle.OpacityMask>
+                                    <VisualBrush Visual="{StaticResource appbar_navigate_previous}" />
+                                </Rectangle.OpacityMask>
+                            </Rectangle>
+                        </Button.Content>
+                    </Button>
+                    <Button Command="{Binding SearchNext}"
+                            CommandParameter="{Binding ElementName=searchBox,Path=Text}">
+                        <Button.Content>
+                            <Rectangle Fill="#FF006595"
+                                       Height="13"
+                                       Width="9">
+                                <Rectangle.OpacityMask>
+                                    <VisualBrush Visual="{StaticResource appbar_navigate_next}" />
+                                </Rectangle.OpacityMask>
+                            </Rectangle>
+                        </Button.Content>
+                    </Button>
+                </StackPanel>
+            </Grid>
+
             <Grid Grid.Column="2">
                 <Grid.RowDefinitions>
                     <RowDefinition />

@@ -72,10 +72,12 @@
                     Click="OpenFlyout"
                     Visibility="{Binding ElementName=captionViewer,Path=Visibility}" />
             <StackPanel  Visibility="{Binding PlayerViewModel.VideoPath, Converter={StaticResource NullToCollapsedConverter}, Source={StaticResource Locator}}">
-                <CheckBox Style="{StaticResource ShowHomePageCheckBox}" IsChecked="{Binding PlayerViewModel.IsShowViewer, Source={StaticResource Locator}}"
-                
-                 />
+                <CheckBox Style="{StaticResource ShowHomePageCheckBox}"
+                          IsChecked="{Binding PlayerViewModel.IsShowViewer, Source={StaticResource Locator}}" />
             </StackPanel>
+
+            <Button Content="Settings"
+                    Click="OpenSettingFlyout" />
         </Controls:WindowCommands>
     </Controls:MetroWindow.RightWindowCommands>
 
@@ -89,6 +91,23 @@
                 <ListBox ItemsSource="{Binding SourcePaths}"
                          ItemTemplate="{StaticResource CaptionFiles}"
                          ItemContainerStyle="{StaticResource ListBoxItemStyle}" />
+            </Controls:Flyout>
+
+            <Controls:Flyout IsOpen="False"
+                             Header="Settings"
+                             DataContext="{Binding SettingViewModel, Source={StaticResource Locator}}"
+                             Position="Right"
+                             x:Name="SettingFlyout"
+                             Width="300">
+
+                <StackPanel Margin="20"
+                            Orientation="Vertical">
+
+                    <Controls:ToggleSwitch Header="Continue play ending loop"
+                                           IsChecked="{Binding PlayAfterEndingLoop}"
+                                           OnLabel="Yes"
+                                           OffLabel="No" />
+                </StackPanel>
             </Controls:Flyout>
         </Controls:FlyoutsControl>
     </Controls:MetroWindow.Flyouts>
@@ -216,7 +235,6 @@
                                     </StackPanel>
                                 </Grid>
                             </StackPanel>
-
                         </StackPanel>
                     </ScrollViewer>
                 </Grid>
