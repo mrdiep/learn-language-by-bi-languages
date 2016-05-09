@@ -24,7 +24,6 @@
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.AnimatedTabControl.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.AnimatedSingleRowTabControl.xaml" />
                 <ResourceDictionary Source="/Resources/Icons.xaml" />
-
             </ResourceDictionary.MergedDictionaries>
             <vm:ViewModelLocator xmlns:vm="clr-namespace:VoiceSubtitle.ViewModel"
                                  x:Key="Locator"
@@ -35,7 +34,6 @@
             <converter:BoolToVisibleConverter x:Key="BoolToVisibleConverter" />
             <converter:VisibleInvertConverter x:Key="VisibleInvertConverter" />
             <converter:BoolToCollapsedConverter x:Key="BoolToCollapsedConverter" />
-
 
             <ControlTemplate x:Key="LinkButton"
                              TargetType="{x:Type ButtonBase}">
@@ -80,7 +78,7 @@
                 <Setter Property="FontWeight"
                         Value="Bold" />
                 <Setter Property="FontSize"
-                        Value="{DynamicResource UpperCaseContentFontSize}" />
+                        Value="18" />
                 <Setter Property="FontFamily"
                         Value="{DynamicResource DefaultFont}" />
                 <Setter Property="Background"
@@ -88,7 +86,7 @@
                 <Setter Property="BorderBrush"
                         Value="{DynamicResource TextBoxBorderBrush}" />
                 <Setter Property="Foreground"
-                        Value="{DynamicResource TextBrush}" />
+                        Value="#FF005180" />
                 <Setter Property="Padding"
                         Value="5,6" />
                 <Setter Property="BorderThickness"
@@ -96,8 +94,7 @@
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type Button}">
-                            <Border BorderBrush="#FF006468" BorderThickness="0,4,0,0"
-                                    Background="#33023559">
+                            <Border>
                                 <Custom:ContentControlEx x:Name="PART_ContentPresenter"
                                                          ContentCharacterCasing="{Binding (Custom:ControlsHelper.ContentCharacterCasing), RelativeSource={RelativeSource TemplatedParent}}"
                                                          ContentTemplate="{TemplateBinding ContentTemplate}"
@@ -109,7 +106,9 @@
                                                          SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
                                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                                                          Foreground="#FFCFCFCF"
-                                                         Background="{x:Null}" />
+                                                         Background="{x:Null}"
+                                                         HorizontalAlignment="Center"
+                                                         VerticalAlignment="Top" />
                             </Border>
                         </ControlTemplate>
                     </Setter.Value>
@@ -145,45 +144,100 @@
                     </Setter.Value>
                 </Setter>
             </Style>
-            <SolidColorBrush x:Key="OptionMark.MouseOver.Background"
-                             Color="#FFF3F9FF" />
-            <SolidColorBrush x:Key="OptionMark.MouseOver.Border"
-                             Color="#FF5593FF" />
-            <SolidColorBrush x:Key="OptionMark.MouseOver.Glyph"
-                             Color="#FF212121" />
-            <SolidColorBrush x:Key="OptionMark.Disabled.Background"
-                             Color="#FFE6E6E6" />
-            <SolidColorBrush x:Key="OptionMark.Disabled.Border"
-                             Color="#FFBCBCBC" />
-            <SolidColorBrush x:Key="OptionMark.Disabled.Glyph"
-                             Color="#FF707070" />
-            <SolidColorBrush x:Key="OptionMark.Pressed.Background"
-                             Color="#FFD9ECFF" />
-            <SolidColorBrush x:Key="OptionMark.Pressed.Border"
-                             Color="#FF3C77DD" />
-            <SolidColorBrush x:Key="OptionMark.Pressed.Glyph"
-                             Color="#FF212121" />
-            <SolidColorBrush x:Key="OptionMark.Static.Glyph"
-                             Color="#FF212121" />
-            <Style x:Key="BackCheckBox"
+
+            <Style x:Key="BackCurcentCaptionCheckBox"
                    TargetType="{x:Type CheckBox}">
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type CheckBox}">
-                            <Grid x:Name="templateRoot"
+
+                            <Grid x:Name="content"
                                   Background="Transparent"
                                   SnapsToDevicePixels="True">
-                                <Rectangle>
-                                    <Rectangle.Fill>
-                                        <VisualBrush Visual="{StaticResource appbar_add}" />
-                                    </Rectangle.Fill>
-                                </Rectangle>
+                                <TextBlock FontFamily="Segoe UI Symbol"
+                                           Text="&#xE00E;"
+                                           HorizontalAlignment="Left"
+                                           VerticalAlignment="Center"
+                                           FontSize="35"
+                                           Margin="0,-5,0,5" />
+                                <TextBlock Text="{Binding PlayerViewModel.VideoName, Source={StaticResource Locator}}"
+                                           FontSize="16"
+                                           Background="{x:Null}"
+                                           HorizontalAlignment="Left"
+                                           VerticalAlignment="Center"
+                                           Margin="34,0,0,0" />
                             </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver"
+                                         Value="True">
+                                    <Setter Property="Opacity"
+                                            TargetName="content"
+                                            Value="0.8" />
+                                </Trigger>
+                                <Trigger Property="IsPressed"
+                                         Value="True">
+                                    <Setter Property="Opacity"
+                                            TargetName="content"
+                                            Value="0.6" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style x:Key="ShowHomePageCheckBox"
+                   TargetType="{x:Type CheckBox}">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type CheckBox}">
+
+                            <Grid x:Name="content"
+                                  Background="Transparent"
+                                  SnapsToDevicePixels="True">
+
+                                <TextBlock x:Name="currentPage"
+                                           Text="{Binding PlayerViewModel.VideoName, Source={StaticResource Locator}}"
+                                           Background="{x:Null}"
+                                           Foreground="White"
+                                           HorizontalAlignment="Left"
+                                           VerticalAlignment="Center" />
+                                <TextBlock Text="Start page"
+                                           Foreground="White"
+                                           x:Name="startPage"
+                                           Visibility="Collapsed"
+                                           Background="{x:Null}"
+                                           HorizontalAlignment="Left"
+                                           VerticalAlignment="Center"
+                                           />
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver"
+                                         Value="True">
+                                    <Setter Property="Opacity"
+                                            TargetName="content"
+                                            Value="0.8" />
+                                </Trigger>
+                                <Trigger Property="IsChecked"
+                                         Value="True">
+                                    <Setter Property="Visibility"
+                                            TargetName="startPage"
+                                            Value="Visible" />
+                                    <Setter Property="Visibility"
+                                            TargetName="currentPage"
+                                            Value="Collapsed" />
+                                </Trigger>
+                                <Trigger Property="IsPressed"
+                                         Value="True">
+                                    <Setter Property="Opacity"
+                                            TargetName="content"
+                                            Value="0.6" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
             </Style>
         </ResourceDictionary>
-
     </Application.Resources>
 </Application>

@@ -135,7 +135,7 @@ namespace VoiceSubtitle.ViewModel
             MediaPlayer.MediaOpened += MediaPlayer_MediaOpened;
             DispatcherTimer timer = new DispatcherTimer();
             timer.Tick += Timer_Tick;
-            timer.Interval = TimeSpan.FromSeconds(0.5);
+            timer.Interval = TimeSpan.FromSeconds(1);
             timer.Start();
 
             loadEvents = true;

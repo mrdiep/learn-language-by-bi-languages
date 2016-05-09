@@ -7,6 +7,6 @@ namespace VoiceSubtitle
     /// </summary>
     public partial class App : Application
     {
-        public static string AppTitle = "MOCKING-PIG";
+        public static string AppTitle = "MOCKINGBIRD";
     }
 }

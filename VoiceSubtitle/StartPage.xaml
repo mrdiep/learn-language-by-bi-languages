@@ -10,7 +10,7 @@
                       mc:Ignorable="d"
                       ShowMaxRestoreButton="True"
                       ShowIconOnTitleBar="True"
-                      Title="Mocking-pig"
+                      Title="MOCKINGBIRD"
                       MinHeight="500"
                       MinWidth="600"
                       BorderThickness="1"
@@ -72,7 +72,9 @@
                     Click="OpenFlyout"
                     Visibility="{Binding ElementName=captionViewer,Path=Visibility}" />
             <StackPanel  Visibility="{Binding PlayerViewModel.VideoPath, Converter={StaticResource NullToCollapsedConverter}, Source={StaticResource Locator}}">
-                <CheckBox IsChecked="{Binding PlayerViewModel.IsShowViewer, Source={StaticResource Locator}}" />
+                <CheckBox Style="{StaticResource ShowHomePageCheckBox}" IsChecked="{Binding PlayerViewModel.IsShowViewer, Source={StaticResource Locator}}"
+                
+                 />
             </StackPanel>
         </Controls:WindowCommands>
     </Controls:MetroWindow.RightWindowCommands>
@@ -103,17 +105,15 @@
                     <RowDefinition />
                 </Grid.RowDefinitions>
 
-                <StackPanel Grid.Row="0"
-                            Visibility="{Binding PlayerViewModel.VideoPath, Converter={StaticResource NullToCollapsedConverter}, Source={StaticResource Locator}}">
-                    <CheckBox Style="{DynamicResource BackCheckBox}"
-                              IsChecked="{Binding PlayerViewModel.IsShowViewer, Source={StaticResource Locator}}" />
-                    <TextBlock Text="Open Voices"
-                               FontSize="18"
-                               HorizontalAlignment="Left"
-                               Margin="30,0,0,0"
-                               VerticalAlignment="Center" />
-                </StackPanel>
-
+                <Grid Background="#FFA00284"
+                      Height="45"
+                      Visibility="{Binding PlayerViewModel.VideoPath, Converter={StaticResource NullToCollapsedConverter}, Source={StaticResource Locator}}">
+                    <CheckBox Style="{DynamicResource BackCurcentCaptionCheckBox}"
+                              Foreground="White"
+                              IsChecked="{Binding PlayerViewModel.IsShowViewer, Source={StaticResource Locator}}"
+                              Margin="20,0,0,0"
+                              HorizontalAlignment="Left" />
+                </Grid>
                 <Grid Grid.Row="1">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="300" />
@@ -141,7 +141,7 @@
                                  Grid.Row="1"
                                  Margin="10,20,0,0"
                                  SelectedItem="{Binding EditCurrent}"
-                                 HorizontalAlignment="Left"
+                                 HorizontalAlignment="Stretch"
                                  ItemsSource="{Binding SourcePaths}"
                                  ItemTemplate="{StaticResource CaptionFiles}"
                                  ItemContainerStyle="{StaticResource ListBoxItemStyle}" />
@@ -193,8 +193,7 @@
                                                        VideoName="{Binding EditCurrent.VideoName,Mode=TwoWay}"
                                                        VideoPath="{Binding EditCurrent.Video,Mode=TwoWay}"
                                                        SubEngPath="{Binding EditCurrent.PrimaryCaption,Mode=TwoWay}"
-                                                       SubOtherPath="{Binding EditCurrent.TranslatedCaption,Mode=TwoWay}"
-                                                       />
+                                                       SubOtherPath="{Binding EditCurrent.TranslatedCaption,Mode=TwoWay}" />
 
                                 <Grid Margin="10"
                                       HorizontalAlignment="Stretch">
@@ -213,18 +212,16 @@
                                                 Grid.Column="1"
                                                 HorizontalAlignment="Left"
                                                 Command="{Binding SaveEditCurrent}"
-                                                CommandParameter="{Binding EditCurrent}"
-                                                />
+                                                CommandParameter="{Binding EditCurrent}" />
                                     </StackPanel>
                                 </Grid>
                             </StackPanel>
-                            
+
                         </StackPanel>
                     </ScrollViewer>
                 </Grid>
             </Grid>
         </Border>
-
         <local:CaptionViewer x:Name="captionViewer"
                              Visibility="{Binding PlayerViewModel. IsShowViewer,Converter={StaticResource BoolToVisibleConverter},Source={StaticResource Locator}}" />
     </Grid>
