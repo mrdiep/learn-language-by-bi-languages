@@ -243,6 +243,11 @@
 
             <StackPanel Orientation="Horizontal"
                         VerticalAlignment="Center">
+
+                <TextBlock Text="{Binding NotifyViewModel.Text,Source={StaticResource Locator}}"
+                           Foreground="#FFE2E2E2"
+                           Margin="20,0,0,0" />
+
                 <TextBlock Text="{Binding Status}"
                            Foreground="#FFE2E2E2"
                            Margin="20,0,0,0" />
@@ -288,8 +293,9 @@
                              HorizontalAlignment="Center"
                              VerticalAlignment="Center"
                              Width="210"
+                             Text="{Binding SubtitleDownloaderViewModel.SearchText, Source={StaticResource Locator},Mode=TwoWay}"
                              Controls:TextBoxHelper.SelectAllOnFocus="True"
-                             Controls:TextBoxHelper.Watermark="Search caption online ..."
+                             Controls:TextBoxHelper.Watermark="Search subtitle online ..."
                              Controls:TextBoxHelper.ClearTextButton="True" />
                     <Button Command="{Binding SubtitleDownloaderViewModel.SearchCaptionOnline, Source={StaticResource Locator}}"
                             CommandParameter="{Binding ElementName=captionOnlineText,Path=Text}">
@@ -343,6 +349,34 @@
                      SelectedItem="{Binding SelectedPrimaryCaption}"
                      ItemContainerStyle="{DynamicResource ListBoxItemStyle1}"
                      ItemTemplate="{DynamicResource DataTemplate1}" />
+
+            <Border HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom"
+                    Height="Auto"
+                    Width="170"
+                    Opacity="0.8"
+                    Visibility="{Binding PrimaryCaption.Count,Converter={StaticResource IntGreaterZeroToVisibleConverter}}">
+                <Grid Margin="3">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Controls:NumericUpDown x:Name="syncSubPrimaryText"
+                             Controls:TextBoxHelper.Watermark="Sync sub..." />
+                    <Button Grid.Column="1" Command="{Binding SyncPrimaryCaptionCommand}"
+                            CommandParameter="{Binding ElementName=syncSubPrimaryText,Path=Value}">
+                        <Button.Content>
+                            <Rectangle Fill="#FF006595"
+                                       Height="13"
+                                       Width="9">
+                                <Rectangle.OpacityMask>
+                                    <VisualBrush Visual="{StaticResource appbar_navigate_next}" />
+                                </Rectangle.OpacityMask>
+                            </Rectangle>
+                        </Button.Content>
+                    </Button>
+                </Grid>
+            </Border>
 
             <Border AllowDrop="True"
                     Drop="PrimaryCaptionDrop"
@@ -437,7 +471,34 @@
                          SelectionChanged="ScrollToSelected"
                          ItemsSource="{Binding TranslateCaption}"
                          SelectedItem="{Binding SelectedTranslateCaption}" />
-
+                <Border HorizontalAlignment="Right"
+                        VerticalAlignment="Bottom"
+                        Height="Auto"
+                        Width="170"
+                        Opacity="0.8"
+                        Visibility="{Binding TranslateCaption.Count,Converter={StaticResource IntGreaterZeroToVisibleConverter}}">
+                    <Grid Margin="3">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Controls:NumericUpDown x:Name="syncSubTranslatedText"
+                                                Controls:TextBoxHelper.Watermark="Sync sub..." />
+                        <Button Grid.Column="1"
+                                Command="{Binding SyncTranslatedCaptionCommand}"
+                                CommandParameter="{Binding ElementName=syncSubTranslatedText,Path=Value}">
+                            <Button.Content>
+                                <Rectangle Fill="#FF006595"
+                                           Height="13"
+                                           Width="9">
+                                    <Rectangle.OpacityMask>
+                                        <VisualBrush Visual="{StaticResource appbar_navigate_next}" />
+                                    </Rectangle.OpacityMask>
+                                </Rectangle>
+                            </Button.Content>
+                        </Button>
+                    </Grid>
+                </Border>
                 <Border AllowDrop="True"
                         Drop="TranslatedCaptionDrop"
                         Visibility="{Binding TranslateCaption.Count,Converter={StaticResource IntGreaterZeroToCollapsedConverter}}"

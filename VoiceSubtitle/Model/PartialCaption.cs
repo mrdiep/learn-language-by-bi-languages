@@ -13,8 +13,8 @@ namespace VoiceSubtitle.Model
         }
 
         public int Index { get; }
-        public TimeSpan From { get; }
-        public TimeSpan To { get; }
+        public TimeSpan From { get; set; }
+        public TimeSpan To { get; set; }
         public string Text { get; }
 
         public override string ToString()

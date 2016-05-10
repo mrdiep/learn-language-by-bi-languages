@@ -144,7 +144,7 @@ namespace VoiceSubtitle.ViewModel
                     });
 
                     ct.ThrowIfCancellationRequested();
-                    await Task.Delay(to - from);
+                    await Task.Delay(to - from,ct);
                     ct.ThrowIfCancellationRequested();
                     if (i == loop - 1 && !settingViewModel.PlayAfterEndingLoop)
                     {

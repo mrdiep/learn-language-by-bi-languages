@@ -21,7 +21,7 @@ namespace VoiceSubtitle
             videoViewModel = ServiceLocator.Current.GetInstance<VideoViewModel>();
 
             
-            Messenger.Default.Register<bool>(this, "IsSettingFlyoutOpenToken", (isOpen) =>
+            Messenger.Default.Register<bool>(this, "StopOrResumeVideoToken", (isOpen) =>
             {
                 viewViewer.Visibility = isOpen ? Visibility.Collapsed : Visibility.Visible;
                 if (isOpen)

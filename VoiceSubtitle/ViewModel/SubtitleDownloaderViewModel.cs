@@ -8,22 +8,72 @@ using System.Windows.Input;
 using VoiceSubtitle.Model;
 using GalaSoft.MvvmLight;
 using System.IO;
-using Ionic.Zip;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using Ionic.Zip;
+using static VoiceSubtitle.Helper.ConverterExtensions;
+using System.Windows;
+using System.Reflection;
+using Microsoft.Practices.ServiceLocation;
 
 namespace VoiceSubtitle.ViewModel
 {
     public class SubtitleDownloaderViewModel : ViewModelBase
     {
+        private DispatchService dispatchService;
+        private SettingViewModel settingViewModel;
+
         public ICommand SearchCaptionOnline { get; }
         public ICommand AddPrimaryCaptionCommand { get; }
         public ICommand AddTranslatedCaptionCommand { get; }
 
-        private SettingViewModel settingViewModel;
-
         public ObservableCollection<FilmInfo> FilmInfos { get; private set; }
         public ObservableCollection<SubtitleInfo> SubtitleInfos { get; private set; }
+        public List<SubtitleInfo> _subtitleInfos { get; private set; }
+
+        public SubtitleDownloaderViewModel(SettingViewModel settingViewModel, DispatchService dispatchService)
+        {
+            this.dispatchService = dispatchService;
+            this.settingViewModel = settingViewModel;
+            FilmInfos = new ObservableCollection<FilmInfo>();
+            SubtitleInfos = new ObservableCollection<SubtitleInfo>();
+            _subtitleInfos = new List<SubtitleInfo>();
+            SearchCaptionOnline = new ActionCommand(async (text) =>
+            {
+                IsShowCaptionOnline = true;
+
+                if (lastSearch == text as string && _subtitleInfos.Count!=0)
+                    return;
+
+                IsFilmInfoDownloading = true;
+                lastSearch = text as string;
+                var films = await SearchTitle(text as string);
+                IsFilmInfoDownloading = false;
+
+                FilmInfos.Clear();
+                this.dispatchService.Invoke(() =>
+                {
+                    films.ForEach(x => FilmInfos.Add(x));
+                });
+                RaisePropertyChanged("FilmInfos");
+            });
+
+            AddPrimaryCaptionCommand = new ActionCommand(async (x) =>
+            {
+                var captionFile = await LocalFileFromDownloader(x as SubtitleInfo);
+                if (captionFile != null)
+                    ServiceLocator.Current.GetInstance<PlayerViewModel>().UpdatePrivateCaption(captionFile);
+            }
+            );
+
+            AddTranslatedCaptionCommand = new ActionCommand(async (x) =>
+            {
+                var captionFile = await LocalFileFromDownloader(x as SubtitleInfo);
+                if (captionFile != null)
+                    ServiceLocator.Current.GetInstance<PlayerViewModel>().UpdateTranslatedCaption(captionFile);
+            }
+          );
+        }
 
         private FilmInfo currentFilmInfo;
 
@@ -42,39 +92,99 @@ namespace VoiceSubtitle.ViewModel
 
                 Task.Factory.StartNew(async () =>
                 {
+                    IsCaptionListDownloading = true;
                     var captions = await GetSubtitleExtract(value.Link);
-                    dispatchService.Invoke(() => captions.ForEach(x => SubtitleInfos.Add(x)));
+                    dispatchService.Invoke(() =>
+                    {
+                        _subtitleInfos.AddRange(captions);
+                        SubtitleFilter = string.Empty;
+                    });
+                    IsCaptionListDownloading = false;
                 });
             }
         }
 
-        private DispatchService dispatchService;
+        private bool isFilmInfoDownloading;
 
-        public SubtitleDownloaderViewModel(SettingViewModel settingViewModel, DispatchService dispatchService)
+        public bool IsFilmInfoDownloading
         {
-            this.dispatchService = dispatchService;
-            this.settingViewModel = settingViewModel;
-            FilmInfos = new ObservableCollection<FilmInfo>();
-            SubtitleInfos = new ObservableCollection<SubtitleInfo>();
-
-            SearchCaptionOnline = new ActionCommand(async (text) =>
+            get
             {
-                IsShowCaptionOnline = true;
-                var films = await SearchTitle(text as string);
-                FilmInfos.Clear();
-                this.dispatchService.Invoke(() =>
-                {
-                    films.ForEach(x => FilmInfos.Add(x));
-                });
-                RaisePropertyChanged("FilmInfos");
-            });
-
-            AddPrimaryCaptionCommand = new ActionCommand(async (x) =>
-            {
-                SubtitleInfo info = x as SubtitleInfo;
-                var captionText = await DownloadCaptionText(await GetLinkDownload(info.LinkDownload));
+                return isFilmInfoDownloading;
             }
-            );
+            set
+            {
+                Set(ref isFilmInfoDownloading, value);
+            }
+        }
+
+        private bool isCaptionListDownloading;
+
+        public bool IsCaptionListDownloading
+        {
+            get
+            {
+                return isCaptionListDownloading;
+            }
+            set
+            {
+                Set(ref isCaptionListDownloading, value);
+            }
+        }
+
+        private string searchText;
+
+        public string SearchText
+        {
+            get
+            {
+                return searchText;
+            }
+            set
+            {
+                Set(ref searchText, value);
+            }
+        }
+
+        private string subtitleFilter;
+
+        public string SubtitleFilter
+        {
+            get
+            {
+                return subtitleFilter;
+            }
+            set
+            {
+                Set(ref subtitleFilter, value);
+                SubtitleInfos.Clear();
+                foreach (var item in _subtitleInfos.Where(x => x.Title.Contains(value)))
+                {
+                    SubtitleInfos.Add(item);
+                }
+            }
+        }
+
+        private async Task<string> LocalFileFromDownloader(SubtitleInfo info)
+        {
+            if (info == null)
+                return null;
+
+            var captionText = await DownloadCaptionText(await GetLinkDownload(info.LinkDownload));
+            var captions = LoadSourceFromText(captionText);
+            if (captions.Count == 0)
+            {
+                MessageBox.Show("No source found, please choose another", App.AppTitle);
+                return null; ;
+            }
+
+            string folder = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + @"\temp captions";
+            if (!Directory.Exists(folder))
+                Directory.CreateDirectory(folder);
+
+            string captionFile = folder + $@"\{info.Title}.srt";
+            File.WriteAllText(captionFile, captionText);
+            return captionFile;
         }
 
         private bool isShowCaptionOnline;
@@ -88,8 +198,13 @@ namespace VoiceSubtitle.ViewModel
             }
         }
 
+        private string lastSearch = string.Empty;
+
         public async Task<List<FilmInfo>> SearchTitle(string text)
         {
+            if (string.IsNullOrWhiteSpace(text))
+                return new List<FilmInfo>();
+
             text = text.Replace(" ", "+");
             string searchUrl = $@"https://subscene.com/subtitles/title?q={text}&l=";
             var values = new List<FilmInfo>();
@@ -115,6 +230,9 @@ namespace VoiceSubtitle.ViewModel
                         values.Add(item);
                     }
                 }
+                catch
+                {
+                }
                 finally
                 {
                 }
@@ -125,6 +243,9 @@ namespace VoiceSubtitle.ViewModel
 
         public async Task<List<SubtitleInfo>> GetSubtitleExtract(string url)
         {
+            if (string.IsNullOrWhiteSpace(url))
+                return new List<SubtitleInfo>();
+
             var values = new List<SubtitleInfo>();
             using (var webClient = new WebClient() { Encoding = Encoding.UTF8 })
             {
@@ -134,23 +255,35 @@ namespace VoiceSubtitle.ViewModel
                     var hString = await webClient.DownloadStringTaskAsync(new Uri(url, UriKind.RelativeOrAbsolute));
                     html.LoadHtml(hString);
                     var links = html.DocumentNode.Descendants("a").Where(n => n.GetAttributeValue("href", "").StartsWith("/subtitles"));
+                    var tasks = new List<Task<SubtitleInfo>>();
                     foreach (var link in links)
                     {
-                        string language = link.Descendants("span").ElementAt(0).InnerText.Trim();
-                        if (settingViewModel.DownloadCaptionLanguage.Contains(language))
+                        var taskParse = Task.Factory.StartNew<SubtitleInfo>(() =>
                         {
+                            string language = link.Descendants("span").ElementAt(0).InnerText.Trim();
+                            if (!settingViewModel.DownloadCaptionLanguage.Contains(language))
+                                return null;
+
                             string title = link.Descendants("span").ElementAt(1).InnerText.Trim();
                             Uri href = new Uri("https://subscene.com" + link.GetAttributeValue("href", ""));
 
-                            var item = new SubtitleInfo()
+                            return new SubtitleInfo()
                             {
                                 Language = language,
                                 LinkDownload = href.ToString(),
                                 Title = title
                             };
-                            values.Add(item);
                         }
+                        );
+
+                        tasks.Add(taskParse);
                     }
+
+                    var result = await Task.WhenAll<SubtitleInfo>(tasks);
+                    return result.Where(x => x != null).OrderBy(x => x.Language + x.Title).ToList();
+                }
+                catch
+                {
                 }
                 finally
                 {
@@ -162,6 +295,9 @@ namespace VoiceSubtitle.ViewModel
 
         public async Task<string> GetLinkDownload(string url)
         {
+            if (string.IsNullOrWhiteSpace(url))
+                return null;
+
             using (var webClient = new WebClient() { Encoding = Encoding.UTF8 })
             {
                 try
@@ -173,6 +309,9 @@ namespace VoiceSubtitle.ViewModel
                         Descendants().Where(x => x.GetAttributeValue("href", "").StartsWith(@"/subtitle/download")).FirstOrDefault()?.GetAttributeValue("href", "");
                     return "https://subscene.com" + link;
                 }
+                catch
+                {
+                }
                 finally
                 {
                 }
@@ -183,16 +322,14 @@ namespace VoiceSubtitle.ViewModel
 
         public async Task<string> DownloadCaptionText(string url)
         {
+            if (string.IsNullOrWhiteSpace(url))
+                return null;
+
             try
             {
                 WebClient client = new WebClient();
                 Uri uri = new Uri(url);
                 var zipStream = await client.OpenReadTaskAsync(uri);
-                //using (var fileStream = File.Create(@"d:\t.zip"))
-                //{
-                //    zipStream.CopyTo(fileStream);
-                //}
-
                 using (var zMemory = new MemoryStream())
                 {
                     zipStream.CopyTo(zMemory);
@@ -213,6 +350,9 @@ namespace VoiceSubtitle.ViewModel
                         }
                     }
                 }
+            }
+            catch
+            {
             }
             finally
             {

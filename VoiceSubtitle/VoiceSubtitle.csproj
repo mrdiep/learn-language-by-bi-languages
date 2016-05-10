@@ -161,6 +161,7 @@
       <DependentUpon>EditCaptionInfo.xaml</DependentUpon>
     </Compile>
     <Compile Include="Helper\CambridgeOnlineHelper.cs" />
+    <Compile Include="Helper\ConverterExtensions.cs" />
     <Compile Include="Helper\IEnumerableExts.cs" />
     <Compile Include="Helper\IniFile.cs" />
     <Compile Include="Helper\ItemsControlExtensions.cs" />
@@ -187,6 +188,7 @@
     <Compile Include="ViewModel\CambridgeDictionaryViewModel.cs" />
     <Compile Include="ViewModel\DispatchService.cs" />
     <Compile Include="Model\LanguageDetail.cs" />
+    <Compile Include="ViewModel\NotifyViewModel.cs" />
     <Compile Include="ViewModel\PlayerViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\SettingViewModel.cs" />

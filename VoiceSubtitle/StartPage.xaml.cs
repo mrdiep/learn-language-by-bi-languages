@@ -36,17 +36,17 @@ namespace VoiceSubtitle
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(newCaption.SubEngPath))
-            {
-                MessageBox.Show("Please drop English Subtitle", App.AppTitle);
-                return;
-            }
+            //if (string.IsNullOrWhiteSpace(newCaption.SubEngPath))
+            //{
+            //    MessageBox.Show("Please drop English Subtitle", App.AppTitle);
+            //    return;
+            //}
 
-            if (string.IsNullOrWhiteSpace(newCaption.SubOtherPath))
-            {
-                MessageBox.Show("Please drop Other Subtitle", App.AppTitle);
-                return;
-            }
+            //if (string.IsNullOrWhiteSpace(newCaption.SubOtherPath))
+            //{
+            //    MessageBox.Show("Please drop Other Subtitle", App.AppTitle);
+            //    return;
+            //}
 
             string content = $"{newCaption.VideoName}\r\n{newCaption.VideoPath}\r\n{newCaption.SubEngPath}\r\n{newCaption.SubOtherPath}";
             var source = new SourcePath()
@@ -72,7 +72,7 @@ namespace VoiceSubtitle
 
         private void SettingFlyout_IsOpenChanged(object sender, RoutedEventArgs e)
         {
-            Messenger.Default.Send(SettingFlyout.IsOpen || CaptionSeacherFlyout.IsOpen, "IsSettingFlyoutOpenToken");
+            Messenger.Default.Send(SettingFlyout.IsOpen || CaptionSeacherFlyout.IsOpen, "StopOrResumeVideoToken");
         }
     }
 }

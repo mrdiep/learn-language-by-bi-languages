@@ -295,6 +295,6 @@
             </Grid>
         </Border>
         <local:CaptionViewer x:Name="captionViewer"
-                             Visibility="{Binding PlayerViewModel. IsShowViewer,Converter={StaticResource BoolToVisibleConverter},Source={StaticResource Locator}}" />
+                             Visibility="{Binding PlayerViewModel.IsShowViewer,Converter={StaticResource BoolToVisibleConverter},Source={StaticResource Locator}}" />
     </Grid>
 </Controls:MetroWindow>

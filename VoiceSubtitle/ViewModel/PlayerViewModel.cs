@@ -2,47 +2,39 @@ using GalaSoft.MvvmLight;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Globalization;
-using System.IO;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using VoiceSubtitle.Model;
 using System.Linq;
-using VoiceSubtitle.Helper;
 using System.Windows;
+using static VoiceSubtitle.Helper.ConverterExtensions;
+using GalaSoft.MvvmLight.Messaging;
 
 namespace VoiceSubtitle.ViewModel
 {
     public class PlayerViewModel : ViewModelBase
     {
-        private static Regex pattern_1 = new Regex(
-            @"(?<sequence>\d+)\r\n(?<start>\d{2}\:\d{2}\:\d{2},\d{3}) --\> (?<end>\d{2}\:\d{2}\:\d{2},\d{3})\r\n(?<text>[\s\S]*?\r\n\r\n)",
-            RegexOptions.Compiled | RegexOptions.ECMAScript);
-
-        private static Regex pattern_2 = new Regex(
-            @"(?<sequence>\d+)\n(?<start>\d{2}\:\d{2}\:\d{2},\d{3}) --\> (?<end>\d{2}\:\d{2}\:\d{2},\d{3})\n(?<text>[\s\S]*?\n\n)",
-            RegexOptions.Compiled | RegexOptions.ECMAScript);
-
-        private static readonly string FormatTime = @"hh\:mm\:ss\,fff";
-
         private DispatchService dispatchService;
-
         private CambridgeDictionaryViewModel cambridgeDictionaryViewModel;
         private VideoViewModel videoViewModel;
+
+        private NotifyViewModel notifyViewModel;
+        private SourcePath currentSource;
 
         public ICommand Listen { get; }
         public ICommand PlayVoice { get; }
         public ICommand SwitchSource { get; }
         public ICommand SearchBack { get; }
         public ICommand SearchNext { get; }
-        private SourcePath currentSource;
+        public ICommand SyncPrimaryCaptionCommand { get; }
+        public ICommand SyncTranslatedCaptionCommand { get; }
 
-        public PlayerViewModel(DispatchService dispatchService, CambridgeDictionaryViewModel cambridgeDictionaryViewModel, VideoViewModel videoViewModel)
+        public PlayerViewModel(DispatchService dispatchService, CambridgeDictionaryViewModel cambridgeDictionaryViewModel, VideoViewModel videoViewModel, NotifyViewModel notifyViewModel)
         {
             this.dispatchService = dispatchService;
             this.cambridgeDictionaryViewModel = cambridgeDictionaryViewModel;
             this.videoViewModel = videoViewModel;
+            this.notifyViewModel = notifyViewModel;
 
             PrimaryCaption = new ObservableCollection<PartialCaption>();
             TranslateCaption = new ObservableCollection<PartialCaption>();
@@ -73,6 +65,22 @@ namespace VoiceSubtitle.ViewModel
                 this.videoViewModel.BeginLoopVideo(timeLoop, SelectedPrimaryCaption.From, SelectedPrimaryCaption.To);
             }
              );
+            Action<ObservableCollection<PartialCaption>, object> syncCaption = (list, timeInMs) =>
+             {
+                 long time = Convert.ToInt64(timeInMs);
+                 var timegap = TimeSpan.FromMilliseconds(time);
+                 foreach (var caption in list)
+                 {
+                     caption.From = caption.From.Add(timegap);
+                     caption.To = caption.To.Add(timegap);
+                 }
+                 string w = time > 0 ? "forward" : "back";
+                 this.notifyViewModel.Text = $"Sync {w} {timegap.ToString(@"ss\.fff")} seconds";
+             };
+
+            SyncPrimaryCaptionCommand = new ActionCommand((x) => syncCaption.Invoke(PrimaryCaption, x));
+
+            SyncTranslatedCaptionCommand = new ActionCommand((x) => syncCaption.Invoke(TranslateCaption, x));
 
             SwitchSource = new ActionCommand(async x =>
             {
@@ -132,6 +140,7 @@ namespace VoiceSubtitle.ViewModel
             currentSource.TranslatedCaption = fileCaption;
             currentSource.Save();
         }
+
         public void UpdateVideoPath(string fileVideo)
         {
             videoViewModel.LoadVideo(VideoPath);
@@ -139,6 +148,7 @@ namespace VoiceSubtitle.ViewModel
             currentSource.Video = fileVideo;
             currentSource.Save();
         }
+
         public ObservableCollection<PartialCaption> PrimaryCaption { get; private set; }
         public ObservableCollection<PartialCaption> TranslateCaption { get; private set; }
 
@@ -198,6 +208,7 @@ namespace VoiceSubtitle.ViewModel
             set
             {
                 Set(ref isShowViewer, value);
+                Messenger.Default.Send(!value, "StopOrResumeVideoToken");
             }
         }
 
@@ -267,66 +278,6 @@ namespace VoiceSubtitle.ViewModel
             var k = t.ToList().OrderByDescending(c => Intersects(caption.From, caption.To, c.From, c.To)).FirstOrDefault();
 
             return k;
-        }
-
-        private double Intersects(TimeSpan f1, TimeSpan t1, TimeSpan f2, TimeSpan t2)
-        {
-            if (f1 > t1 || f2 > t2)
-                return 0;
-
-            if (f1 == t1 || f2 == t2)
-                return 0; // No actual date range
-
-            if (f1 == f2 || t1 == t2)
-                return (t1 - f1).TotalMilliseconds; // If any set is the same time, then by default there must be some overlap.
-
-            if (f1 < f2)
-            {
-                if (t1 > f2 && t1 < t2)
-                    return (t1 - f2).TotalMilliseconds; // Condition 1
-
-                if (t1 > t2)
-                    return (t2 - f2).TotalMilliseconds; // Condition 3
-            }
-            else
-            {
-                if (t2 > f1 && t2 < t1)
-                    return (t2 - f1).TotalMilliseconds; // Condition 2
-
-                if (t2 > t1)
-                    return (t1 - f1).TotalMilliseconds; // Condition 4
-            }
-
-            return 0;
-        }
-
-        private List<PartialCaption> LoadSubFormFile(string filePath)
-        {
-            if (!File.Exists(filePath))
-            {
-                return new List<PartialCaption>();
-            }
-
-            var textSource = File.ReadAllText(filePath);
-            var captions = new List<PartialCaption>();
-            var matches = pattern_1.Matches(textSource);
-            if (matches.Count == 0)
-                matches = pattern_2.Matches(textSource);
-            foreach (Match e in matches)
-            {
-                var index = Convert.ToInt32(e.Groups[1].Value);
-                var from = TimeSpan.ParseExact(e.Groups[2].Value, FormatTime, CultureInfo.InvariantCulture);
-                var to = TimeSpan.ParseExact(e.Groups[3].Value, FormatTime, CultureInfo.InvariantCulture);
-                var text = e.Groups[4].Value.Replace("\r\n", " ").Replace("  ", " ");
-                text = text.Replace("\n", " ").Replace("  ", " ");
-                text = text.Trim();
-
-                text = WebHelper.InnerHtmlText(text);
-                var caption = new PartialCaption(index, from, to, text);
-                captions.Add(caption);
-            }
-
-            return captions;
         }
 
         #region Search Text
