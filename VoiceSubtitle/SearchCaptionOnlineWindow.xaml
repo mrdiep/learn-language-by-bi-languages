@@ -1,0 +1,26 @@
+﻿<Controls:MetroWindow x:Name="metroWindow"
+                      x:Class="VoiceSubtitle.SearchCaptionOnlineWindow"
+                      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                      xmlns:local="clr-namespace:VoiceSubtitle"
+                      xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
+                      DataContext="{Binding Main, Source={StaticResource Locator}}"
+                      mc:Ignorable="d"
+                      ShowMaxRestoreButton="True"
+                      ShowIconOnTitleBar="True"
+                      Title="Saerch subtitle"
+                      MinHeight="500"
+                      MinWidth="400"
+                      Width="400"
+                      BorderThickness="1"
+                      GlowBrush="{DynamicResource {x:Static SystemColors.HotTrackBrushKey}}"
+                      ResizeMode="CanResizeWithGrip"
+                      WindowTransitionsEnabled="False"
+                      WindowStartupLocation="Manual"
+                      BorderBrush="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}">
+    <Grid>
+        <local:SubsenceSearcher />
+    </Grid>
+</Controls:MetroWindow>

@@ -266,12 +266,45 @@
             </StackPanel>
         </Grid>
         <Border Background="#FF024F7C">
-            <TextBlock Text="{Binding VideoName}"
-                       FontSize="18"
-                       HorizontalAlignment="Left"
-                       Margin="30,8,8,8"
-                       VerticalAlignment="Center"
-                       Foreground="White" />
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{Binding VideoName}"
+                           FontSize="18"
+                           HorizontalAlignment="Left"
+                           Margin="30,8,8,8"
+                           VerticalAlignment="Center"
+                           Foreground="White" />
+
+                <StackPanel Grid.Column="2"
+                            Margin="0,0,10,0"
+                            Orientation="Horizontal"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+                    <TextBox x:Name="captionOnlineText"
+                             HorizontalAlignment="Center"
+                             VerticalAlignment="Center"
+                             Width="210"
+                             Controls:TextBoxHelper.SelectAllOnFocus="True"
+                             Controls:TextBoxHelper.Watermark="Search caption online ..."
+                             Controls:TextBoxHelper.ClearTextButton="True" />
+                    <Button Command="{Binding SubtitleDownloaderViewModel.SearchCaptionOnline, Source={StaticResource Locator}}"
+                            CommandParameter="{Binding ElementName=captionOnlineText,Path=Text}">
+                        <Button.Content>
+                            <Rectangle Fill="#FF006595"
+                                       Height="13"
+                                       Width="9">
+                                <Rectangle.OpacityMask>
+                                    <VisualBrush Visual="{StaticResource appbar_navigate_next}" />
+                                </Rectangle.OpacityMask>
+                            </Rectangle>
+                        </Button.Content>
+                    </Button>
+                </StackPanel>
+            </Grid>
         </Border>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
@@ -423,7 +456,8 @@
                                HorizontalAlignment="Center" />
                 </Border>
 
-                <local:VideoViewer x:Name="viewViewer" Grid.Row="2" />
+                <local:VideoViewer x:Name="viewViewer"
+                                   Grid.Row="2" />
 
                 <Border AllowDrop="True"
                         Grid.Row="2"

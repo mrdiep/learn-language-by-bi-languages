@@ -93,8 +93,18 @@
                          ItemContainerStyle="{StaticResource ListBoxItemStyle}" />
             </Controls:Flyout>
 
+            <Controls:Flyout IsOpen="{Binding SubtitleDownloaderViewModel.IsShowCaptionOnline, Source={StaticResource Locator}}"
+                             Header="Subtitle Searcher"
+                             Position="Right"
+                             IsOpenChanged="SettingFlyout_IsOpenChanged"
+                             x:Name="CaptionSeacherFlyout"
+                             Width="600">
+                <local:SubsenceSearcher />
+            </Controls:Flyout>
+
             <Controls:Flyout IsOpen="False"
                              Header="Settings"
+                             IsOpenChanged="SettingFlyout_IsOpenChanged"
                              DataContext="{Binding SettingViewModel, Source={StaticResource Locator}}"
                              Position="Right"
                              x:Name="SettingFlyout"
@@ -215,13 +225,13 @@
                                                 Orientation="Horizontal">
                                         <Button Content="save &amp; START"
                                                 HorizontalAlignment="Left"
+                                                Tag="saveAndStart"
                                                 Click="StartSub" />
 
                                         <Button Content="START without saving"
                                                 Margin="10,0,0,0"
                                                 Grid.Column="1"
                                                 HorizontalAlignment="Left"
-                                                Tag="play"
                                                 Click="StartSub" />
                                     </StackPanel>
                                 </Grid>
@@ -229,11 +239,28 @@
 
                             <StackPanel Margin="20"
                                         Visibility="{Binding EditCurrent,Converter={StaticResource NullToCollapsedConverter}}">
-                                <TextBlock Text="EDIT PROJECT"
+
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Width="45"
+                                            Height="45"
+                                            Command="{Binding CancelEditSource}"
+                                            Style="{DynamicResource MetroCircleButtonStyle}">
+                                        <Rectangle Width="12"
+                                                   Height="17"
+                                                   Fill="#FF005B7E">
+                                            <Rectangle.OpacityMask>
+                                                <VisualBrush Stretch="Fill"
+                                                             Visual="{DynamicResource appbar_navigate_previous}" />
+                                            </Rectangle.OpacityMask>
+                                        </Rectangle>
+                                    </Button>
+
+                                    <TextBlock Text="EDIT PROJECT"
                                            FontSize="18.667"
                                            FontWeight="Bold"
                                            FontFamily="Segoe UI Semilight"
                                            Margin="20" />
+                                </StackPanel>
 
                                 <local:EditCaptionInfo x:Name="editCaption"
                                                        VideoName="{Binding EditCurrent.VideoName,Mode=TwoWay}"

@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
 using System;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Reflection;
 using VoiceSubtitle.Helper;
@@ -15,6 +16,12 @@ namespace VoiceSubtitle.ViewModel
         {
             FileSetting = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + @"\settings.ini";
             Load();
+
+            DownloadCaptionLanguage = new ObservableCollection<string>()
+            {
+                "English",
+                "Vietnamese"
+            };
         }
 
         private void Load()
@@ -33,6 +40,8 @@ namespace VoiceSubtitle.ViewModel
             settings["DisplayCaptionWhilePlaying"] = DisplayCaptionWhilePlaying.ToString();
             settings.Save();
         }
+
+        public ObservableCollection<string> DownloadCaptionLanguage { get; }
 
         private bool playAfterEndingLoop;
 

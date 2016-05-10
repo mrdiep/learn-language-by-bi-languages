@@ -56,23 +56,23 @@ namespace VoiceSubtitle
                 TranslatedCaption = newCaption.SubOtherPath,
                 Video = newCaption.VideoPath
             };
-            ServiceLocator.Current.GetInstance<MainViewModel>().AddNewSource(ref source);
 
-            if ((button.Tag as string) == "play")
+            if ((button.Tag as string) == "saveAndStart")
             {
-                ServiceLocator.Current.GetInstance<PlayerViewModel>().SwitchSource.Execute(source);
+                ServiceLocator.Current.GetInstance<MainViewModel>().AddNewSource(ref source);
             }
+
+            ServiceLocator.Current.GetInstance<PlayerViewModel>().SwitchSource.Execute(source);
         }
 
         private void OpenSettingFlyout(object sender, RoutedEventArgs e)
         {
-            SettingFlyout.IsOpenChanged += SettingFlyout_IsOpenChanged;
             SettingFlyout.IsOpen = true;
         }
 
         private void SettingFlyout_IsOpenChanged(object sender, RoutedEventArgs e)
         {
-            Messenger.Default.Send(SettingFlyout.IsOpen, "IsSettingFlyoutOpenToken");
+            Messenger.Default.Send(SettingFlyout.IsOpen || CaptionSeacherFlyout.IsOpen, "IsSettingFlyoutOpenToken");
         }
     }
 }

@@ -79,6 +79,10 @@
       <HintPath>..\packages\HtmlAgilityPack.1.4.9\lib\Net45\HtmlAgilityPack.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Ionic.Zip, Version=1.9.8.0, Culture=neutral, PublicKeyToken=6583c7c814667745, processorArchitecture=MSIL">
+      <HintPath>..\packages\DotNetZip.1.9.8\lib\net20\Ionic.Zip.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="MahApps.Metro, Version=1.2.4.0, Culture=neutral, PublicKeyToken=f4fb5a3c4d1e5b4f, processorArchitecture=MSIL">
       <HintPath>..\packages\MahApps.Metro.1.2.4.0\lib\net45\MahApps.Metro.dll</HintPath>
       <Private>True</Private>
@@ -165,9 +169,16 @@
     <Compile Include="Model\DataSource.cs" />
     <Compile Include="Model\DbContext.cs" />
     <Compile Include="Model\PartialCaption.cs" />
+    <Compile Include="Model\SubtitleOnline.cs" />
     <Compile Include="Model\WordPronunciation.cs" />
+    <Compile Include="SearchCaptionOnlineWindow.xaml.cs">
+      <DependentUpon>SearchCaptionOnlineWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="StartPage.xaml.cs">
       <DependentUpon>StartPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SubsenceSearcher.xaml.cs">
+      <DependentUpon>SubsenceSearcher.xaml</DependentUpon>
     </Compile>
     <Compile Include="VideoViewer.xaml.cs">
       <DependentUpon>VideoViewer.xaml</DependentUpon>
@@ -179,7 +190,7 @@
     <Compile Include="ViewModel\PlayerViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\SettingViewModel.cs" />
-    <Compile Include="ViewModel\SubsenceDownloader.cs" />
+    <Compile Include="ViewModel\SubtitleDownloaderViewModel.cs" />
     <Compile Include="ViewModel\VideoViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Page Include="CaptionViewer.xaml">
@@ -206,7 +217,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="SearchCaptionOnlineWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="StartPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SubsenceSearcher.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
