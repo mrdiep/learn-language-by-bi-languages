@@ -1,4 +1,5 @@
-﻿using MahApps.Metro.Controls;
+﻿using GalaSoft.MvvmLight.Messaging;
+using MahApps.Metro.Controls;
 using Microsoft.Practices.ServiceLocation;
 using System.Windows;
 using System.Windows.Controls;
@@ -65,7 +66,13 @@ namespace VoiceSubtitle
 
         private void OpenSettingFlyout(object sender, RoutedEventArgs e)
         {
+            SettingFlyout.IsOpenChanged += SettingFlyout_IsOpenChanged;
             SettingFlyout.IsOpen = true;
+        }
+
+        private void SettingFlyout_IsOpenChanged(object sender, RoutedEventArgs e)
+        {
+            Messenger.Default.Send(SettingFlyout.IsOpen, "IsSettingFlyoutOpenToken");
         }
     }
 }

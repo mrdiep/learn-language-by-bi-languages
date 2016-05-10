@@ -18,17 +18,19 @@ namespace VoiceSubtitle.ViewModel
         }
 
         private void Load()
-        {            
+        {
             settings = new IniFile(FileSetting);
             if (!settings.HasFile)
                 Save();
 
-            PlayAfterEndingLoop = Convert.ToBoolean(settings["PlayAfterEndingLoop"]);            
+            PlayAfterEndingLoop = Convert.ToBoolean(settings["PlayAfterEndingLoop"]);
+            DisplayCaptionWhilePlaying = Convert.ToBoolean(settings["DisplayCaptionWhilePlaying"]);
         }
 
         private void Save()
         {
             settings["PlayAfterEndingLoop"] = PlayAfterEndingLoop.ToString();
+            settings["DisplayCaptionWhilePlaying"] = DisplayCaptionWhilePlaying.ToString();
             settings.Save();
         }
 
@@ -43,6 +45,21 @@ namespace VoiceSubtitle.ViewModel
             set
             {
                 Set(ref playAfterEndingLoop, value);
+                Save();
+            }
+        }
+
+        private bool displayCaptionWhilePlaying;
+
+        public bool DisplayCaptionWhilePlaying
+        {
+            get
+            {
+                return displayCaptionWhilePlaying;
+            }
+            set
+            {
+                Set(ref displayCaptionWhilePlaying, value);
                 Save();
             }
         }

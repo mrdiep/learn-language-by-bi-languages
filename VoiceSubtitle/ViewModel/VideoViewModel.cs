@@ -4,20 +4,28 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Threading;
-using Vlc.DotNet.Forms;
 using VoiceSubtitle.Model;
 
 namespace VoiceSubtitle.ViewModel
 {
     public class VideoViewModel : ViewModelBase
     {
+        public static readonly string[] VideoExtenstionSupported;
+
         private MediaElement playVoiceMedia;
         private DispatchService dispatchService;
         private CancellationTokenSource videoLoopTokenSource;
         private SettingViewModel settingViewModel;
+
         public ICommand PauseVideoCommand { get; }
         public ICommand PlayVideoCommand { get; }
+
+        static VideoViewModel()
+        {
+            var ext = ".webm|.mkv|.flv|.vob|.ogv|.ogg|.drc|.avi|.mov|.qt|.wmv|.rm|.rmvb|.mp4|.m4p|.m4v|.mpg|.mp2|.mpeg|.mpe|.mpv|.mpg|.mpeg|.m2v|.3gp|.3g2|.mxf|.roq|.nsv|.flv|.f4v|.f4p|.f4a|.f4b";
+            VideoExtenstionSupported = ext.Split('|');
+
+        }
 
         public VideoViewModel(DispatchService dispatchService, SettingViewModel settingViewModel)
         {
@@ -38,9 +46,7 @@ namespace VoiceSubtitle.ViewModel
             });
         }
 
-
-        
-       public bool isPlaying;
+        public bool isPlaying;
 
         public bool IsPlaying
         {
@@ -53,6 +59,7 @@ namespace VoiceSubtitle.ViewModel
                 Set(ref isPlaying, value);
             }
         }
+
         public string videoStatus;
 
         public string VideoStatus
@@ -153,12 +160,11 @@ namespace VoiceSubtitle.ViewModel
                 VideoStatus = string.Empty;
             }
         }
+
         public void LoadVideo(string videoPath)
         {
             try
             {
-               
-
                 MessengerInstance.Send(videoPath, "SetSourceVideoToken");
             }
             catch (Exception ex)

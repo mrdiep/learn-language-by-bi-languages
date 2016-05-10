@@ -109,7 +109,14 @@
                                 Orientation="Vertical">
 
                         <Controls:ToggleSwitch Header="Continue play ending loop"
+                                               FontSize="12"
                                                IsChecked="{Binding PlayAfterEndingLoop}"
+                                               OnLabel="Yes"
+                                               OffLabel="No" />
+
+                        <Controls:ToggleSwitch Header="Display caption when playing"
+                                               FontSize="12"
+                                               IsChecked="{Binding DisplayCaptionWhilePlaying}"
                                                OnLabel="Yes"
                                                OffLabel="No" />
                     </StackPanel>

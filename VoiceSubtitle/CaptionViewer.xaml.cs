@@ -1,17 +1,39 @@
-﻿using Microsoft.Practices.ServiceLocation;
+﻿using GalaSoft.MvvmLight.Messaging;
+using Microsoft.Practices.ServiceLocation;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using VoiceSubtitle.Helper;
 using VoiceSubtitle.ViewModel;
+using System.Linq;
+
 
 namespace VoiceSubtitle
 {
     public partial class CaptionViewer : UserControl
     {
+        private VideoViewModel videoViewModel;
+
+        bool isPlayingLast = false;
         public CaptionViewer()
         {
             InitializeComponent();
+            videoViewModel = ServiceLocator.Current.GetInstance<VideoViewModel>();
+
+            
+            Messenger.Default.Register<bool>(this, "IsSettingFlyoutOpenToken", (isOpen) =>
+            {
+                viewViewer.Visibility = isOpen ? Visibility.Collapsed : Visibility.Visible;
+                if (isOpen)
+                {
+                    isPlayingLast = videoViewModel.IsPlaying;
+                    videoViewModel.PauseVideoCommand.Execute(null);
+                }
+                else if(isPlayingLast)
+                {
+                    videoViewModel.PlayVideoCommand.Execute(null);
+                }
+            });
         }
 
         private void ScrollToSelected(object sender, SelectionChangedEventArgs e)
@@ -30,10 +52,9 @@ namespace VoiceSubtitle
             listView.SelectedItem = null;
         }
 
-
         private void PrimarySearch_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
-            if(e.Key==System.Windows.Input.Key.Enter)
+            if (e.Key == System.Windows.Input.Key.Enter)
                 ServiceLocator.Current.GetInstance<PlayerViewModel>().SearchPrimaryCaption((sender as TextBox).Text);
         }
 
@@ -49,7 +70,6 @@ namespace VoiceSubtitle
                 {
                     ServiceLocator.Current.GetInstance<PlayerViewModel>().UpdatePrivateCaption(file);
                 }
-               
             }
         }
 
@@ -65,7 +85,6 @@ namespace VoiceSubtitle
                 {
                     ServiceLocator.Current.GetInstance<PlayerViewModel>().UpdateTranslatedCaption(file);
                 }
-
             }
         }
 
@@ -77,11 +96,10 @@ namespace VoiceSubtitle
                 string file = files[0];
                 string ext = Path.GetExtension(file);
 
-                if (ext == ".mp4" || ext==".mkv" || ext == ".mp3")
+                if (VideoViewModel.VideoExtenstionSupported.Contains(ext))
                 {
                     ServiceLocator.Current.GetInstance<PlayerViewModel>().UpdateVideoPath(file);
                 }
-
             }
         }
     }

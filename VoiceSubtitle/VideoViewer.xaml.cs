@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using Vlc.DotNet.Forms;
 using VoiceSubtitle.ViewModel;
+using System.Linq;
 
 namespace VoiceSubtitle
 {
@@ -14,6 +15,9 @@ namespace VoiceSubtitle
     {
         public static VlcControl MediaPlayer { get; set; }
         private VideoViewModel videoViewModel;
+        private PlayerViewModel playerViewModel;
+        private SettingViewModel settingViewModel;
+
         private bool isChangeBySetter = false;
         private long totalVideoLength;
         private long currentPosition;
@@ -22,7 +26,10 @@ namespace VoiceSubtitle
         {
             InitializeComponent();
             realSlider.ValueChanged += RealSlider_ValueChanged;
+
             videoViewModel = ServiceLocator.Current.GetInstance<VideoViewModel>();
+            playerViewModel = ServiceLocator.Current.GetInstance<PlayerViewModel>();
+            settingViewModel = ServiceLocator.Current.GetInstance<SettingViewModel>();
 
             myControl.MediaPlayer.VlcLibDirectoryNeeded += OnVlcControlNeedsLibDirectory;
             myControl.MediaPlayer.EndInit();
@@ -31,14 +38,15 @@ namespace VoiceSubtitle
 
             MediaPlayer.Playing += (x, s) => { videoViewModel.IsPlaying = true; };
             MediaPlayer.Paused += (x, s) => { videoViewModel.IsPlaying = false; };
-
+            MediaPlayer.Stopped += MediaPlayer_Stopped;
             MediaPlayer.LengthChanged += MediaPlayer_LengthChanged;
 
             MediaPlayer.TimeChanged += MediaPlayer_TimeChanged;
 
             Messenger.Default.Register<string>(this, "SetSourceVideoToken", (videoPath) =>
             {
-                MediaPlayer.Play(new Uri(videoPath, UriKind.RelativeOrAbsolute));
+                MediaPlayer.SetMedia(new Uri(videoPath, UriKind.RelativeOrAbsolute));
+                MediaPlayer.Play();
             });
 
             Messenger.Default.Register<long>(this, "PlayToPositionVideoToken", (x) =>
@@ -50,14 +58,14 @@ namespace VoiceSubtitle
             {
                 MediaPlayer.Play();
             });
-            Messenger.Default.Register<bool>(this, "PlayPositionVideoToken", (x) =>
-            {
-                MediaPlayer.Play();
-            });
             Messenger.Default.Register<bool>(this, "PauseVideoToken", (x) =>
             {
                 MediaPlayer.Pause();
             });
+        }
+
+        private void MediaPlayer_Stopped(object sender, Vlc.DotNet.Core.VlcMediaPlayerStoppedEventArgs e)
+        {
         }
 
         private void RealSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -77,6 +85,14 @@ namespace VoiceSubtitle
         private void MediaPlayer_TimeChanged(object sender, Vlc.DotNet.Core.VlcMediaPlayerTimeChangedEventArgs e)
         {
             currentPosition = e.NewTime;
+
+            if (settingViewModel.DisplayCaptionWhilePlaying)
+            {
+                TimeSpan currentTime = TimeSpan.FromMilliseconds(e.NewTime);
+                var currentVideoCaption = playerViewModel.PrimaryCaption.Where(x => x.From <= currentTime && currentTime <= x.To).FirstOrDefault();
+                if (currentVideoCaption != playerViewModel.SelectedPrimaryCaption)
+                    playerViewModel.SelectedPrimaryCaption = currentVideoCaption;
+            }
             Dispatcher.Invoke(() =>
             {
                 position.Width = new GridLength(currentPosition, GridUnitType.Star);

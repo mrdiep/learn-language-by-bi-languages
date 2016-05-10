@@ -423,7 +423,7 @@
                                HorizontalAlignment="Center" />
                 </Border>
 
-                <local:VideoViewer Grid.Row="2" />
+                <local:VideoViewer x:Name="viewViewer" Grid.Row="2" />
 
                 <Border AllowDrop="True"
                         Grid.Row="2"

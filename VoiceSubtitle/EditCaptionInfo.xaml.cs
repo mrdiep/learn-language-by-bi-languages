@@ -1,6 +1,8 @@
 ﻿using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using VoiceSubtitle.ViewModel;
+using System.Linq;
 
 namespace VoiceSubtitle
 {
@@ -57,7 +59,7 @@ namespace VoiceSubtitle
                 string file = files[0];
                 string ext = Path.GetExtension(file);
 
-                if (ext == ".mp4" || ext == ".mkv" || ext==".mp3")
+                if (VideoViewModel.VideoExtenstionSupported.Contains(ext))
                 {
                     VideoPath = file;
                     if(string.IsNullOrEmpty(VideoName))
