@@ -72,13 +72,9 @@ namespace VoiceSubtitle.ViewModel
             AddPrimaryCaptionCommand = new ActionCommand(async (x) =>
             {
                 SubtitleInfo info = x as SubtitleInfo;
-                var captionText = await DownloadCaptionText(info.LinkDownload);
-
+                var captionText = await DownloadCaptionText(await GetLinkDownload(info.LinkDownload));
             }
             );
-
-            //    SearchTitle(@"game of throne");
-            //    DownloadCaptionText(@"https://subscene.com/subtitle/download?mac=TtWvzFvulg7FfdQ0kDM5DWGF8jghgASksq768KnqwbAnM7lQhJTxC2POHB68h1aXhIrUQcRP_edfP9e20OwaxubkiYZA2qidxsP_VS8kLY9a9daELI-wKF402S7oMkVy0");
         }
 
         private bool isShowCaptionOnline;
@@ -144,7 +140,7 @@ namespace VoiceSubtitle.ViewModel
                         if (settingViewModel.DownloadCaptionLanguage.Contains(language))
                         {
                             string title = link.Descendants("span").ElementAt(1).InnerText.Trim();
-                            Uri href = new Uri(url + link.GetAttributeValue("href", ""));
+                            Uri href = new Uri("https://subscene.com" + link.GetAttributeValue("href", ""));
 
                             var item = new SubtitleInfo()
                             {
@@ -164,6 +160,27 @@ namespace VoiceSubtitle.ViewModel
             return values;
         }
 
+        public async Task<string> GetLinkDownload(string url)
+        {
+            using (var webClient = new WebClient() { Encoding = Encoding.UTF8 })
+            {
+                try
+                {
+                    var html = new HtmlDocument();
+                    var hString = await webClient.DownloadStringTaskAsync(new Uri(url, UriKind.RelativeOrAbsolute));
+                    html.LoadHtml(hString);
+                    var link = html.DocumentNode.Descendants("div").Where(n => n.GetAttributeValue("class", "").Equals("download")).FirstOrDefault()?.
+                        Descendants().Where(x => x.GetAttributeValue("href", "").StartsWith(@"/subtitle/download")).FirstOrDefault()?.GetAttributeValue("href", "");
+                    return "https://subscene.com" + link;
+                }
+                finally
+                {
+                }
+            }
+
+            return null;
+        }
+
         public async Task<string> DownloadCaptionText(string url)
         {
             try
@@ -179,8 +196,8 @@ namespace VoiceSubtitle.ViewModel
                 using (var zMemory = new MemoryStream())
                 {
                     zipStream.CopyTo(zMemory);
-
-                    using (ZipFile zip = ZipFile.Read(@"d:\t.zip"))
+                    zMemory.Seek(0, SeekOrigin.Begin);
+                    using (ZipFile zip = ZipFile.Read(zMemory))
                     {
                         foreach (ZipEntry zip_entry in zip)
                         {
