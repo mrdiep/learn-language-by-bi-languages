@@ -9,41 +9,117 @@
              d:DesignHeight="300"
              d:DesignWidth="300">
     <Grid  Background="Black"
-           xmlns:converter="clr-namespace:VoiceSubtitle.Converter"
-           xmlns:vlc="clr-namespace:Vlc.DotNet.Core;assembly=Vlc.DotNet.Core">
+           xmlns:converter="clr-namespace:VoiceSubtitle.Converter">
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="45" />
+        </Grid.RowDefinitions>
         <Grid.Resources>
             <converter:TimeSpanToLongConverter x:Key="TimeSpanToLongConverter" />
             <converter:TimeSpanToStringConverter x:Key="TimeSpanToStringConverter" />
         </Grid.Resources>
-        <MediaElement x:Name="mediaPlayer"
-                      LoadedBehavior="Manual"
-                      UnloadedBehavior="Manual" />
 
-        <Grid VerticalAlignment="Bottom"
+        <Grid x:Name="mediaGrid"
+              xmlns:vlc="clr-namespace:Vlc.DotNet.Wpf;assembly=Vlc.DotNet.Wpf">
+            <vlc:VlcControl x:Name="myControl" />
+        </Grid>
+
+        <Grid Grid.Row="1"
+              MouseEnter="StaticSlider_MouseEnter"
+              MouseLeave="StaticSlider_MouseLeave"
+              VerticalAlignment="Bottom"
               HorizontalAlignment="Stretch"
-              Background="#55808080"
-              Margin="50,20">
+              Background="#55808080">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <!--<Button Content="Play/Pause"
-                    Command="{Binding PlayPauseVideoCommand}" />-->
-            <Slider Grid.Column="1"
-                    Margin="15"
-                    IsHitTestVisible="False"
+
+            <Button Width="45"
+                    Height="45"
+                    Visibility="{Binding IsPlaying,Converter={StaticResource BoolToCollapsedConverter}}"
+                    Command="{Binding PlayVideoCommand}"
+                    Style="{DynamicResource MetroCircleButtonStyle}">
+                <Rectangle Width="17"
+                           Height="17"
+                           Fill="#FFEAEAEA">
+                    <Rectangle.OpacityMask>
+                        <VisualBrush Stretch="Fill"
+                                     Visual="{DynamicResource appbar_video}" />
+                    </Rectangle.OpacityMask>
+                </Rectangle>
+            </Button>
+            <Button Width="45"
+                    Height="45"
+                    Visibility="{Binding IsPlaying,Converter={StaticResource BoolToVisibleConverter}}"
+                    Command="{Binding PauseVideoCommand}"
+                    Style="{DynamicResource MetroCircleButtonStyle}">
+                <Rectangle Width="17"
+                           Height="17"
+                           Fill="#FFEAEAEA">
+                    <Rectangle.OpacityMask>
+                        <VisualBrush Stretch="Fill"
+                                     Visual="{DynamicResource appbar_3d_obj}" />
+                    </Rectangle.OpacityMask>
+                </Rectangle>
+            </Button>
+            <Grid Grid.Column="1"
+                  Height="10"
+                  VerticalAlignment="Center"
+                  Background="#FF535353"
+                  x:Name="staticSlider"
+                  >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition x:Name="position"
+                                      Width="1*" />
+                    <ColumnDefinition Width="5" />
+                    <ColumnDefinition x:Name="remain"
+                                      Width="1*" />
+                </Grid.ColumnDefinitions>
+                <Grid Margin="1,1,0,1"
+                      Background="#FFA6A6A6">
+                </Grid>
+                <Grid Grid.Column="1"
+                      Margin="0,1,0,1"
+                      Background="#FF10B5F3">
+                </Grid>
+            </Grid>
+            <Slider
+            x:Name="realSlider"
+                    Visibility="Collapsed"
+                    Grid.Column="1"
                     Height="Auto"
-                    Value="{Binding TimePosition,Mode=OneWay, Converter={StaticResource TimeSpanToLongConverter}}"
+                    Orientation="Horizontal"
                     Minimum="0"
-                    Maximum="{Binding VideoDuration,Mode=OneWay, Converter={StaticResource TimeSpanToLongConverter}}"
-                    />
-            <TextBlock Grid.Column="2"
-                       Text="{Binding TimePosition, Converter={StaticResource TimeSpanToStringConverter}}"
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Center"
-                       FontWeight="Bold" 
-                       Margin="10"/>
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Stretch" />
+
+            <StackPanel Orientation="Horizontal"
+                        VerticalAlignment="Center"
+                        Grid.Column="2">
+                <TextBlock HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           FontWeight="Bold"
+                           Text="{Binding TimePosition,Converter={StaticResource TimeSpanToStringConverter}}"
+                           Margin="10,0,3,0"
+                           Foreground="#FFECECEC"
+                           FontSize="10" />
+                <TextBlock HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           FontWeight="Bold"
+                           Text="/"
+                           Foreground="#FFECECEC"
+                           FontSize="10" />
+                <TextBlock HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           FontWeight="Bold"
+                           Text="{Binding VideoDuration,Converter={StaticResource TimeSpanToStringConverter}}"
+                           Margin="3,0,20,0"
+                           Foreground="#FFECECEC"
+                           FontSize="10" />
+            </StackPanel>
         </Grid>
     </Grid>
 </UserControl>

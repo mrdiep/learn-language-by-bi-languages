@@ -424,6 +424,7 @@
                 </Border>
 
                 <local:VideoViewer Grid.Row="2" />
+
                 <Border AllowDrop="True"
                         Grid.Row="2"
                         Drop="VideoPathDrop"

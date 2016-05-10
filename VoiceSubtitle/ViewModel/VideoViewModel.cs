@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
+using Vlc.DotNet.Forms;
 using VoiceSubtitle.Model;
 
 namespace VoiceSubtitle.ViewModel
@@ -15,8 +16,8 @@ namespace VoiceSubtitle.ViewModel
         private DispatchService dispatchService;
         private CancellationTokenSource videoLoopTokenSource;
         private SettingViewModel settingViewModel;
-        private MediaElement MediaPlayer => VideoViewer.MediaPlayer;
-        public ICommand PlayPauseVideoCommand { get; }
+        public ICommand PauseVideoCommand { get; }
+        public ICommand PlayVideoCommand { get; }
 
         public VideoViewModel(DispatchService dispatchService, SettingViewModel settingViewModel)
         {
@@ -26,11 +27,32 @@ namespace VoiceSubtitle.ViewModel
             playVoiceMedia.LoadedBehavior = MediaState.Manual;
             playVoiceMedia.UnloadedBehavior = MediaState.Manual;
 
-            PlayPauseVideoCommand = new ActionCommand((x) =>
+            PauseVideoCommand = new ActionCommand((x) =>
             {
+                MessengerInstance.Send<bool>(true, "PauseVideoToken");
+            });
+
+            PlayVideoCommand = new ActionCommand((x) =>
+            {
+                MessengerInstance.Send<bool>(true, "PlayVideoToken");
             });
         }
 
+
+        
+       public bool isPlaying;
+
+        public bool IsPlaying
+        {
+            get
+            {
+                return isPlaying;
+            }
+            set
+            {
+                Set(ref isPlaying, value);
+            }
+        }
         public string videoStatus;
 
         public string VideoStatus
@@ -110,8 +132,8 @@ namespace VoiceSubtitle.ViewModel
                     ct.ThrowIfCancellationRequested();
                     dispatchService.Invoke(() =>
                     {
-                        MediaPlayer.Position = from;
-                        MediaPlayer.Play();
+                        long time = Convert.ToInt64(from.TotalMilliseconds);
+                        MessengerInstance.Send(time, "PlayToPositionVideoToken");
                     });
 
                     ct.ThrowIfCancellationRequested();
@@ -119,7 +141,7 @@ namespace VoiceSubtitle.ViewModel
                     ct.ThrowIfCancellationRequested();
                     if (i == loop - 1 && !settingViewModel.PlayAfterEndingLoop)
                     {
-                        dispatchService.Invoke(() => MediaPlayer.Pause());
+                        MessengerInstance.Send(true, "PauseVideoToken");
                     }
 
                     await Task.Delay(TimeSpan.FromSeconds(0));
@@ -131,42 +153,13 @@ namespace VoiceSubtitle.ViewModel
                 VideoStatus = string.Empty;
             }
         }
-
-        private bool loadEvents = false;
-
-        private void MediaEvents()
-        {
-            if (loadEvents)
-                return;
-
-            MediaPlayer.MediaOpened += MediaPlayer_MediaOpened;
-            DispatcherTimer timer = new DispatcherTimer();
-            timer.Tick += Timer_Tick;
-            timer.Interval = TimeSpan.FromSeconds(1);
-            timer.Start();
-
-            loadEvents = true;
-        }
-
-        private void MediaPlayer_MediaOpened(object sender, System.Windows.RoutedEventArgs e)
-        {
-            VideoDuration = MediaPlayer.NaturalDuration.TimeSpan;
-            VideoStatus = "Loading Success";
-        }
-
-        private void Timer_Tick(object sender, EventArgs e)
-        {
-            if (TimePosition != MediaPlayer.Position)
-                TimePosition = MediaPlayer.Position;
-        }
-
         public void LoadVideo(string videoPath)
         {
-            MediaEvents();
-
             try
             {
-                MediaPlayer.Source = new Uri(videoPath, UriKind.RelativeOrAbsolute);
+               
+
+                MessengerInstance.Send(videoPath, "SetSourceVideoToken");
             }
             catch (Exception ex)
             {
