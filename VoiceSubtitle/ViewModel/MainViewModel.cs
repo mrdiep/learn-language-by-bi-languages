@@ -20,7 +20,7 @@ namespace VoiceSubtitle.ViewModel
         {
             this.appDataContext = appDataContext;
             this.notifyViewModel = notifyViewModel;
-
+            MessengerInstance.Register<bool>(this, "CloseAllFlyoutToken", (x) => IsShowProjectPanel = false);
             CancelEditSource = new ActionCommand((x) => EditCurrent = null);
             SaveEditCurrent = new ActionCommand((x) =>
             {
@@ -68,6 +68,22 @@ namespace VoiceSubtitle.ViewModel
         }
 
         public ObservableCollection<SourcePath> SourcePaths { get; }
+
+
+        private bool isShowProjectPanel;
+
+        public bool IsShowProjectPanel
+        {
+            get
+            {
+                return isShowProjectPanel;
+            }
+            set
+            {
+                Set(ref isShowProjectPanel, value);
+            }
+        }
+
 
         private SourcePath editCurrent;
 

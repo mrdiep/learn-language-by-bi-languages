@@ -21,11 +21,6 @@ namespace VoiceSubtitle
             Application.Current.Shutdown();
         }
 
-        private void OpenFlyout(object sender, System.Windows.RoutedEventArgs e)
-        {
-            LeftFlyout.IsOpen = true;
-        }
-
         private void StartSub(object sender, RoutedEventArgs e)
         {
             Button button = sender as Button;
@@ -59,14 +54,9 @@ namespace VoiceSubtitle
             ServiceLocator.Current.GetInstance<PlayerViewModel>().SwitchSource.Execute(source);
         }
 
-        private void OpenSettingFlyout(object sender, RoutedEventArgs e)
-        {
-            SettingFlyout.IsOpen = true;
-        }
-
         private void SettingFlyout_IsOpenChanged(object sender, RoutedEventArgs e)
         {
-            Messenger.Default.Send(SettingFlyout.IsOpen || CaptionSeacherFlyout.IsOpen, "StopOrResumeVideoToken");
+            Messenger.Default.Send(ProjectFlyout.IsOpen || SettingFlyout.IsOpen || CaptionSeacherFlyout.IsOpen || FavoriteFlyout.IsOpen || CambridgeFlyout.IsOpen, "StopOrResumeVideoToken");
         }
     }
 }

@@ -18,6 +18,7 @@ namespace VoiceSubtitle.ViewModel
         private SettingViewModel settingViewModel;
 
         public ICommand PauseVideoCommand { get; }
+        public ICommand StopVideoCommand { get; }
         public ICommand PlayVideoCommand { get; }
 
         static VideoViewModel()
@@ -39,7 +40,10 @@ namespace VoiceSubtitle.ViewModel
             {
                 MessengerInstance.Send<bool>(true, "PauseVideoToken");
             });
-
+            StopVideoCommand = new ActionCommand((x) =>
+            {
+                MessengerInstance.Send<bool>(true, "StopVideoToken");
+            });
             PlayVideoCommand = new ActionCommand((x) =>
             {
                 MessengerInstance.Send<bool>(true, "PlayVideoToken");

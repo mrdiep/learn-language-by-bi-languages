@@ -244,6 +244,7 @@
 
                                 <TextBlock x:Name="currentPage"
                                            Text="{Binding PlayerViewModel.VideoName, Source={StaticResource Locator}}"
+                                           TextTrimming="CharacterEllipsis"
                                            Background="{x:Null}"
                                            Foreground="#FFF1F1F1"
                                            HorizontalAlignment="Left"
@@ -271,6 +272,59 @@
                                             Value="Visible" />
                                     <Setter Property="Visibility"
                                             TargetName="currentPage"
+                                            Value="Collapsed" />
+                                </Trigger>
+                                <Trigger Property="IsPressed"
+                                         Value="True">
+                                    <Setter Property="Opacity"
+                                            TargetName="content"
+                                            Value="0.6" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style x:Key="TextCheckBox"
+                   TargetType="{x:Type CheckBox}">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type CheckBox}">
+
+                            <Grid x:Name="content"
+                                  Background="Transparent"
+                                  SnapsToDevicePixels="True">
+
+                                <TextBlock x:Name="textChecked"
+                                           Text="{TemplateBinding Content}"
+                                           TextTrimming="CharacterEllipsis"
+                                           Background="{x:Null}"
+                                           Foreground="#FF2078AA"
+                                           Visibility="Collapsed"
+                                           HorizontalAlignment="Left"
+                                           VerticalAlignment="Center" />
+                                <TextBlock x:Name="textUnChecked"
+                                           Text="{TemplateBinding Content}"
+                                           Foreground="#FFF1F1F1"
+                                           Background="{x:Null}"
+                                           HorizontalAlignment="Left"
+                                           VerticalAlignment="Center" />
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver"
+                                         Value="True">
+                                    <Setter Property="Opacity"
+                                            TargetName="content"
+                                            Value="0.8" />
+                                </Trigger>
+                                <Trigger Property="IsChecked"
+                                         Value="True">
+                                    <Setter Property="Visibility"
+                                            TargetName="textChecked"
+                                            Value="Visible" />
+                                    <Setter Property="Visibility"
+                                            TargetName="textUnChecked"
                                             Value="Collapsed" />
                                 </Trigger>
                                 <Trigger Property="IsPressed"

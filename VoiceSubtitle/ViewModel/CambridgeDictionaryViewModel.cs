@@ -6,16 +6,21 @@ using System.Data.SQLite;
 using System.IO;
 using System.Reflection;
 using System.Linq;
+using System.Collections.ObjectModel;
 
 namespace VoiceSubtitle.ViewModel
 {
     public class CambridgeDictionaryViewModel : ViewModelBase
     {
         protected Dictionary<string, WordPronunciation> DictRef { get; private set; }
-
+        private List<WordPronunciation> items;
+        public ObservableCollection<WordPronunciation> FilteredItems { get;}
         public CambridgeDictionaryViewModel()
         {
             DictRef = new Dictionary<string, WordPronunciation>();
+            FilteredItems = new ObservableCollection<WordPronunciation>();
+            items = new List<WordPronunciation>();
+            MessengerInstance.Register<bool>(this, "CloseAllFlyoutToken", (x) => IsShowPanel = false);
             Task.Factory.StartNew(FetchData);
         }
 
@@ -44,9 +49,38 @@ namespace VoiceSubtitle.ViewModel
                             };
 
                             DictRef.Add(word, pro);
+                            items.Add(pro);
+                            FilteredItems.Add(pro);
                         }
                     }
                 }
+            }
+        }
+        private bool isShowPanel;
+
+        public bool IsShowPanel
+        {
+            get
+            {
+                return isShowPanel;
+            }
+            set
+            {
+                Set(ref isShowPanel, value);
+            }
+        }
+
+        private string textFilter;
+
+        public string TextFilter
+        {
+            get
+            {
+                return textFilter;
+            }
+            set
+            {
+                Set(ref textFilter, value);
             }
         }
 

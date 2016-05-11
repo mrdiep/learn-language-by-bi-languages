@@ -12,6 +12,7 @@ using GalaSoft.MvvmLight.Messaging;
 using System.IO;
 using System.Diagnostics;
 using Microsoft.Win32;
+using Microsoft.Practices.ServiceLocation;
 
 namespace VoiceSubtitle.ViewModel
 {
@@ -20,9 +21,9 @@ namespace VoiceSubtitle.ViewModel
         private DispatchService dispatchService;
         private CambridgeDictionaryViewModel cambridgeDictionaryViewModel;
         private VideoViewModel videoViewModel;
-
         private NotifyViewModel notifyViewModel;
-        private SourcePath currentSource;
+
+        public SourcePath CurrentSource { get; private set; }
 
         public ICommand Listen { get; }
         public ICommand PlayVoice { get; }
@@ -59,7 +60,7 @@ namespace VoiceSubtitle.ViewModel
                     content = string.Join("", PrimaryCaption.Select(c => $@"{c.Index}{newline}{c.From.ToString(@"hh\:mm\:ss\,fff")} --> {c.To.ToString(@"hh\:mm\:ss\,fff")}{newline}{c.Text}{newline}{newline}"));
                     try
                     {
-                        File.WriteAllText(currentSource.PrimaryCaption, content);
+                        File.WriteAllText(CurrentSource.PrimaryCaption, content);
                     }
                     catch
                     {
@@ -71,7 +72,7 @@ namespace VoiceSubtitle.ViewModel
                     content = string.Join("", TranslateCaption.Select(c => $@"{c.Index}{newline}{c.From.ToString(@"hh\:mm\:ss\,fff")} --> {c.To.ToString(@"hh\:mm\:ss\,fff")}{newline}{c.Text}{newline}{newline}"));
                     try
                     {
-                        File.WriteAllText(currentSource.TranslatedCaption, content);
+                        File.WriteAllText(CurrentSource.TranslatedCaption, content);
                     }
                     catch
                     {
@@ -172,7 +173,7 @@ namespace VoiceSubtitle.ViewModel
             SwitchSource = new ActionCommand(async x =>
             {
                 var source = x as SourcePath;
-                currentSource = source;
+                CurrentSource = source;
 
                 if (source == null)
                 {
@@ -187,6 +188,8 @@ namespace VoiceSubtitle.ViewModel
 
                 dispatchService.Invoke(() =>
                 {
+                    videoViewModel.StopVideoCommand.Execute(null);
+
                     LoadPrimaryCaption(primaryCaption);
                     LoadTranslateCaption(translatedCaption);
 
@@ -196,6 +199,8 @@ namespace VoiceSubtitle.ViewModel
                     videoViewModel.LoadVideo(VideoPath);
 
                     IsShowViewer = true;
+
+                    MessengerInstance.Send(true, "CloseAllFlyoutToken");
                 });
             });
         }
@@ -216,24 +221,24 @@ namespace VoiceSubtitle.ViewModel
         {
             var primaryCaption = LoadSubFormFile(fileCaption);
             LoadPrimaryCaption(primaryCaption);
-            currentSource.PrimaryCaption = fileCaption;
-            currentSource.Save();
+            CurrentSource.PrimaryCaption = fileCaption;
+            CurrentSource.Save();
         }
 
         public void UpdateTranslatedCaption(string fileCaption)
         {
             var translateCaption = LoadSubFormFile(fileCaption);
             LoadTranslateCaption(translateCaption);
-            currentSource.TranslatedCaption = fileCaption;
-            currentSource.Save();
+            CurrentSource.TranslatedCaption = fileCaption;
+            CurrentSource.Save();
         }
 
         public void UpdateVideoPath(string fileVideo)
         {
             videoViewModel.LoadVideo(VideoPath);
 
-            currentSource.Video = fileVideo;
-            currentSource.Save();
+            CurrentSource.Video = fileVideo;
+            CurrentSource.Save();
         }
 
         public ObservableCollection<PartialCaption> PrimaryCaption { get; private set; }

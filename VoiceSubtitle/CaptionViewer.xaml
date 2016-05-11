@@ -37,15 +37,31 @@
                                 SnapsToDevicePixels="true">
                             <StackPanel>
                                 <TextBlock Text="{Binding Text}"
+                                           x:Name="textHolding"
                                            FontSize="13" />
                                 <StackPanel x:Name="detailGrid"
                                             Grid.Row="1"
                                             Visibility="Collapsed">
-                                    <TextBlock Margin="0,10,0,0"
-                                               Text="{Binding PrononciationSentence}"
-                                               FontStyle="Italic"
-                                               Foreground="#FF4F4F4F"
-                                               FontSize="12" />
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button Command="{Binding FavoriteViewModel.AddFavorite,Source={StaticResource Locator}}"
+                                                CommandParameter="{Binding ElementName=textHolding,Path=Text}"
+                                                Template="{StaticResource LinkButton}"
+                                                Margin="0,5,0,-5">
+                                            <Button.Content>
+                                                <TextBlock FontFamily="Segoe UI Symbol"
+                                                           Text="&#xE113;"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center"
+                                                           FontSize="16"
+                                                           Foreground="#FF006595" />
+                                            </Button.Content>
+                                        </Button>
+                                        <TextBlock Margin="0,10,0,0"
+                                                   Text="{Binding PrononciationSentence}"
+                                                   FontStyle="Italic"
+                                                   Foreground="#FF4F4F4F"
+                                                   FontSize="12" />
+                                    </StackPanel>
                                     <Grid Height="15"
                                           Visibility="{Binding Prononciations.Count,Converter={StaticResource IntGreaterZeroToVisibleConverter}}">
                                     </Grid>
@@ -84,64 +100,64 @@
                                     </StackPanel>
                                     <Border Background="#339B9B9B"
                                             Margin="0,15,0,0">
-                                    <ItemsControl ItemsSource="{Binding Prononciations}"
+                                        <ItemsControl ItemsSource="{Binding Prononciations}"
                                                       Margin="0,15,0,0">
-                                        <ItemsControl.ItemsPanel>
-                                            <ItemsPanelTemplate>
-                                                <StackPanel Orientation="Vertical" />
-                                            </ItemsPanelTemplate>
-                                        </ItemsControl.ItemsPanel>
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate>
-                                                <StackPanel Margin="8"
-                                                            Orientation="Horizontal">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <StackPanel Orientation="Vertical" />
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel Margin="8"
+                                                                Orientation="Horizontal">
 
-                                                    <TextBlock Grid.Row="0"
-                                                               Margin="16,0,10,0"
-                                                               Text="{Binding Text}"
-                                                               FontSize="14" />
+                                                        <TextBlock Grid.Row="0"
+                                                                   Margin="16,0,10,0"
+                                                                   Text="{Binding Text}"
+                                                                   FontSize="14" />
 
-                                                    <Button IsHitTestVisible="True"
-                                                            Margin="16,-5,10,5"
-                                                            Command="{Binding PlayerViewModel.PlayVoice, Source={StaticResource Locator}}"
-                                                            CommandParameter="{Binding UKVoiceLink}">
-                                                        <Button.Content>
-                                                            <StackPanel Orientation="Horizontal">
-                                                                <TextBlock Text="UK" />
-                                                                <TextBlock FontFamily="Segoe UI Symbol"
-                                                                           Text="&#xE15D;"
-                                                                           HorizontalAlignment="Center"
-                                                                           VerticalAlignment="Center"
-                                                                           FontSize="16"
-                                                                           Foreground="#FF006595" />
-                                                            </StackPanel>
-                                                        </Button.Content>
-                                                    </Button>
+                                                        <Button IsHitTestVisible="True"
+                                                                Margin="16,-5,10,5"
+                                                                Command="{Binding PlayerViewModel.PlayVoice, Source={StaticResource Locator}}"
+                                                                CommandParameter="{Binding UKVoiceLink}">
+                                                            <Button.Content>
+                                                                <StackPanel Orientation="Horizontal">
+                                                                    <TextBlock Text="UK" />
+                                                                    <TextBlock FontFamily="Segoe UI Symbol"
+                                                                               Text="&#xE15D;"
+                                                                               HorizontalAlignment="Center"
+                                                                               VerticalAlignment="Center"
+                                                                               FontSize="16"
+                                                                               Foreground="#FF006595" />
+                                                                </StackPanel>
+                                                            </Button.Content>
+                                                        </Button>
 
-                                                    <TextBlock Text="{Binding UK}"
-                                                               FontSize="14" />
+                                                        <TextBlock Text="{Binding UK}"
+                                                                   FontSize="14" />
 
-                                                    <Button Margin="20,-5,10,5"
-                                                            Command="{Binding PlayerViewModel.PlayVoice, Source={StaticResource Locator}}"
-                                                            CommandParameter="{Binding USVoiceLink}">
-                                                        <Button.Content>
-                                                            <StackPanel Orientation="Horizontal">
-                                                                <TextBlock Text="US" />
-                                                                <TextBlock FontFamily="Segoe UI Symbol"
-                                                                           Text="&#xE15D;"
-                                                                           HorizontalAlignment="Center"
-                                                                           VerticalAlignment="Center"
-                                                                           FontSize="16"
-                                                                           Foreground="#FF006595" />
-                                                            </StackPanel>
-                                                        </Button.Content>
-                                                    </Button>
-                                                    <TextBlock Text="{Binding US}"
-                                                               FontSize="14" />
-                                                </StackPanel>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
+                                                        <Button Margin="20,-5,10,5"
+                                                                Command="{Binding PlayerViewModel.PlayVoice, Source={StaticResource Locator}}"
+                                                                CommandParameter="{Binding USVoiceLink}">
+                                                            <Button.Content>
+                                                                <StackPanel Orientation="Horizontal">
+                                                                    <TextBlock Text="US" />
+                                                                    <TextBlock FontFamily="Segoe UI Symbol"
+                                                                               Text="&#xE15D;"
+                                                                               HorizontalAlignment="Center"
+                                                                               VerticalAlignment="Center"
+                                                                               FontSize="16"
+                                                                               Foreground="#FF006595" />
+                                                                </StackPanel>
+                                                            </Button.Content>
+                                                        </Button>
+                                                        <TextBlock Text="{Binding US}"
+                                                                   FontSize="14" />
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
                                     </Border>
                                 </StackPanel>
                             </StackPanel>
@@ -313,8 +329,7 @@
                      SelectionChanged="ScrollToSelected"
                      ItemsSource="{Binding PrimaryCaption}"
                      SelectedItem="{Binding SelectedPrimaryCaption}"
-                     ItemContainerStyle="{DynamicResource ListBoxItemStyle1}"
-                     />
+                     ItemContainerStyle="{DynamicResource ListBoxItemStyle1}" />
 
             <Border HorizontalAlignment="Right"
                     VerticalAlignment="Bottom"

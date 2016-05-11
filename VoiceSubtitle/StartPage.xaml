@@ -69,25 +69,37 @@
     </Controls:MetroWindow.Resources>
     <Controls:MetroWindow.RightWindowCommands>
         <Controls:WindowCommands>
-            <Button Content="Projects"
-                    Click="OpenFlyout"
-                    Visibility="{Binding ElementName=captionViewer,Path=Visibility}" />
-            <StackPanel  Visibility="{Binding PlayerViewModel.VideoPath, Converter={StaticResource NullToCollapsedConverter}, Source={StaticResource Locator}}">
-                <CheckBox Style="{StaticResource ShowHomePageCheckBox}"
-                          IsChecked="{Binding PlayerViewModel.IsShowViewer, Source={StaticResource Locator}}" />
-            </StackPanel>
 
-            <Button Content="Settings"
-                    Click="OpenSettingFlyout" />
+            <CheckBox Style="{StaticResource TextCheckBox}"
+                      Content="Project"
+                      Visibility="{Binding ElementName=captionViewer,Path=Visibility}"
+                      IsChecked="{Binding Main.IsShowProjectPanel, Source={StaticResource Locator},Mode=TwoWay}" />
+
+            <CheckBox Style="{StaticResource ShowHomePageCheckBox}"
+                      MaxWidth="200"
+                      IsChecked="{Binding PlayerViewModel.IsShowViewer, Source={StaticResource Locator}}"
+                      Visibility="{Binding PlayerViewModel.VideoPath, Converter={StaticResource NullToCollapsedConverter}, Source={StaticResource Locator}}" />
+
+            <CheckBox Style="{StaticResource TextCheckBox}"
+                      Content="Setting"
+                      IsChecked="{Binding SettingViewModel.IsShowPanel, Source={StaticResource Locator},Mode=TwoWay}" />
+
+            <CheckBox Style="{StaticResource TextCheckBox}"
+                      Content="Quotation"
+                      IsChecked="{Binding FavoriteViewModel.IsShowPanel, Source={StaticResource Locator},Mode=TwoWay}" />
+
+            <CheckBox Style="{StaticResource TextCheckBox}"
+                      Content="Cambridge"
+                      IsChecked="{Binding CambridgeDictionaryViewModel.IsShowPanel, Source={StaticResource Locator},Mode=TwoWay}" />
         </Controls:WindowCommands>
     </Controls:MetroWindow.RightWindowCommands>
 
     <Controls:MetroWindow.Flyouts>
-        <Controls:FlyoutsControl>
-            <Controls:Flyout IsOpen="False"
-                             Header="Files"
+        <Controls:FlyoutsControl x:Name="flyouts">
+            <Controls:Flyout IsOpen="{Binding IsShowProjectPanel}"
+                             Header="Projects"
                              Position="Left"
-                             x:Name="LeftFlyout"
+                             x:Name="ProjectFlyout"
                              Width="300">
                 <ListBox ItemsSource="{Binding SourcePaths}"
                          ItemTemplate="{StaticResource CaptionFiles}"
@@ -103,7 +115,145 @@
                 <local:SubsenceSearcher />
             </Controls:Flyout>
 
-            <Controls:Flyout IsOpen="False"
+            <Controls:Flyout IsOpen="{Binding IsShowPanel}"
+                             Header="My Quotation"
+                             DataContext="{Binding FavoriteViewModel, Source={StaticResource Locator}}"
+                             Position="Right"
+                             IsOpenChanged="SettingFlyout_IsOpenChanged"
+                             x:Name="FavoriteFlyout"
+                             Width="600">
+                <Grid>
+                    <ListBox ItemsSource="{Binding Items}"
+                             SelectedItem="{Binding Selected,Mode=TwoWay}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Margin="10">
+                                    <TextBlock Margin="5,0,0,0"
+                                               Text="{Binding Text}"
+                                               FontSize="13" />
+                                    <TextBlock Margin="20,0,0,0"
+                                               Text="{Binding Film}"
+                                               FontSize="10"
+                                               Foreground="#FFCFCFCF"
+                                               FontStyle="Italic" />
+
+                                    <StackPanel Orientation="Horizontal"
+                                                FlowDirection="LeftToRight">
+                                        <StackPanel.Style>
+                                            <Style>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}},Path=IsSelected}"
+                                                                 Value="True">
+                                                        <Setter Property="StackPanel.Visibility"
+                                                                Value="Visible" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}},Path=IsSelected}"
+                                                                 Value="False">
+                                                        <Setter Property="StackPanel.Visibility"
+                                                                Value="Collapsed" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </StackPanel.Style>
+                                        <Button Content="Remove"
+                                                Command="{Binding FavoriteViewModel.RemoveCommand, Source={StaticResource Locator}}"
+                                                CommandParameter="{Binding}"
+                                                HorizontalAlignment="Right"
+                                                Foreground="#FFEEEEEE"
+                                                Template="{DynamicResource LinkButton}" />
+                                        <Button Content="Switch to Project"
+                                                Command="{Binding FavoriteViewModel.SwitchToProject, Source={StaticResource Locator}}"
+                                                CommandParameter="{Binding}"
+                                                Foreground="#FFEEEEEE"
+                                                HorizontalAlignment="Right"
+                                                Template="{DynamicResource LinkButton}" />
+                                    </StackPanel>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <Border                             BorderBrush="{StaticResource DashBorder}"
+                                                        Visibility="{Binding Items.Count,Converter={StaticResource IntGreaterZeroToCollapsedConverter}}"
+                                                        BorderThickness="1"
+                                                        Margin="20,100,20,20"
+                                                        VerticalAlignment="Top"
+                                                        Height="120">
+
+                        <TextBlock Text="No items. Add the quotions to view"
+                                   Margin="5"
+                                   Foreground="#FF535353"
+                                   FontSize="15"
+                                   FontFamily="Segoe UI Light"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center" />
+                    </Border>
+                </Grid>
+            </Controls:Flyout>
+
+            <Controls:Flyout IsOpen="{Binding IsShowPanel}"
+                             Header="Cambridge Dictionary"
+                             DataContext="{Binding CambridgeDictionaryViewModel, Source={StaticResource Locator}}"
+                             Position="Right"
+                             IsOpenChanged="SettingFlyout_IsOpenChanged"
+                             x:Name="CambridgeFlyout"
+                             Width="600">
+                <Grid>
+                    <ListBox ItemsSource="{Binding FilteredItems}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Margin="8"
+                                            Orientation="Horizontal">
+
+                                    <TextBlock Grid.Row="0"
+                                               Margin="16,0,10,0"
+                                               Text="{Binding Text}"
+                                               FontSize="14" />
+
+                                    <Button IsHitTestVisible="True"
+                                            Margin="16,-5,10,5"
+                                            Command="{Binding PlayerViewModel.PlayVoice, Source={StaticResource Locator}}"
+                                            CommandParameter="{Binding UKVoiceLink}">
+                                        <Button.Content>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="UK" />
+                                                <TextBlock FontFamily="Segoe UI Symbol"
+                                                           Text="&#xE15D;"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center"
+                                                           FontSize="16"
+                                                           Foreground="#FF006595" />
+                                            </StackPanel>
+                                        </Button.Content>
+                                    </Button>
+
+                                    <TextBlock Text="{Binding UK}"
+                                               FontSize="14" />
+
+                                    <Button Margin="20,-5,10,5"
+                                            Command="{Binding PlayerViewModel.PlayVoice, Source={StaticResource Locator}}"
+                                            CommandParameter="{Binding USVoiceLink}">
+                                        <Button.Content>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="US" />
+                                                <TextBlock FontFamily="Segoe UI Symbol"
+                                                           Text="&#xE15D;"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center"
+                                                           FontSize="16"
+                                                           Foreground="#FF006595" />
+                                            </StackPanel>
+                                        </Button.Content>
+                                    </Button>
+                                    <TextBlock Text="{Binding US}"
+                                               FontSize="14" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+            </Controls:Flyout>
+
+            <Controls:Flyout IsOpen="{Binding IsShowPanel}"
                              Header="Settings"
                              IsOpenChanged="SettingFlyout_IsOpenChanged"
                              DataContext="{Binding SettingViewModel, Source={StaticResource Locator}}"
