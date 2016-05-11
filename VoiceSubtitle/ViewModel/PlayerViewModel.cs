@@ -9,6 +9,9 @@ using System.Linq;
 using System.Windows;
 using static VoiceSubtitle.Helper.ConverterExtensions;
 using GalaSoft.MvvmLight.Messaging;
+using System.IO;
+using System.Diagnostics;
+using Microsoft.Win32;
 
 namespace VoiceSubtitle.ViewModel
 {
@@ -28,8 +31,15 @@ namespace VoiceSubtitle.ViewModel
         public ICommand SearchNext { get; }
         public ICommand SyncPrimaryCaptionCommand { get; }
         public ICommand SyncTranslatedCaptionCommand { get; }
+        public ICommand OpenExternalPath { get; }
+        public ICommand SaveCaptionFile { get; }
+        public ICommand SaveAsCaptionFile { get; }
 
-        public PlayerViewModel(DispatchService dispatchService, CambridgeDictionaryViewModel cambridgeDictionaryViewModel, VideoViewModel videoViewModel, NotifyViewModel notifyViewModel)
+        public PlayerViewModel(DispatchService dispatchService, 
+            CambridgeDictionaryViewModel cambridgeDictionaryViewModel, 
+            VideoViewModel videoViewModel, 
+            NotifyViewModel notifyViewModel
+            )
         {
             this.dispatchService = dispatchService;
             this.cambridgeDictionaryViewModel = cambridgeDictionaryViewModel;
@@ -39,21 +49,98 @@ namespace VoiceSubtitle.ViewModel
             PrimaryCaption = new ObservableCollection<PartialCaption>();
             TranslateCaption = new ObservableCollection<PartialCaption>();
 
+            SaveCaptionFile = new ActionCommand((x) =>
+            {
+                string type = x as string;
+                string newline = "\r\n";
+                string content = "";
+                if (type == "PrimaryCaption")
+                {
+                    content = string.Join("", PrimaryCaption.Select(c => $@"{c.Index}{newline}{c.From.ToString(@"hh\:mm\:ss\,fff")} --> {c.To.ToString(@"hh\:mm\:ss\,fff")}{newline}{c.Text}{newline}{newline}"));
+                    try
+                    {
+                        File.WriteAllText(currentSource.PrimaryCaption, content);
+                    }
+                    catch
+                    {
+                        notifyViewModel.MessageBox("Can not save.");
+                    }
+                }
+                else if (type == "TranslateCaption")
+                {
+                    content = string.Join("", TranslateCaption.Select(c => $@"{c.Index}{newline}{c.From.ToString(@"hh\:mm\:ss\,fff")} --> {c.To.ToString(@"hh\:mm\:ss\,fff")}{newline}{c.Text}{newline}{newline}"));
+                    try
+                    {
+                        File.WriteAllText(currentSource.TranslatedCaption, content);
+                    }
+                    catch
+                    {
+                        notifyViewModel.MessageBox("Can not save.");
+                    }
+                }
+                else
+                {
+                    return;
+                }
+            });
+
+            SaveAsCaptionFile = new ActionCommand((x) =>
+            {
+                string type = x as string;
+                string newline = "\r\n";
+                string content = "";
+                if (type == "PrimaryCaption")
+                {
+                    content = string.Join("", PrimaryCaption.Select(c => $@"{c.Index}{newline}{c.From.ToString(@"hh\:mm\:ss\,fff")} --> {c.To.ToString(@"hh\:mm\:ss\,fff")}{newline}{c.Text}{newline}{newline}"));
+                }
+                else if (type == "TranslateCaption")
+                {
+                    content = string.Join("", TranslateCaption.Select(c => $@"{c.Index}{newline}{c.From.ToString(@"hh\:mm\:ss\,fff")} --> {c.To.ToString(@"hh\:mm\:ss\,fff")}{newline}{c.Text}{newline}{newline}"));
+                }
+                else
+                {
+                    return;
+                }
+
+                SaveFileDialog dialog = new SaveFileDialog()
+                {
+                    Filter = "Srt Files(*.srt)|*.srt|All(*.*)|*"
+                };
+
+                if (dialog.ShowDialog() == true)
+                {
+                    string fileName = dialog.FileName;
+                    File.WriteAllText(fileName, content);
+                }
+            });
+
             SearchBack = new ActionCommand((text) =>
             {
-                SearchPrimaryCaption(text as string, false);
+                 SearchPrimaryCaption(text as string, false);
+            });
+
+            OpenExternalPath = new ActionCommand((x) =>
+            {
+                try
+                {
+                    Process.Start(Path.GetDirectoryName(VideoPath));
+                }
+                catch (Exception ex)
+                {
+                    notifyViewModel.MessageBox($@"Can not open path '{Path.GetDirectoryName(VideoPath)}'");
+                }
             });
 
             SearchNext = new ActionCommand((text) =>
             {
                 SearchPrimaryCaption(text as string);
             });
+
             PlayVoice = new ActionCommand((link) =>
             {
                 string url = link as string;
                 this.videoViewModel.PlayVoice(url);
-            }
-            );
+            });
 
             Listen = new ActionCommand(loop =>
             {
@@ -63,10 +150,10 @@ namespace VoiceSubtitle.ViewModel
                 int timeLoop = Convert.ToInt32(loop as string);
 
                 this.videoViewModel.BeginLoopVideo(timeLoop, SelectedPrimaryCaption.From, SelectedPrimaryCaption.To);
-            }
-             );
+            });
+
             Action<ObservableCollection<PartialCaption>, object> syncCaption = (list, timeInMs) =>
-             {
+            {
                  long time = Convert.ToInt64(timeInMs);
                  var timegap = TimeSpan.FromMilliseconds(time);
                  foreach (var caption in list)
@@ -76,7 +163,7 @@ namespace VoiceSubtitle.ViewModel
                  }
                  string w = time > 0 ? "forward" : "back";
                  this.notifyViewModel.Text = $"Sync {w} {timegap.ToString(@"ss\.fff")} seconds";
-             };
+            };
 
             SyncPrimaryCaptionCommand = new ActionCommand((x) => syncCaption.Invoke(PrimaryCaption, x));
 
@@ -332,7 +419,7 @@ namespace VoiceSubtitle.ViewModel
 
             if (caption == null)
             {
-                MessageBox.Show("No word found", App.AppTitle);
+                notifyViewModel.MessageBox("No word found");
                 return;
             }
             Status = $"Search {matchCount} Matches";

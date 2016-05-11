@@ -1,6 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace VoiceSubtitle.ViewModel
 {
@@ -41,6 +42,15 @@ namespace VoiceSubtitle.ViewModel
                     }
                 });
             }
+        }
+
+        public void MessageBox(string text)
+        {
+            var window = new MessageWindow();
+            window.Topmost = true;
+            window.Text = text;
+            window.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            window.ShowDialog();
         }
     }
 }

@@ -166,6 +166,9 @@
     <Compile Include="Helper\IniFile.cs" />
     <Compile Include="Helper\ItemsControlExtensions.cs" />
     <Compile Include="Helper\WebHelper.cs" />
+    <Compile Include="MessageWindow.xaml.cs">
+      <DependentUpon>MessageWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Model\ActionCommand.cs" />
     <Compile Include="Model\DataSource.cs" />
     <Compile Include="Model\DbContext.cs" />
@@ -208,6 +211,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="EditCaptionInfo.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MessageWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -1,0 +1,31 @@
+﻿<Controls:MetroWindow x:Name="metroWindow"
+                      x:Class="VoiceSubtitle.MessageWindow"
+                      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                      xmlns:local="clr-namespace:VoiceSubtitle"
+                      xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
+                      mc:Ignorable="d"
+                      ShowMaxRestoreButton="False"
+                      ShowMinButton="False"
+                      ShowIconOnTitleBar="True"
+                      Title="Mockingbird Messager"
+                      Width="400"
+                      BorderThickness="1"
+                      GlowBrush="{DynamicResource {x:Static SystemColors.HotTrackBrushKey}}"
+                      ResizeMode="NoResize"
+                      WindowTransitionsEnabled="False"
+                      BorderBrush="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}"
+                      Height="157">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="35"/>
+        </Grid.RowDefinitions>
+        <TextBlock Text="{Binding ElementName=metroWindow,Path=Text}" FontSize="13" Foreground="Brown" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <Grid Grid.Row="1">
+            <Button Content="OK" Width="120" Margin="4" Click="Button_Click"/>
+        </Grid>
+    </Grid>
+</Controls:MetroWindow>

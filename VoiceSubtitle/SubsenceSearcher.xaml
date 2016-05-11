@@ -105,7 +105,8 @@
                                        FontWeight="Bold" />
                         </StackPanel>
                         <StackPanel Grid.Row="1"
-                                    Margin="5">
+                            Orientation="Horizontal"
+                                    Margin="40,5,5,5">
                             <StackPanel.Style>
                                 <Style>
                                     <Style.Triggers>
@@ -126,14 +127,14 @@
                                     Content="ADD TO ENGLISH CAPTION"
                                     Command="{Binding SubtitleDownloaderViewModel.AddPrimaryCaptionCommand,Source={StaticResource Locator}}"
                                     CommandParameter="{Binding}"
-                                    Foreground="#FFF3F3F3"
+                                    Foreground="#FFD4D4D4"
                                     Template="{DynamicResource LinkButton}"
                                     FontSize="10" />
                             <Button HorizontalAlignment="Left"
                                     Content="ADD TO OTHER CAPTION"
                                     Command="{Binding SubtitleDownloaderViewModel.AddTranslatedCaptionCommand,Source={StaticResource Locator}}"
                                     CommandParameter="{Binding}"
-                                    Foreground="#FFF3F3F3"
+                                    Foreground="#FFD4D4D4"
                                     Template="{DynamicResource LinkButton}"
                                     FontSize="10" />
                         </StackPanel>

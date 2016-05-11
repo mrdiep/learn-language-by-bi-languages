@@ -22,7 +22,7 @@ namespace VoiceSubtitle.ViewModel
     {
         private DispatchService dispatchService;
         private SettingViewModel settingViewModel;
-
+         NotifyViewModel notifyViewModel;
         public ICommand SearchCaptionOnline { get; }
         public ICommand AddPrimaryCaptionCommand { get; }
         public ICommand AddTranslatedCaptionCommand { get; }
@@ -31,13 +31,16 @@ namespace VoiceSubtitle.ViewModel
         public ObservableCollection<SubtitleInfo> SubtitleInfos { get; private set; }
         public List<SubtitleInfo> _subtitleInfos { get; private set; }
 
-        public SubtitleDownloaderViewModel(SettingViewModel settingViewModel, DispatchService dispatchService)
+        public SubtitleDownloaderViewModel(SettingViewModel settingViewModel, DispatchService dispatchService,NotifyViewModel notifyViewModel)
         {
             this.dispatchService = dispatchService;
             this.settingViewModel = settingViewModel;
+            this.notifyViewModel = notifyViewModel;
             FilmInfos = new ObservableCollection<FilmInfo>();
             SubtitleInfos = new ObservableCollection<SubtitleInfo>();
+
             _subtitleInfos = new List<SubtitleInfo>();
+
             SearchCaptionOnline = new ActionCommand(async (text) =>
             {
                 IsShowCaptionOnline = true;
@@ -55,6 +58,12 @@ namespace VoiceSubtitle.ViewModel
                 {
                     films.ForEach(x => FilmInfos.Add(x));
                 });
+                if(films.Count==0)
+                {
+                    string textSearch = WebUtility.UrlEncode(text as string);
+                    DownloadCaptionList($@"https://subscene.com/subtitles/title?q={textSearch}&l=");
+                }
+
                 RaisePropertyChanged("FilmInfos");
             });
 
@@ -90,18 +99,31 @@ namespace VoiceSubtitle.ViewModel
                 if (value == null)
                     return;
 
-                Task.Factory.StartNew(async () =>
-                {
-                    IsCaptionListDownloading = true;
-                    var captions = await GetSubtitleExtract(value.Link);
-                    dispatchService.Invoke(() =>
-                    {
-                        _subtitleInfos.AddRange(captions);
-                        SubtitleFilter = string.Empty;
-                    });
-                    IsCaptionListDownloading = false;
-                });
+                DownloadCaptionList(value?.Link);
             }
+        }
+
+        private void DownloadCaptionList(string link)
+        {
+            if(string.IsNullOrWhiteSpace(link))
+            {
+                _subtitleInfos.Clear();
+                SubtitleFilter = string.Empty;
+                IsCaptionListDownloading = false;
+            }
+
+            Task.Factory.StartNew(async () =>
+            {
+                IsCaptionListDownloading = true;
+                var captions = await GetSubtitleExtract(link);
+                _subtitleInfos.Clear();
+                dispatchService.Invoke(() =>
+                {
+                    _subtitleInfos.AddRange(captions);
+                    SubtitleFilter = string.Empty;
+                });
+                IsCaptionListDownloading = false;
+            });
         }
 
         private bool isFilmInfoDownloading;
@@ -174,7 +196,7 @@ namespace VoiceSubtitle.ViewModel
             var captions = LoadSourceFromText(captionText);
             if (captions.Count == 0)
             {
-                MessageBox.Show("No source found, please choose another", App.AppTitle);
+                notifyViewModel.MessageBox("No source found, please choose another");
                 return null; ;
             }
 
@@ -260,7 +282,7 @@ namespace VoiceSubtitle.ViewModel
                     {
                         var taskParse = Task.Factory.StartNew<SubtitleInfo>(() =>
                         {
-                            string language = link.Descendants("span").ElementAt(0).InnerText.Trim();
+                            string language = link.Descendants("span")?.FirstOrDefault()?.InnerText?.Trim();
                             if (!settingViewModel.DownloadCaptionLanguage.Contains(language))
                                 return null;
 

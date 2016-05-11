@@ -26,27 +26,15 @@ namespace VoiceSubtitle
 
             if (string.IsNullOrWhiteSpace(newCaption.VideoName))
             {
-                MessageBox.Show("Please enter Video Name", App.AppTitle);
+                ServiceLocator.Current.GetInstance<NotifyViewModel>().MessageBox("Please enter Video Name");
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(newCaption.VideoPath))
             {
-                MessageBox.Show("Please drop Video Path", App.AppTitle);
+                ServiceLocator.Current.GetInstance<NotifyViewModel>().MessageBox("Please drop Video Path");
                 return;
             }
-
-            //if (string.IsNullOrWhiteSpace(newCaption.SubEngPath))
-            //{
-            //    MessageBox.Show("Please drop English Subtitle", App.AppTitle);
-            //    return;
-            //}
-
-            //if (string.IsNullOrWhiteSpace(newCaption.SubOtherPath))
-            //{
-            //    MessageBox.Show("Please drop Other Subtitle", App.AppTitle);
-            //    return;
-            //}
 
             string content = $"{newCaption.VideoName}\r\n{newCaption.VideoPath}\r\n{newCaption.SubEngPath}\r\n{newCaption.SubOtherPath}";
             var source = new SourcePath()

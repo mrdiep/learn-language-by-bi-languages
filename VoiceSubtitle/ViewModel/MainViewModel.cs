@@ -5,21 +5,22 @@ using System.Windows.Input;
 using System.IO;
 using System.Windows;
 using System;
-using System.Reflection;
 
 namespace VoiceSubtitle.ViewModel
 {
     public class MainViewModel : ViewModelBase
     {
         private AppDataContext appDataContext;
-
+        private NotifyViewModel notifyViewModel;
         public ICommand SaveEditCurrent { get; }
         public ICommand CancelEditSource { get; }
         public ICommand DeleteSource { get; }
 
-        public MainViewModel(AppDataContext appDataContext, DispatchService dispatchService)
+        public MainViewModel(AppDataContext appDataContext, DispatchService dispatchService, NotifyViewModel notifyViewModel)
         {
             this.appDataContext = appDataContext;
+            this.notifyViewModel = notifyViewModel;
+
             CancelEditSource = new ActionCommand((x) => EditCurrent = null);
             SaveEditCurrent = new ActionCommand((x) =>
             {
@@ -32,11 +33,11 @@ namespace VoiceSubtitle.ViewModel
                     File.Delete(source.Path);
                     SourcePaths.Remove(source);
                     AddNewSource(ref source);
-                    MessageBox.Show("Save Success", App.AppTitle);
+                    notifyViewModel.MessageBox("Save Success");
                 }
                 catch (Exception)
                 {
-                    MessageBox.Show("Failing to save", App.AppTitle);
+                    notifyViewModel.MessageBox("Failing to save");
                 }
             });
             DeleteSource = new ActionCommand((x) =>
@@ -55,7 +56,7 @@ namespace VoiceSubtitle.ViewModel
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show("Error on delete project", App.AppTitle);
+                        notifyViewModel.MessageBox("Error on delete project");
                     }
                 }
             });
@@ -64,8 +65,6 @@ namespace VoiceSubtitle.ViewModel
 
             var captions = appDataContext.LoadCaptions();
             dispatchService.Invoke(() => { captions.ForEach(x => SourcePaths.Add(x)); });
-
-        
         }
 
         public ObservableCollection<SourcePath> SourcePaths { get; }

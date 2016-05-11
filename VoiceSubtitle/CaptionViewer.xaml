@@ -261,9 +261,13 @@
                         Orientation="Horizontal"
                         VerticalAlignment="Center">
 
-                <TextBlock Text="{Binding VideoName}"
+                <Button Content="{Binding VideoName}"
                            Foreground="#FFF9F9F9"
-                           Margin="0,0,20,0" />
+                           FontSize="12"
+                           Template="{StaticResource LinkButton}"
+                           Margin="0,0,20,0" 
+                           Command="{Binding OpenExternalPath}"
+                           />
 
                 <TextBlock Text="{Binding  VideoViewModel.VideoStatus,Source={StaticResource Locator}}"
                            Foreground="#FFF9F9F9"
@@ -353,13 +357,16 @@
             <Border HorizontalAlignment="Right"
                     VerticalAlignment="Bottom"
                     Height="Auto"
-                    Width="170"
+                    Width="270"
+                    Margin="0,0,16,0"
                     Opacity="0.8"
                     Visibility="{Binding PrimaryCaption.Count,Converter={StaticResource IntGreaterZeroToVisibleConverter}}">
                 <Grid Margin="3">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
                         <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <Controls:NumericUpDown x:Name="syncSubPrimaryText"
                              Controls:TextBoxHelper.Watermark="Sync sub..." />
@@ -373,6 +380,30 @@
                                     <VisualBrush Visual="{StaticResource appbar_navigate_next}" />
                                 </Rectangle.OpacityMask>
                             </Rectangle>
+                        </Button.Content>
+                    </Button>
+                    <Button Grid.Column="2"
+                            Command="{Binding SaveCaptionFile}"
+                            CommandParameter="PrimaryCaption">
+                        <Button.Content>
+                            <TextBlock FontFamily="Segoe UI Symbol"
+                                       Text="&#xE105;"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       FontSize="16"
+                                       Foreground="#FF006595" />
+                        </Button.Content>
+                    </Button>
+                    <Button Grid.Column="3"
+                            Command="{Binding SaveAsCaptionFile}"
+                            CommandParameter="PrimaryCaption">
+                        <Button.Content>
+                            <TextBlock FontFamily="Segoe UI Symbol"
+                                       Text="&#xE118;"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       FontSize="16"
+                                       Foreground="#FF006595" />
                         </Button.Content>
                     </Button>
                 </Grid>
@@ -474,12 +505,15 @@
                 <Border HorizontalAlignment="Right"
                         VerticalAlignment="Bottom"
                         Height="Auto"
-                        Width="170"
+                        Width="270"
+                        Margin="0,0,16,0"
                         Opacity="0.8"
                         Visibility="{Binding TranslateCaption.Count,Converter={StaticResource IntGreaterZeroToVisibleConverter}}">
                     <Grid Margin="3">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <Controls:NumericUpDown x:Name="syncSubTranslatedText"
@@ -495,6 +529,30 @@
                                         <VisualBrush Visual="{StaticResource appbar_navigate_next}" />
                                     </Rectangle.OpacityMask>
                                 </Rectangle>
+                            </Button.Content>
+                        </Button>
+                        <Button Grid.Column="2"
+                                Command="{Binding SaveCaptionFile}"
+                                CommandParameter="TranslateCaption">
+                            <Button.Content>
+                                <TextBlock FontFamily="Segoe UI Symbol"
+                                           Text="&#xE105;"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           FontSize="16"
+                                           Foreground="#FF006595" />
+                            </Button.Content>
+                        </Button>
+                        <Button Grid.Column="3"
+                                Command="{Binding SaveAsCaptionFile}"
+                                CommandParameter="TranslateCaption">
+                            <Button.Content>
+                                <TextBlock FontFamily="Segoe UI Symbol"
+                                           Text="&#xE118;"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           FontSize="16"
+                                           Foreground="#FF006595" />
                             </Button.Content>
                         </Button>
                     </Grid>
