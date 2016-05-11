@@ -99,6 +99,7 @@
             <Controls:Flyout IsOpen="{Binding IsShowProjectPanel}"
                              Header="Projects"
                              Position="Left"
+                             IsOpenChanged="SettingFlyout_IsOpenChanged"
                              x:Name="ProjectFlyout"
                              Width="300">
                 <ListBox ItemsSource="{Binding SourcePaths}"
@@ -106,8 +107,9 @@
                          ItemContainerStyle="{StaticResource ListBoxItemStyle}" />
             </Controls:Flyout>
 
-            <Controls:Flyout IsOpen="{Binding SubtitleDownloaderViewModel.IsShowCaptionOnline, Source={StaticResource Locator}}"
+            <Controls:Flyout IsOpen="{Binding IsShowPanel}"
                              Header="Subtitle Searcher"
+                             DataContext="{Binding SubtitleDownloaderViewModel,Source={StaticResource Locator}}"
                              Position="Right"
                              IsOpenChanged="SettingFlyout_IsOpenChanged"
                              x:Name="CaptionSeacherFlyout"

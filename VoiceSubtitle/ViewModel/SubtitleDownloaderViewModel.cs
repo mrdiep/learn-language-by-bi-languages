@@ -40,10 +40,10 @@ namespace VoiceSubtitle.ViewModel
             SubtitleInfos = new ObservableCollection<SubtitleInfo>();
 
             _subtitleInfos = new List<SubtitleInfo>();
-
+            MessengerInstance.Register<bool>(this, "CloseAllFlyoutToken", (x) => IsShowPanel = false);
             SearchCaptionOnline = new ActionCommand(async (text) =>
             {
-                IsShowCaptionOnline = true;
+                IsShowPanel = true;
 
                 if (lastSearch == text as string && _subtitleInfos.Count!=0)
                     return;
@@ -209,14 +209,14 @@ namespace VoiceSubtitle.ViewModel
             return captionFile;
         }
 
-        private bool isShowCaptionOnline;
+        private bool isShowPanel;
 
-        public bool IsShowCaptionOnline
+        public bool IsShowPanel
         {
-            get { return isShowCaptionOnline; }
+            get { return isShowPanel; }
             set
             {
-                Set(ref isShowCaptionOnline, value);
+                Set(ref isShowPanel, value);
             }
         }
 
