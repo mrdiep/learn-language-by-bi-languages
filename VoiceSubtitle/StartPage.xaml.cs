@@ -13,6 +13,12 @@ namespace VoiceSubtitle
         public StartPage()
         {
             InitializeComponent();
+            Closed += StartPage_Closed;
+        }
+
+        private void StartPage_Closed(object sender, System.EventArgs e)
+        {
+            Application.Current.Shutdown();
         }
 
         private void OpenFlyout(object sender, System.Windows.RoutedEventArgs e)

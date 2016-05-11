@@ -10,15 +10,16 @@
                       mc:Ignorable="d"
                       ShowMaxRestoreButton="True"
                       ShowIconOnTitleBar="True"
-                      Title="MOCKINGBIRD"
+                      Title="MOCKINGJAY"
                       MinHeight="500"
                       MinWidth="600"
                       BorderThickness="1"
-                      GlowBrush="{DynamicResource {x:Static SystemColors.HotTrackBrushKey}}"
                       ResizeMode="CanResizeWithGrip"
                       WindowTransitionsEnabled="False"
                       WindowStartupLocation="CenterScreen"
-                      BorderBrush="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}">
+                      GlowBrush="{DynamicResource {x:Static SystemColors.HotTrackBrushKey}}"
+                      BorderBrush="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}"
+                      Icon="pig.png">
     <Controls:MetroWindow.Resources>
         <DataTemplate x:Key="CaptionFiles">
             <Grid Height="Auto"
@@ -201,6 +202,17 @@
                                  ItemsSource="{Binding SourcePaths}"
                                  ItemTemplate="{StaticResource CaptionFiles}"
                                  ItemContainerStyle="{StaticResource ListBoxItemStyle}" />
+
+                        <Border Grid.Row="1"
+                                Visibility="{Binding SourcePaths.Count,Converter={StaticResource IntGreaterZeroToCollapsedConverter}}"
+                                BorderThickness="1"
+                                Margin="20,5,2,2"
+                                VerticalAlignment="Top"
+                                BorderBrush="{StaticResource DashBorder}">
+
+                            <TextBlock Text="You have no project. you can start a new..."
+                                       Margin="5" />
+                        </Border>
                     </Grid>
 
                     <ScrollViewer Grid.Column="2">
@@ -256,10 +268,10 @@
                                     </Button>
 
                                     <TextBlock Text="EDIT PROJECT"
-                                           FontSize="18.667"
-                                           FontWeight="Bold"
-                                           FontFamily="Segoe UI Semilight"
-                                           Margin="20" />
+                                               FontSize="18.667"
+                                               FontWeight="Bold"
+                                               FontFamily="Segoe UI Semilight"
+                                               Margin="20" />
                                 </StackPanel>
 
                                 <local:EditCaptionInfo x:Name="editCaption"

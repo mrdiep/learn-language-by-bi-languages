@@ -36,7 +36,23 @@
             <converter:BoolToCollapsedConverter x:Key="BoolToCollapsedConverter" />
             <converter:IntGreaterZeroToVisibleConverter x:Key="IntGreaterZeroToVisibleConverter" />
             <converter:IntGreaterZeroToCollapsedConverter x:Key="IntGreaterZeroToCollapsedConverter" />
-            
+            <DrawingBrush x:Key="DashBorder"
+                          Viewport="0,0,8,8"
+                          ViewportUnits="Absolute"
+                          TileMode="Tile">
+                <DrawingBrush.Drawing>
+                    <DrawingGroup>
+                        <GeometryDrawing Brush="#FF6C6C6C">
+                            <GeometryDrawing.Geometry>
+                                <GeometryGroup>
+                                    <RectangleGeometry Rect="0,0,50,50" />
+                                    <RectangleGeometry Rect="50,50,50,50" />
+                                </GeometryGroup>
+                            </GeometryDrawing.Geometry>
+                        </GeometryDrawing>
+                    </DrawingGroup>
+                </DrawingBrush.Drawing>
+            </DrawingBrush>
             <ControlTemplate x:Key="LinkButton"
                              TargetType="{x:Type ButtonBase}">
                 <Border x:Name="border"
@@ -229,12 +245,12 @@
                                 <TextBlock x:Name="currentPage"
                                            Text="{Binding PlayerViewModel.VideoName, Source={StaticResource Locator}}"
                                            Background="{x:Null}"
-                                           Foreground="#FFE6E6E6"
+                                           Foreground="#FFF1F1F1"
                                            HorizontalAlignment="Left"
                                            VerticalAlignment="Center" />
                                 <TextBlock Text="Start page"
-                                           Foreground="White"
                                            x:Name="startPage"
+                                           Foreground="#FFF1F1F1"
                                            Visibility="Collapsed"
                                            Background="{x:Null}"
                                            HorizontalAlignment="Left"

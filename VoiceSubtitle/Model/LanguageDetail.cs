@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 
 namespace VoiceSubtitle.Model
 {
@@ -7,20 +8,19 @@ namespace VoiceSubtitle.Model
     {
         public LanguageDetail(string text, List<WordPronunciation> Prononciations)
         {
+            text = text.ToLower();
             PrononciationSentence = text;
-            this.Prononciations = Prononciations;
+            
+            this.Prononciations = Prononciations.Where(x=>x!=null).Distinct().ToList();
 
-            foreach(var e in Prononciations)
-            {
-                text = text.ToLower();
-                PrononciationSentence  = PrononciationSentence.Replace(e.Text, $"{e.Text} {e.US}");
-            }
+            var words = text.Split(@" ,/.-&!@#$%^&*()~`?<>;{}[],./\|".ToCharArray());
+            PrononciationSentence = string.Join(" ", words.Select(x => Prononciations.Where(t => t.Text == x)?.FirstOrDefault()?.US?? AddSpace(x.Length)));
         }
 
-        string AddSpace(int length)
+        private string AddSpace(int length)
         {
             StringBuilder builder = new StringBuilder();
-                for(int i=0;i< length;i++)
+            for (int i = 0; i < length; i++)
             {
                 builder.Append(" ");
             }

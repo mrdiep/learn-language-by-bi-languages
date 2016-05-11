@@ -46,6 +46,8 @@ namespace VoiceSubtitle.Helper
                 var text = e.Groups[4].Value.Replace("\r\n", " ").Replace("  ", " ");
                 text = text.Replace("\n", " ").Replace("  ", " ");
                 text = text.Trim();
+                if (string.IsNullOrWhiteSpace(text))
+                    continue;
 
                 text = WebHelper.InnerHtmlText(text);
                 var caption = new PartialCaption(index, from, to, text);
