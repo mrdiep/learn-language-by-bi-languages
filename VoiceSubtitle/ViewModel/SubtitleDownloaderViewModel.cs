@@ -12,7 +12,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Ionic.Zip;
 using static VoiceSubtitle.Helper.ConverterExtensions;
-using System.Windows;
 using System.Reflection;
 using Microsoft.Practices.ServiceLocation;
 
@@ -22,16 +21,16 @@ namespace VoiceSubtitle.ViewModel
     {
         private DispatchService dispatchService;
         private SettingViewModel settingViewModel;
-         NotifyViewModel notifyViewModel;
+        private NotifyViewModel notifyViewModel;
         public ICommand SearchCaptionOnline { get; }
         public ICommand AddPrimaryCaptionCommand { get; }
         public ICommand AddTranslatedCaptionCommand { get; }
 
         public ObservableCollection<FilmInfo> FilmInfos { get; private set; }
         public ObservableCollection<SubtitleInfo> SubtitleInfos { get; private set; }
-        public List<SubtitleInfo> _subtitleInfos { get; private set; }
+        private List<SubtitleInfo> _subtitleInfos;
 
-        public SubtitleDownloaderViewModel(SettingViewModel settingViewModel, DispatchService dispatchService,NotifyViewModel notifyViewModel)
+        public SubtitleDownloaderViewModel(SettingViewModel settingViewModel, DispatchService dispatchService, NotifyViewModel notifyViewModel)
         {
             this.dispatchService = dispatchService;
             this.settingViewModel = settingViewModel;
@@ -45,7 +44,7 @@ namespace VoiceSubtitle.ViewModel
             {
                 IsShowPanel = true;
 
-                if (lastSearch == text as string && _subtitleInfos.Count!=0)
+                if (lastSearch == text as string && _subtitleInfos.Count != 0)
                     return;
 
                 IsFilmInfoDownloading = true;
@@ -53,18 +52,17 @@ namespace VoiceSubtitle.ViewModel
                 var films = await SearchTitle(text as string);
                 IsFilmInfoDownloading = false;
 
-                FilmInfos.Clear();
                 this.dispatchService.Invoke(() =>
                 {
-                    films.ForEach(x => FilmInfos.Add(x));
+                    FilmInfos = new ObservableCollection<FilmInfo>(films);
+                    RaisePropertyChanged("FilmInfos");
                 });
-                if(films.Count==0)
+
+                if (films.Count == 0)
                 {
                     string textSearch = WebUtility.UrlEncode(text as string);
                     DownloadCaptionList($@"https://subscene.com/subtitles/title?q={textSearch}&l=");
                 }
-
-                RaisePropertyChanged("FilmInfos");
             });
 
             AddPrimaryCaptionCommand = new ActionCommand(async (x) =>
@@ -105,7 +103,7 @@ namespace VoiceSubtitle.ViewModel
 
         private void DownloadCaptionList(string link)
         {
-            if(string.IsNullOrWhiteSpace(link))
+            if (string.IsNullOrWhiteSpace(link))
             {
                 _subtitleInfos.Clear();
                 SubtitleFilter = string.Empty;
@@ -196,7 +194,7 @@ namespace VoiceSubtitle.ViewModel
             var captions = LoadSourceFromText(captionText);
             if (captions.Count == 0)
             {
-                notifyViewModel.MessageBox("No source found, please choose another");
+                notifyViewModel.ShowMessageBox("No source found, please choose another");
                 return null; ;
             }
 
@@ -222,7 +220,7 @@ namespace VoiceSubtitle.ViewModel
 
         private string lastSearch = string.Empty;
 
-        public async Task<List<FilmInfo>> SearchTitle(string text)
+        private async Task<List<FilmInfo>> SearchTitle(string text)
         {
             if (string.IsNullOrWhiteSpace(text))
                 return new List<FilmInfo>();
@@ -263,7 +261,7 @@ namespace VoiceSubtitle.ViewModel
             return values;
         }
 
-        public async Task<List<SubtitleInfo>> GetSubtitleExtract(string url)
+        private async Task<List<SubtitleInfo>> GetSubtitleExtract(string url)
         {
             if (string.IsNullOrWhiteSpace(url))
                 return new List<SubtitleInfo>();
@@ -315,7 +313,7 @@ namespace VoiceSubtitle.ViewModel
             return values;
         }
 
-        public async Task<string> GetLinkDownload(string url)
+        private async Task<string> GetLinkDownload(string url)
         {
             if (string.IsNullOrWhiteSpace(url))
                 return null;
@@ -342,7 +340,7 @@ namespace VoiceSubtitle.ViewModel
             return null;
         }
 
-        public async Task<string> DownloadCaptionText(string url)
+        private async Task<string> DownloadCaptionText(string url)
         {
             if (string.IsNullOrWhiteSpace(url))
                 return null;

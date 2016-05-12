@@ -16,13 +16,12 @@ namespace VoiceSubtitle.ViewModel
         private DispatchService dispatchService;
         private CancellationTokenSource videoLoopTokenSource;
         private SettingViewModel settingViewModel;
-
+        private NotifyViewModel notifyViewModel;
         public ICommand PauseVideoCommand { get; }
         public ICommand StopVideoCommand { get; }
         public ICommand PlayVideoCommand { get; }
         public ICommand TogglePlayVideo { get; set; }
         public ICommand CancelLoopVideo { get; set; }
-
 
         static VideoViewModel()
         {
@@ -30,10 +29,11 @@ namespace VoiceSubtitle.ViewModel
             VideoExtenstionSupported = ext.Split('|');
         }
 
-        public VideoViewModel(DispatchService dispatchService, SettingViewModel settingViewModel)
+        public VideoViewModel(DispatchService dispatchService, SettingViewModel settingViewModel, NotifyViewModel notifyViewModel)
         {
             this.dispatchService = dispatchService;
             this.settingViewModel = settingViewModel;
+            this.notifyViewModel = notifyViewModel;
 
             playVoiceMedia = new MediaElement();
             playVoiceMedia.LoadedBehavior = MediaState.Manual;
@@ -120,6 +120,7 @@ namespace VoiceSubtitle.ViewModel
                 playVoiceMedia.Source = new Uri(url);
                 playVoiceMedia.Play();
             }
+            catch { notifyViewModel.Text = "Play voice error"; }
             finally { }
         }
 
@@ -160,6 +161,10 @@ namespace VoiceSubtitle.ViewModel
 
                     await Task.Delay(TimeSpan.FromSeconds(0));
                 }
+            }
+            catch
+            {
+                notifyViewModel.Text = "Cancel loop";
             }
             finally
             {

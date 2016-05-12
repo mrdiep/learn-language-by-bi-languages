@@ -62,7 +62,7 @@ namespace VoiceSubtitle.ViewModel
                     }
                     catch
                     {
-                        notifyViewModel.MessageBox("Can not save.");
+                        notifyViewModel.ShowMessageBox("Can not save.");
                     }
                 }
                 else if (type == "TranslateCaption")
@@ -74,7 +74,7 @@ namespace VoiceSubtitle.ViewModel
                     }
                     catch
                     {
-                        notifyViewModel.MessageBox("Can not save.");
+                        notifyViewModel.ShowMessageBox("Can not save.");
                     }
                 }
                 else
@@ -126,7 +126,7 @@ namespace VoiceSubtitle.ViewModel
                 }
                 catch (Exception ex)
                 {
-                    notifyViewModel.MessageBox($@"Can not open path '{Path.GetDirectoryName(VideoPath)}'");
+                    notifyViewModel.ShowMessageBox($@"Can not open path '{Path.GetDirectoryName(VideoPath)}'");
                 }
             });
 
@@ -422,7 +422,7 @@ namespace VoiceSubtitle.ViewModel
 
             if (caption == null)
             {
-                notifyViewModel.MessageBox("No word found");
+                notifyViewModel.ShowMessageBox("No word found");
                 return;
             }
             Status = $"Search {matchCount} Matches";

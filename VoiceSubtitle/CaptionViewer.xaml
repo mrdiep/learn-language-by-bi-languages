@@ -9,7 +9,216 @@
              mc:Ignorable="d"
              DataContext="{Binding PlayerViewModel, Source={StaticResource Locator}}">
     <UserControl.Resources>
+        <ControlTemplate x:Key="PrimaryCaptionSelectedTemplate" TargetType="{x:Type ListBoxItem}">
+            <Border x:Name="Bd"
+                    BorderBrush="#3300598B"
+                    BorderThickness="1"
+                    Background="#339AD6FF"
+                    Padding="{TemplateBinding Padding}"
+                    SnapsToDevicePixels="true">
+                <StackPanel>
+                    <TextBlock Text="{Binding Text}"
+                               x:Name="textHolding"
+                               FontSize="13" />
+                    <StackPanel x:Name="detailGrid"
+                                Grid.Row="1"
+                                DataContext="{Binding PlayerViewModel.LanguageDetail, Source={StaticResource Locator}}">
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox x:Name="syncCheckbox"
+                                      Style="{StaticResource TextCheckBox}"
+                                      Content="Sync"
+                                      Margin="3,5,0,-5"
+                                      IsChecked="False"
+                                      Foreground="#FF707070"
+                                      VerticalAlignment="Center"
+                                      HorizontalAlignment="Left"
+                                      FontSize="12" />
+                            <Button Command="{Binding FavoriteViewModel.AddFavorite,Source={StaticResource Locator}}"
+                                    CommandParameter="{Binding ElementName=textHolding,Path=Text}"
+                                    Template="{StaticResource LinkButton}"
+                                    Margin="0,5,0,-5">
+                                <Button.Content>
+                                    <TextBlock FontFamily="Segoe UI Symbol"
+                                               Text="&#xE113;"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               FontSize="16"
+                                               Foreground="#FF006595" />
+                                </Button.Content>
+                            </Button>
+                            <TextBlock Margin="0,10,0,0"
+                                       Text="{Binding PrononciationSentence}"
+                                       FontStyle="Italic"
+                                       Foreground="#FF4F4F4F"
+                                       FontSize="12" />
+                        </StackPanel>
+                        <Grid Height="15"
+                              Visibility="{Binding Prononciations.Count,Converter={StaticResource IntGreaterZeroToVisibleConverter}}">
+                        </Grid>
+                        <Grid Visibility="{Binding ElementName=syncCheckbox,Path=IsChecked,Converter={StaticResource BoolToVisibleConverter}}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
 
+                            <TextBlock Grid.Column="0"
+                                       Margin="5"
+                                       Text="Start" />
+                            <TextBlock Grid.Column="2"
+                                       Margin="5"
+                                       Text="End" />
+
+                            <Slider Margin="5"
+                                    Grid.Column="1" />
+                            <Slider Margin="5"
+                                    Grid.Column="3" />
+                        </Grid>
+                        <StackPanel Margin="10,0,10,0"
+                                    Orientation="Horizontal">
+                            <Button Content="1"
+                                    Width="60"
+                                    Margin="3"
+                                    Command="{Binding PlayerViewModel.Listen, Source={StaticResource Locator}}"
+                                    CommandParameter="1" />
+                            <Button Content="2+"
+                                    Width="60"
+                                    Margin="3"
+                                    Command="{Binding PlayerViewModel.Listen, Source={StaticResource Locator}}"
+                                    CommandParameter="2" />
+                            <Button Content="3+"
+                                    Width="60"
+                                    Margin="3"
+                                    Command="{Binding PlayerViewModel.Listen, Source={StaticResource Locator}}"
+                                    CommandParameter="3" />
+                            <Button Content="5+"
+                                    Width="60"
+                                    Margin="3"
+                                    Command="{Binding PlayerViewModel.Listen, Source={StaticResource Locator}}"
+                                    CommandParameter="5" />
+                            <Button Content="10+"
+                                    Width="60"
+                                    Margin="3"
+                                    Command="{Binding PlayerViewModel.Listen, Source={StaticResource Locator}}"
+                                    CommandParameter="10" />
+                            <Button Content="20+"
+                                    Width="60"
+                                    Margin="3"
+                                    Command="{Binding PlayerViewModel.Listen, Source={StaticResource Locator}}"
+                                    CommandParameter="20" />
+                        </StackPanel>
+                        <Border Background="#339B9B9B"
+                                Margin="0,15,0,0"
+                                Visibility="{Binding Prononciations.Count,Converter={StaticResource IntGreaterZeroToVisibleConverter}}">
+                            <ItemsControl ItemsSource="{Binding Prononciations}"
+                                          Margin="0,15,0,0">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Vertical" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Margin="8"
+                                                    Orientation="Horizontal">
+
+                                            <TextBlock Grid.Row="0"
+                                                       Margin="16,0,10,0"
+                                                       Text="{Binding Text}"
+                                                       FontSize="14" />
+
+                                            <Button IsHitTestVisible="True"
+                                                    Margin="16,-5,10,5"
+                                                    Command="{Binding PlayerViewModel.PlayVoice, Source={StaticResource Locator}}"
+                                                    CommandParameter="{Binding UKVoiceLink}">
+                                                <Button.Content>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <TextBlock Text="UK" />
+                                                        <TextBlock FontFamily="Segoe UI Symbol"
+                                                                   Text="&#xE15D;"
+                                                                   HorizontalAlignment="Center"
+                                                                   VerticalAlignment="Center"
+                                                                   FontSize="16"
+                                                                   Foreground="#FF006595" />
+                                                    </StackPanel>
+                                                </Button.Content>
+                                            </Button>
+
+                                            <TextBlock Text="{Binding UK}"
+                                                       FontSize="14" />
+
+                                            <Button Margin="20,-5,10,5"
+                                                    Command="{Binding PlayerViewModel.PlayVoice, Source={StaticResource Locator}}"
+                                                    CommandParameter="{Binding USVoiceLink}">
+                                                <Button.Content>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <TextBlock Text="US" />
+                                                        <TextBlock FontFamily="Segoe UI Symbol"
+                                                                   Text="&#xE15D;"
+                                                                   HorizontalAlignment="Center"
+                                                                   VerticalAlignment="Center"
+                                                                   FontSize="16"
+                                                                   Foreground="#FF006595" />
+                                                    </StackPanel>
+                                                </Button.Content>
+                                            </Button>
+                                            <TextBlock Text="{Binding US}"
+                                                       FontSize="14" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Border>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+            <ControlTemplate.Triggers>
+                <MultiTrigger>
+                    <MultiTrigger.Conditions>
+                        <Condition Property="IsMouseOver"
+                                   Value="True" />
+                    </MultiTrigger.Conditions>
+                    <Setter Property="Background"
+                            TargetName="Bd"
+                            Value="#1F26A0DA" />
+                    <Setter Property="BorderBrush"
+                            TargetName="Bd"
+                            Value="#a826A0Da" />
+                </MultiTrigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
+        <ControlTemplate x:Key="PrimaryCaptionTemplate"
+                         TargetType="{x:Type ListBoxItem}">
+            <Border x:Name="Bd"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    Background="{TemplateBinding Background}"
+                    Padding="{TemplateBinding Padding}"
+                    SnapsToDevicePixels="true">
+                <StackPanel Margin="3">
+                    <TextBlock Text="{Binding Text}"
+                               x:Name="textHolding"
+                               FontSize="13" />
+                </StackPanel>
+            </Border>
+            <ControlTemplate.Triggers>
+                <MultiTrigger>
+                    <MultiTrigger.Conditions>
+                        <Condition Property="IsMouseOver"
+                                   Value="True" />
+                    </MultiTrigger.Conditions>
+                    <Setter Property="Background"
+                            TargetName="Bd"
+                            Value="#1F26A0DA" />
+                    <Setter Property="BorderBrush"
+                            TargetName="Bd"
+                            Value="#a826A0Da" />
+                </MultiTrigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+        
         <Style x:Key="ListBoxItemStyle1"
                TargetType="{x:Type ListBoxItem}">
             <Setter Property="SnapsToDevicePixels"
@@ -26,212 +235,17 @@
                     Value="Transparent" />
             <Setter Property="BorderThickness"
                     Value="1" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                        <Border x:Name="Bd"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                Background="{TemplateBinding Background}"
-                                Padding="{TemplateBinding Padding}"
-                                SnapsToDevicePixels="true">
-                            <StackPanel>
-                                <TextBlock Text="{Binding Text}"
-                                           x:Name="textHolding"
-                                           FontSize="13" />
-                                <StackPanel x:Name="detailGrid"
-                                            Grid.Row="1"
-                                            Visibility="Collapsed">
-                                    <StackPanel Orientation="Horizontal">
-                                        <CheckBox x:Name="syncCheckbox"
-                                                  Style="{StaticResource TextCheckBox}"
-                                                  Content="Sync"
-                                                  IsChecked="False"
-                                                  Foreground="#FF707070"
-                                                  VerticalAlignment="Center"
-                                                  HorizontalAlignment="Left"
-                                                  FontSize="10" />
-                                        <Button Command="{Binding FavoriteViewModel.AddFavorite,Source={StaticResource Locator}}"
-                                                CommandParameter="{Binding ElementName=textHolding,Path=Text}"
-                                                Template="{StaticResource LinkButton}"
-                                                Margin="0,5,0,-5">
-                                            <Button.Content>
-                                                <TextBlock FontFamily="Segoe UI Symbol"
-                                                           Text="&#xE113;"
-                                                           HorizontalAlignment="Center"
-                                                           VerticalAlignment="Center"
-                                                           FontSize="16"
-                                                           Foreground="#FF006595" />
-                                            </Button.Content>
-                                        </Button>
-                                        <TextBlock Margin="0,10,0,0"
-                                                   Text="{Binding PrononciationSentence}"
-                                                   FontStyle="Italic"
-                                                   Foreground="#FF4F4F4F"
-                                                   FontSize="12" />
-                                    </StackPanel>
-                                    <Grid Height="15"
-                                          Visibility="{Binding Prononciations.Count,Converter={StaticResource IntGreaterZeroToVisibleConverter}}">
-                                    </Grid>
-                                    <Grid Visibility="{Binding ElementName=syncCheckbox,Path=IsChecked,Converter={StaticResource BoolToVisibleConverter}}">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition />
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition />
-                                        </Grid.ColumnDefinitions>
+            <Setter Property="Template"
+                    Value="{StaticResource PrimaryCaptionTemplate}"/>
 
-                                        <TextBlock Grid.Column="0"
-                                                   Margin="5"
-                                                   Text="Start" />
-                                        <TextBlock Grid.Column="2"
-                                                   Margin="5"
-                                                   Text="End" />
 
-                                        <Slider Margin="5"
-                                                Grid.Column="1" />
-                                        <Slider Margin="5"
-                                                Grid.Column="3" />
-                                    </Grid>
-                                    <StackPanel Margin="10,0,10,0"
-                                                Orientation="Horizontal">
-                                        <Button Content="1"
-                                                Width="60"
-                                                Margin="3"
-                                                Command="{Binding PlayerViewModel.Listen, Source={StaticResource Locator}}"
-                                                CommandParameter="1" />
-                                        <Button Content="2+"
-                                                Width="60"
-                                                Margin="3"
-                                                Command="{Binding PlayerViewModel.Listen, Source={StaticResource Locator}}"
-                                                CommandParameter="2" />
-                                        <Button Content="3+"
-                                                Width="60"
-                                                Margin="3"
-                                                Command="{Binding PlayerViewModel.Listen, Source={StaticResource Locator}}"
-                                                CommandParameter="3" />
-                                        <Button Content="5+"
-                                                Width="60"
-                                                Margin="3"
-                                                Command="{Binding PlayerViewModel.Listen, Source={StaticResource Locator}}"
-                                                CommandParameter="5" />
-                                        <Button Content="10+"
-                                                Width="60"
-                                                Margin="3"
-                                                Command="{Binding PlayerViewModel.Listen, Source={StaticResource Locator}}"
-                                                CommandParameter="10" />
-                                        <Button Content="20+"
-                                                Width="60"
-                                                Margin="3"
-                                                Command="{Binding PlayerViewModel.Listen, Source={StaticResource Locator}}"
-                                                CommandParameter="20" />
-                                    </StackPanel>
-                                    <Border Background="#339B9B9B"
-                                            Margin="0,15,0,0">
-                                        <ItemsControl ItemsSource="{Binding Prononciations}"
-                                                      Margin="0,15,0,0">
-                                            <ItemsControl.ItemsPanel>
-                                                <ItemsPanelTemplate>
-                                                    <StackPanel Orientation="Vertical" />
-                                                </ItemsPanelTemplate>
-                                            </ItemsControl.ItemsPanel>
-                                            <ItemsControl.ItemTemplate>
-                                                <DataTemplate>
-                                                    <StackPanel Margin="8"
-                                                                Orientation="Horizontal">
-
-                                                        <TextBlock Grid.Row="0"
-                                                                   Margin="16,0,10,0"
-                                                                   Text="{Binding Text}"
-                                                                   FontSize="14" />
-
-                                                        <Button IsHitTestVisible="True"
-                                                                Margin="16,-5,10,5"
-                                                                Command="{Binding PlayerViewModel.PlayVoice, Source={StaticResource Locator}}"
-                                                                CommandParameter="{Binding UKVoiceLink}">
-                                                            <Button.Content>
-                                                                <StackPanel Orientation="Horizontal">
-                                                                    <TextBlock Text="UK" />
-                                                                    <TextBlock FontFamily="Segoe UI Symbol"
-                                                                               Text="&#xE15D;"
-                                                                               HorizontalAlignment="Center"
-                                                                               VerticalAlignment="Center"
-                                                                               FontSize="16"
-                                                                               Foreground="#FF006595" />
-                                                                </StackPanel>
-                                                            </Button.Content>
-                                                        </Button>
-
-                                                        <TextBlock Text="{Binding UK}"
-                                                                   FontSize="14" />
-
-                                                        <Button Margin="20,-5,10,5"
-                                                                Command="{Binding PlayerViewModel.PlayVoice, Source={StaticResource Locator}}"
-                                                                CommandParameter="{Binding USVoiceLink}">
-                                                            <Button.Content>
-                                                                <StackPanel Orientation="Horizontal">
-                                                                    <TextBlock Text="US" />
-                                                                    <TextBlock FontFamily="Segoe UI Symbol"
-                                                                               Text="&#xE15D;"
-                                                                               HorizontalAlignment="Center"
-                                                                               VerticalAlignment="Center"
-                                                                               FontSize="16"
-                                                                               Foreground="#FF006595" />
-                                                                </StackPanel>
-                                                            </Button.Content>
-                                                        </Button>
-                                                        <TextBlock Text="{Binding US}"
-                                                                   FontSize="14" />
-                                                    </StackPanel>
-                                                </DataTemplate>
-                                            </ItemsControl.ItemTemplate>
-                                        </ItemsControl>
-                                    </Border>
-                                </StackPanel>
-                            </StackPanel>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <MultiTrigger>
-                                <MultiTrigger.Conditions>
-                                    <Condition Property="IsMouseOver"
-                                               Value="True" />
-                                </MultiTrigger.Conditions>
-                                <Setter Property="Background"
-                                        TargetName="Bd"
-                                        Value="#1F26A0DA" />
-                                <Setter Property="BorderBrush"
-                                        TargetName="Bd"
-                                        Value="#a826A0Da" />
-                            </MultiTrigger>
-                            <MultiTrigger>
-                                <MultiTrigger.Conditions>
-                                    <Condition Property="IsSelected"
-                                               Value="True" />
-                                </MultiTrigger.Conditions>
-                                <Setter Property="Background"
-                                        TargetName="Bd"
-                                        Value="#2226A0DA" />
-                                <Setter Property="BorderBrush"
-                                        TargetName="Bd"
-                                        Value="#FF26A0DA" />
-                                <Setter Property="DataContext"
-                                        TargetName="detailGrid"
-                                        Value="{Binding PlayerViewModel.LanguageDetail, Source={StaticResource Locator}}" />
-
-                                <Setter Property="Visibility"
-                                        TargetName="detailGrid"
-                                        Value="Visible" />
-                            </MultiTrigger>
-                            <MultiTrigger>
-                                <MultiTrigger.Conditions>
-                                    <Condition Property="IsSelected"
-                                               Value="False" />
-                                </MultiTrigger.Conditions>
-                            </MultiTrigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsSelected"
+                         Value="True">
+                    <Setter Property="Template"
+                            Value="{StaticResource PrimaryCaptionSelectedTemplate}" />
+                </Trigger>
+            </Style.Triggers>
         </Style>
     </UserControl.Resources>
     <Grid>
@@ -359,7 +373,8 @@
                      SelectedItem="{Binding SelectedPrimaryCaption}"
                      ItemContainerStyle="{DynamicResource ListBoxItemStyle1}" />
 
-            <Border HorizontalAlignment="Right"
+            <Border 
+                HorizontalAlignment="Right"
                     VerticalAlignment="Bottom"
                     Height="Auto"
                     Width="270"

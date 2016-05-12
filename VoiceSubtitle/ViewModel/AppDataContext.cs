@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using VoiceSubtitle.Model;
@@ -19,8 +20,8 @@ namespace VoiceSubtitle.ViewModel
             foreach (var filepath in filePaths)
             {
                 SourcePath source = ParseSource(filepath);
-
-                items.Add(source);
+                if (source != null)
+                    items.Add(source);
             }
 
             return items;
@@ -28,16 +29,23 @@ namespace VoiceSubtitle.ViewModel
 
         public SourcePath ParseSource(string filepath)
         {
-            var lines = File.ReadAllLines(filepath);
-            var source = new SourcePath()
+            try
             {
-                Path = filepath,
-                VideoName = lines[0],
-                Video = lines[1],
-                PrimaryCaption = lines[2],
-                TranslatedCaption = lines[3],
-            };
-            return source;
+                var lines = File.ReadAllLines(filepath);
+                var source = new SourcePath()
+                {
+                    Path = filepath,
+                    VideoName = lines[0],
+                    Video = lines[1],
+                    PrimaryCaption = lines[2],
+                    TranslatedCaption = lines[3],
+                };
+                return source;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
     }
 }

@@ -17,12 +17,6 @@ namespace VoiceSubtitle.ViewModel
             FileSetting = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + @"\settings.ini";
             Load();
 
-            DownloadCaptionLanguage = new ObservableCollection<string>()
-            {
-                "English",
-                "Vietnamese"
-            };
-
             MessengerInstance.Register<bool>(this, "CloseAllFlyoutToken", (x) => IsShowPanel = false);
         }
 
@@ -34,14 +28,18 @@ namespace VoiceSubtitle.ViewModel
 
             PlayAfterEndingLoop = Convert.ToBoolean(settings["PlayAfterEndingLoop"]);
             DisplayCaptionWhilePlaying = Convert.ToBoolean(settings["DisplayCaptionWhilePlaying"]);
+            DownloadCaptionLanguage = settings["DownloadCaptionLanguage"].Split(",".ToCharArray());
         }
 
         private void Save()
         {
             settings["PlayAfterEndingLoop"] = PlayAfterEndingLoop.ToString();
             settings["DisplayCaptionWhilePlaying"] = DisplayCaptionWhilePlaying.ToString();
+            settings["DownloadCaptionLanguage"] = string.Join(",", DownloadCaptionLanguage);
+
             settings.Save();
         }
+
         private bool isShowPanel;
 
         public bool IsShowPanel
@@ -55,7 +53,8 @@ namespace VoiceSubtitle.ViewModel
                 Set(ref isShowPanel, value);
             }
         }
-        public ObservableCollection<string> DownloadCaptionLanguage { get; }
+
+        public string[] DownloadCaptionLanguage { get; set; } = { "Vietnamese","English" };
 
         private bool playAfterEndingLoop;
 

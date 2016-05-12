@@ -33,11 +33,11 @@ namespace VoiceSubtitle.ViewModel
                     File.Delete(source.Path);
                     SourcePaths.Remove(source);
                     AddNewSource(ref source);
-                    notifyViewModel.MessageBox("Save Success");
+                    notifyViewModel.ShowMessageBox("Save Success");
                 }
                 catch (Exception)
                 {
-                    notifyViewModel.MessageBox("Failing to save");
+                    notifyViewModel.ShowMessageBox("Failing to save");
                 }
             });
             DeleteSource = new ActionCommand((x) =>
@@ -56,7 +56,7 @@ namespace VoiceSubtitle.ViewModel
                     }
                     catch (Exception ex)
                     {
-                        notifyViewModel.MessageBox("Error on delete project");
+                        notifyViewModel.ShowMessageBox("Error on delete project");
                     }
                 }
             });

@@ -13,11 +13,11 @@ namespace VoiceSubtitle
 {
     public partial class VideoViewer : UserControl
     {
-        public static VlcControl MediaPlayer { get; set; }
+        private VlcControl MediaPlayer { get; set; }
         private VideoViewModel videoViewModel;
         private PlayerViewModel playerViewModel;
         private SettingViewModel settingViewModel;
-
+        private NotifyViewModel notifyViewModel;
         private bool isChangeBySetter = false;
         private long totalVideoLength;
         private long currentPosition;
@@ -25,56 +25,64 @@ namespace VoiceSubtitle
         public VideoViewer()
         {
             InitializeComponent();
-            realSlider.ValueChanged += RealSlider_ValueChanged;
 
             videoViewModel = ServiceLocator.Current.GetInstance<VideoViewModel>();
             playerViewModel = ServiceLocator.Current.GetInstance<PlayerViewModel>();
             settingViewModel = ServiceLocator.Current.GetInstance<SettingViewModel>();
+            notifyViewModel = ServiceLocator.Current.GetInstance<NotifyViewModel>();
 
-            myControl.MediaPlayer.VlcLibDirectoryNeeded += OnVlcControlNeedsLibDirectory;
-            myControl.MediaPlayer.EndInit();
-
-            MediaPlayer = myControl.MediaPlayer;
-
-            MediaPlayer.Playing += (x, s) => { videoViewModel.IsPlaying = true; };
-            MediaPlayer.Paused += (x, s) => { videoViewModel.IsPlaying = false; };
-            MediaPlayer.Stopped += MediaPlayer_Stopped;
-            MediaPlayer.LengthChanged += MediaPlayer_LengthChanged;
-
-            MediaPlayer.TimeChanged += MediaPlayer_TimeChanged;
-
-            Messenger.Default.Register<string>(this, "SetSourceVideoToken", (videoPath) =>
+            try
             {
-                MediaPlayer.SetMedia(new Uri(videoPath, UriKind.RelativeOrAbsolute));
-                MediaPlayer.Play();
-            });
+                myControl.MediaPlayer.VlcLibDirectoryNeeded += OnVlcControlNeedsLibDirectory;
+                myControl.MediaPlayer.EndInit();
 
-            Messenger.Default.Register<long>(this, "PlayToPositionVideoToken", (x) =>
-            {
-                MediaPlayer.Time = x;
-                MediaPlayer.Play();
-            });
-            Messenger.Default.Register<bool>(this, "PlayVideoToken", (x) =>
-            {
-                MediaPlayer.Play();
-            });
-            Messenger.Default.Register<bool>(this, "ToggleVideoToken", (x) =>
-            {
-                if (MediaPlayer.IsPlaying)
-                    MediaPlayer.Pause();
-                else
+                MediaPlayer = myControl.MediaPlayer;
+
+                MediaPlayer.Playing += (x, s) => { videoViewModel.IsPlaying = true; };
+                MediaPlayer.Paused += (x, s) => { videoViewModel.IsPlaying = false; };
+                MediaPlayer.Stopped += MediaPlayer_Stopped;
+                MediaPlayer.LengthChanged += MediaPlayer_LengthChanged;
+
+                MediaPlayer.TimeChanged += MediaPlayer_TimeChanged;
+                realSlider.ValueChanged += RealSlider_ValueChanged;
+
+                Messenger.Default.Register<string>(this, "SetSourceVideoToken", (videoPath) =>
+                {
+                    MediaPlayer.SetMedia(new Uri(videoPath, UriKind.RelativeOrAbsolute));
                     MediaPlayer.Play();
-            });
+                });
 
-            Messenger.Default.Register<bool>(this, "PauseVideoToken", (x) =>
-            {
-                MediaPlayer.Pause();
-            });
+                Messenger.Default.Register<long>(this, "PlayToPositionVideoToken", (x) =>
+                {
+                    MediaPlayer.Time = x;
+                    MediaPlayer.Play();
+                });
+                Messenger.Default.Register<bool>(this, "PlayVideoToken", (x) =>
+                {
+                    MediaPlayer.Play();
+                });
+                Messenger.Default.Register<bool>(this, "ToggleVideoToken", (x) =>
+                {
+                    if (MediaPlayer.IsPlaying)
+                        MediaPlayer.Pause();
+                    else
+                        MediaPlayer.Play();
+                });
 
-            Messenger.Default.Register<bool>(this, "StopVideoToken", (x) =>
+                Messenger.Default.Register<bool>(this, "PauseVideoToken", (x) =>
+                {
+                    MediaPlayer.Pause();
+                });
+
+                Messenger.Default.Register<bool>(this, "StopVideoToken", (x) =>
+                {
+                    MediaPlayer.Stop();
+                });
+            }
+            catch (Exception ex)
             {
-                MediaPlayer.Stop();
-            });
+                notifyViewModel.ShowMessageBox("Error loading Video Library");
+            }
         }
 
         private void MediaPlayer_Stopped(object sender, Vlc.DotNet.Core.VlcMediaPlayerStoppedEventArgs e)

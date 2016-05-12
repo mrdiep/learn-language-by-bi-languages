@@ -44,7 +44,7 @@ namespace VoiceSubtitle.ViewModel
             }
         }
 
-        public void MessageBox(string text)
+        public void ShowMessageBox(string text)
         {
             var window = new MessageWindow();
             window.Topmost = true;

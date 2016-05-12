@@ -27,13 +27,13 @@ namespace VoiceSubtitle
 
             if (string.IsNullOrWhiteSpace(newCaption.VideoName))
             {
-                ServiceLocator.Current.GetInstance<NotifyViewModel>().MessageBox("Please enter Video Name");
+                ServiceLocator.Current.GetInstance<NotifyViewModel>().ShowMessageBox("Please enter Video Name");
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(newCaption.VideoPath))
             {
-                ServiceLocator.Current.GetInstance<NotifyViewModel>().MessageBox("Please drop Video Path");
+                ServiceLocator.Current.GetInstance<NotifyViewModel>().ShowMessageBox("Please drop Video Path");
                 return;
             }
 

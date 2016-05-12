@@ -61,7 +61,7 @@ namespace VoiceSubtitle.ViewModel
                 var currentSource = ServiceLocator.Current.GetInstance<MainViewModel>().SourcePaths.Where(c => c.Path == model.Source).FirstOrDefault();
                 if (currentSource == null)
                 {
-                    notifyViewModel.MessageBox("Source do not exists");
+                    notifyViewModel.ShowMessageBox("Source do not exists");
                     return;
                 }
 
