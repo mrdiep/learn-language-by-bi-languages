@@ -6,13 +6,11 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using VoiceSubtitle.Model;
 using System.Linq;
-using System.Windows;
 using static VoiceSubtitle.Helper.ConverterExtensions;
 using GalaSoft.MvvmLight.Messaging;
 using System.IO;
 using System.Diagnostics;
 using Microsoft.Win32;
-using Microsoft.Practices.ServiceLocation;
 
 namespace VoiceSubtitle.ViewModel
 {
@@ -36,9 +34,9 @@ namespace VoiceSubtitle.ViewModel
         public ICommand SaveCaptionFile { get; }
         public ICommand SaveAsCaptionFile { get; }
 
-        public PlayerViewModel(DispatchService dispatchService, 
-            CambridgeDictionaryViewModel cambridgeDictionaryViewModel, 
-            VideoViewModel videoViewModel, 
+        public PlayerViewModel(DispatchService dispatchService,
+            CambridgeDictionaryViewModel cambridgeDictionaryViewModel,
+            VideoViewModel videoViewModel,
             NotifyViewModel notifyViewModel
             )
         {
@@ -103,7 +101,7 @@ namespace VoiceSubtitle.ViewModel
                     return;
                 }
 
-                SaveFileDialog dialog = new SaveFileDialog()
+                var dialog = new SaveFileDialog()
                 {
                     Filter = "Srt Files(*.srt)|*.srt|All(*.*)|*"
                 };
@@ -117,7 +115,7 @@ namespace VoiceSubtitle.ViewModel
 
             SearchBack = new ActionCommand((text) =>
             {
-                 SearchPrimaryCaption(text as string, false);
+                SearchPrimaryCaption(text as string, false);
             });
 
             OpenExternalPath = new ActionCommand((x) =>
@@ -155,15 +153,15 @@ namespace VoiceSubtitle.ViewModel
 
             Action<ObservableCollection<PartialCaption>, object> syncCaption = (list, timeInMs) =>
             {
-                 long time = Convert.ToInt64(timeInMs);
-                 var timegap = TimeSpan.FromMilliseconds(time);
-                 foreach (var caption in list)
-                 {
-                     caption.From = caption.From.Add(timegap);
-                     caption.To = caption.To.Add(timegap);
-                 }
-                 string w = time > 0 ? "forward" : "back";
-                 this.notifyViewModel.Text = $"Sync {w} {timegap.ToString(@"ss\.fff")} seconds";
+                long time = Convert.ToInt64(timeInMs);
+                var timegap = TimeSpan.FromMilliseconds(time);
+                foreach (var caption in list)
+                {
+                    caption.From = caption.From.Add(timegap);
+                    caption.To = caption.To.Add(timegap);
+                }
+                string w = time > 0 ? "forward" : "back";
+                this.notifyViewModel.Text = $"Sync {w} {timegap.ToString(@"ss\.fff")} seconds";
             };
 
             SyncPrimaryCaptionCommand = new ActionCommand((x) => syncCaption.Invoke(PrimaryCaption, x));

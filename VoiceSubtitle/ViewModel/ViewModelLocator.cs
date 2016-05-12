@@ -17,12 +17,13 @@ namespace VoiceSubtitle.ViewModel
             SimpleIoc.Default.Register<AppDataContext>();
             SimpleIoc.Default.Register<MainViewModel>();
             SimpleIoc.Default.Register<NotifyViewModel>();
+            SimpleIoc.Default.Register<RecordViewModel>();
             SimpleIoc.Default.Register<SubtitleDownloaderViewModel>();
-            
             SimpleIoc.Default.Register<CambridgeDictionaryViewModel>();
         }
-        
-                    public CambridgeDictionaryViewModel CambridgeDictionaryViewModel => ServiceLocator.Current.GetInstance<CambridgeDictionaryViewModel>();
+
+        public RecordViewModel RecordViewModel => ServiceLocator.Current.GetInstance<RecordViewModel>();
+        public CambridgeDictionaryViewModel CambridgeDictionaryViewModel => ServiceLocator.Current.GetInstance<CambridgeDictionaryViewModel>();
         public FavoriteViewModel FavoriteViewModel => ServiceLocator.Current.GetInstance<FavoriteViewModel>();
         public NotifyViewModel NotifyViewModel => ServiceLocator.Current.GetInstance<NotifyViewModel>();
         public SubtitleDownloaderViewModel SubtitleDownloaderViewModel => ServiceLocator.Current.GetInstance<SubtitleDownloaderViewModel>();

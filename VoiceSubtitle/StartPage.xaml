@@ -25,6 +25,11 @@
         <KeyBinding Key="P"
                     Command="{Binding VideoViewModel.TogglePlayVideo, Source={StaticResource Locator}}" />
 
+        <KeyBinding Key="R"
+                    Command="{Binding RecordViewModel.RecordPressedCommand, Source={StaticResource Locator}}" />
+        <KeyBinding Key="T"
+                    Command="{Binding RecordViewModel.ListenAgain, Source={StaticResource Locator}}" />
+
         <KeyBinding Key="Space"
                     Command="{Binding VideoViewModel.TogglePlayVideo, Source={StaticResource Locator}}" />
 

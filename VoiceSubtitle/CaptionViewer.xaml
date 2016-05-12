@@ -43,8 +43,9 @@
                                             Grid.Row="1"
                                             Visibility="Collapsed">
                                     <StackPanel Orientation="Horizontal">
-                                        <CheckBox x:Name="syncCheckbox" Style="{StaticResource TextCheckBox}"
-                                                  Content="Sync" 
+                                        <CheckBox x:Name="syncCheckbox"
+                                                  Style="{StaticResource TextCheckBox}"
+                                                  Content="Sync"
                                                   IsChecked="False"
                                                   Foreground="#FF707070"
                                                   VerticalAlignment="Center"
@@ -74,17 +75,23 @@
                                     </Grid>
                                     <Grid Visibility="{Binding ElementName=syncCheckbox,Path=IsChecked,Converter={StaticResource BoolToVisibleConverter}}">
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto" />
                                             <ColumnDefinition />
-                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto" />
                                             <ColumnDefinition />
                                         </Grid.ColumnDefinitions>
 
-                                        <TextBlock Grid.Column="0" Margin="5" Text="Start" />
-                                        <TextBlock Grid.Column="2" Margin="5" Text="End" />
+                                        <TextBlock Grid.Column="0"
+                                                   Margin="5"
+                                                   Text="Start" />
+                                        <TextBlock Grid.Column="2"
+                                                   Margin="5"
+                                                   Text="End" />
 
-                                        <Slider Margin="5" Grid.Column="1" />
-                                        <Slider Margin="5" Grid.Column="3" />
+                                        <Slider Margin="5"
+                                                Grid.Column="1" />
+                                        <Slider Margin="5"
+                                                Grid.Column="3" />
                                     </Grid>
                                     <StackPanel Margin="10,0,10,0"
                                                 Orientation="Horizontal">
@@ -462,6 +469,47 @@
                                     <VisualBrush Visual="{StaticResource appbar_navigate_next}" />
                                 </Rectangle.OpacityMask>
                             </Rectangle>
+                        </Button.Content>
+                    </Button>
+                </StackPanel>
+            </Grid>
+            <Grid HorizontalAlignment="Right"
+                  VerticalAlignment="Top"
+                  Opacity="0.4"
+                  Visibility="{Binding PrimaryCaption.Count,Converter={StaticResource IntGreaterZeroToVisibleConverter}}"
+                  Margin="0,45,20,0"
+                  Background="#FFE8E8E8">
+                <StackPanel Orientation="Horizontal"
+                            DataContext="{Binding RecordViewModel, Source={StaticResource Locator}}"
+                            Visibility="{Binding IsShowPanel,Converter={StaticResource BoolToVisibleConverter}}"
+                            Margin="5">
+                    <Button Width="130"
+                            Height="30"
+                            Command="{Binding StartRecordCommand}"
+                            Background="Transparent">
+                        <Button.Content>
+                            <Grid>
+                                <TextBlock FontFamily="Segoe UI Symbol"
+                                           Text="&#xe217;"
+                                           HorizontalAlignment="Left"
+                                           VerticalAlignment="Center"
+                                           FontSize="9"
+                                           Margin="-5,0,5,0"
+                                           Foreground="#FF0095CD" />
+                                <TextBlock Visibility="{Binding BlinkRed,Converter={StaticResource BoolToVisibleConverter}}"
+                                           FontFamily="Segoe UI Symbol"
+                                           Text="&#xe217;"
+                                           HorizontalAlignment="Left"
+                                           VerticalAlignment="Center"
+                                           FontSize="9"
+                                           Margin="-5,0,5,0"
+                                           Foreground="Red" />
+                                
+                                <TextBlock Margin="30,0,0,0" FontSize="14"
+                                           Text="Record (X)"
+                                           Foreground="#FF0361B0"
+                                           HorizontalAlignment="Left" />
+                            </Grid>
                         </Button.Content>
                     </Button>
                 </StackPanel>
