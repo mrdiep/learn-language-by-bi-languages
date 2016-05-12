@@ -22,9 +22,45 @@
                       Icon="pig.png">
 
     <Controls:MetroWindow.InputBindings>
-        <KeyBinding Modifiers="Control"
-                    Key="E"
-                    Command="{Binding PlayerViewModel.Pause, Source={StaticResource Locator}}" />
+        <KeyBinding Key="P"
+                    Command="{Binding VideoViewModel.TogglePlayVideo, Source={StaticResource Locator}}" />
+
+        <KeyBinding Key="Space"
+                    Command="{Binding VideoViewModel.TogglePlayVideo, Source={StaticResource Locator}}" />
+
+        <KeyBinding Key="F1"
+                    Command="{Binding PlayerViewModel.Listen, Source={StaticResource Locator}}"
+                    CommandParameter="1" />
+        <KeyBinding Key="F2"
+                    Command="{Binding PlayerViewModel.Listen, Source={StaticResource Locator}}"
+                    CommandParameter="2" />
+        <KeyBinding Key="F3"
+                    Command="{Binding PlayerViewModel.Listen, Source={StaticResource Locator}}"
+                    CommandParameter="3" />
+        <KeyBinding Key="F4"
+                    Command="{Binding PlayerViewModel.Listen, Source={StaticResource Locator}}"
+                    CommandParameter="4" />
+        <KeyBinding Key="F5"
+                    Command="{Binding PlayerViewModel.Listen, Source={StaticResource Locator}}"
+                    CommandParameter="5" />
+        <KeyBinding Key="F6"
+                    Command="{Binding PlayerViewModel.Listen, Source={StaticResource Locator}}"
+                    CommandParameter="6" />
+        <KeyBinding Key="F7"
+                    Command="{Binding PlayerViewModel.Listen, Source={StaticResource Locator}}"
+                    CommandParameter="7" />
+        <KeyBinding Key="F8"
+                    Command="{Binding PlayerViewModel.Listen, Source={StaticResource Locator}}"
+                    CommandParameter="8" />
+        <KeyBinding Key="F9"
+                    Command="{Binding PlayerViewModel.Listen, Source={StaticResource Locator}}"
+                    CommandParameter="9" />
+        <KeyBinding Key="F10"
+                    Command="{Binding PlayerViewModel.Listen, Source={StaticResource Locator}}"
+                    CommandParameter="10" />
+
+        <KeyBinding Key="Esc"
+                    Command="{Binding PlayerViewModel.CancelLoopVideo, Source={StaticResource Locator}}" />
     </Controls:MetroWindow.InputBindings>
     <Controls:MetroWindow.Resources>
         <DataTemplate x:Key="CaptionFiles">
@@ -206,7 +242,36 @@
                              x:Name="CambridgeFlyout"
                              Width="600">
                 <Grid>
-                    <ListBox ItemsSource="{Binding FilteredItems}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0" Margin="5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBox HorizontalAlignment="Stretch"
+                                 VerticalAlignment="Center"
+                                 Text="{Binding CambridgeDictionaryViewModel.TextFilter, Source={StaticResource Locator},Mode=TwoWay}"
+                                 Controls:TextBoxHelper.SelectAllOnFocus="True"
+                                 Controls:TextBoxHelper.Watermark="Search word ..."
+                                 Controls:TextBoxHelper.ClearTextButton="True" />
+                        <Button Grid.Column="1">
+                            <Button.Content>
+                                <Rectangle Fill="#FF006595"
+                                           Height="13"
+                                           Width="9">
+                                    <Rectangle.OpacityMask>
+                                        <VisualBrush Visual="{StaticResource appbar_navigate_next}" />
+                                    </Rectangle.OpacityMask>
+                                </Rectangle>
+                            </Button.Content>
+                        </Button>
+                    </Grid>
+
+                    <ListBox Grid.Row="1"
+                             ItemsSource="{Binding FilteredItems}">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Margin="8"
@@ -216,20 +281,37 @@
                                                Margin="16,0,10,0"
                                                Text="{Binding Text}"
                                                FontSize="14" />
-
-                                    <Button IsHitTestVisible="True"
-                                            Margin="16,-5,10,5"
+                                    <TextBlock Text="   UK"
+                                               FontSize="14" />
+                                    <Button BorderThickness="0"
+                                            Margin="3,0,3,0"
+                                            Background="Transparent"
                                             Command="{Binding PlayerViewModel.PlayVoice, Source={StaticResource Locator}}"
                                             CommandParameter="{Binding UKVoiceLink}">
+                                        <Button.Style>
+                                            <Style>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}},Path=IsSelected}"
+                                                                 Value="True">
+                                                        <Setter Property="Button.Visibility"
+                                                                Value="Visible" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}},Path=IsSelected}"
+                                                                 Value="False">
+                                                        <Setter Property="Button.Visibility"
+                                                                Value="Collapsed" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
                                         <Button.Content>
                                             <StackPanel Orientation="Horizontal">
-                                                <TextBlock Text="UK" />
                                                 <TextBlock FontFamily="Segoe UI Symbol"
                                                            Text="&#xE15D;"
                                                            HorizontalAlignment="Center"
                                                            VerticalAlignment="Center"
                                                            FontSize="16"
-                                                           Foreground="#FF006595" />
+                                                           Foreground="White" />
                                             </StackPanel>
                                         </Button.Content>
                                     </Button>
@@ -237,23 +319,43 @@
                                     <TextBlock Text="{Binding UK}"
                                                FontSize="14" />
 
-                                    <Button Margin="20,-5,10,5"
+                                    <TextBlock Text="   US"
+                                               FontSize="14" />
+                                    <Button BorderThickness="0"
+                                            Margin="3,0,3,0"
+                                            Background="Transparent"
                                             Command="{Binding PlayerViewModel.PlayVoice, Source={StaticResource Locator}}"
                                             CommandParameter="{Binding USVoiceLink}">
+                                        <Button.Style>
+                                            <Style>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}},Path=IsSelected}"
+                                                                 Value="True">
+                                                        <Setter Property="Button.Visibility"
+                                                                Value="Visible" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}},Path=IsSelected}"
+                                                                 Value="False">
+                                                        <Setter Property="Button.Visibility"
+                                                                Value="Collapsed" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
                                         <Button.Content>
                                             <StackPanel Orientation="Horizontal">
-                                                <TextBlock Text="US" />
                                                 <TextBlock FontFamily="Segoe UI Symbol"
                                                            Text="&#xE15D;"
                                                            HorizontalAlignment="Center"
                                                            VerticalAlignment="Center"
                                                            FontSize="16"
-                                                           Foreground="#FF006595" />
+                                                           Foreground="White" />
                                             </StackPanel>
                                         </Button.Content>
                                     </Button>
                                     <TextBlock Text="{Binding US}"
-                                               FontSize="14" />
+                                               FontSize="14"
+                                               Foreground="#FFF2FDAB" />
                                 </StackPanel>
                             </DataTemplate>
                         </ListBox.ItemTemplate>

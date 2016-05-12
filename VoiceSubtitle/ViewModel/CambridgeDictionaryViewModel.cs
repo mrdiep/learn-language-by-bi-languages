@@ -7,16 +7,25 @@ using System.IO;
 using System.Reflection;
 using System.Linq;
 using System.Collections.ObjectModel;
+using System;
+using System.Windows.Input;
 
 namespace VoiceSubtitle.ViewModel
 {
     public class CambridgeDictionaryViewModel : ViewModelBase
     {
+        private DispatchService dispatchService;
         protected Dictionary<string, WordPronunciation> DictRef { get; private set; }
         private List<WordPronunciation> items;
-        public ObservableCollection<WordPronunciation> FilteredItems { get;}
-        public CambridgeDictionaryViewModel()
+
+
+
+        public ICommand SearchCommand { get; }
+
+        public CambridgeDictionaryViewModel(DispatchService dispatchService)
         {
+            this.dispatchService = dispatchService;
+            SearchCommand = new ActionCommand((x) => { });
             DictRef = new Dictionary<string, WordPronunciation>();
             FilteredItems = new ObservableCollection<WordPronunciation>();
             items = new List<WordPronunciation>();
@@ -24,8 +33,23 @@ namespace VoiceSubtitle.ViewModel
             Task.Factory.StartNew(FetchData);
         }
 
+        private ObservableCollection<WordPronunciation> filteredItems;
+
+        public ObservableCollection<WordPronunciation> FilteredItems
+        {
+            get
+            {
+                return filteredItems;
+            }
+            set
+            {
+                Set(ref filteredItems, value);
+            }
+        }
+
         private void FetchData()
         {
+            DateTime time = DateTime.Now;
             string connectionString = $@"Data Source={Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Dict\dict.db;Version=3;";
             using (SQLiteConnection connection = new SQLiteConnection(connectionString))
             {
@@ -50,12 +74,14 @@ namespace VoiceSubtitle.ViewModel
 
                             DictRef.Add(word, pro);
                             items.Add(pro);
-                            FilteredItems.Add(pro);
                         }
                     }
                 }
             }
+            dispatchService.Invoke(() => FilteredItems = new ObservableCollection<WordPronunciation>(items));
+            var time2 = DateTime.Now - time;
         }
+
         private bool isShowPanel;
 
         public bool IsShowPanel
@@ -81,6 +107,15 @@ namespace VoiceSubtitle.ViewModel
             set
             {
                 Set(ref textFilter, value);
+                FilteredItems.Clear();
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    dispatchService.Invoke(() => FilteredItems = new ObservableCollection<WordPronunciation>(items));
+                    return;
+                }
+
+                var itemList = items.Where(x => x.Text.ToLower().Contains(textFilter.ToLower()));
+                dispatchService.Invoke(() => FilteredItems = new ObservableCollection<WordPronunciation>(itemList));
             }
         }
 

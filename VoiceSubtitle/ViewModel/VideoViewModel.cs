@@ -20,40 +20,40 @@ namespace VoiceSubtitle.ViewModel
         public ICommand PauseVideoCommand { get; }
         public ICommand StopVideoCommand { get; }
         public ICommand PlayVideoCommand { get; }
-
         public ICommand TogglePlayVideo { get; set; }
+        public ICommand CancelLoopVideo { get; set; }
+
 
         static VideoViewModel()
         {
             var ext = ".webm|.mkv|.flv|.vob|.ogv|.ogg|.drc|.avi|.mov|.qt|.wmv|.rm|.rmvb|.mp4|.m4p|.m4v|.mpg|.mp2|.mpeg|.mpe|.mpv|.mpg|.mpeg|.m2v|.3gp|.3g2|.mxf|.roq|.nsv|.flv|.f4v|.f4p|.f4a|.f4b";
             VideoExtenstionSupported = ext.Split('|');
-
         }
 
         public VideoViewModel(DispatchService dispatchService, SettingViewModel settingViewModel)
         {
             this.dispatchService = dispatchService;
             this.settingViewModel = settingViewModel;
+
             playVoiceMedia = new MediaElement();
             playVoiceMedia.LoadedBehavior = MediaState.Manual;
             playVoiceMedia.UnloadedBehavior = MediaState.Manual;
 
-            PauseVideoCommand = new ActionCommand((x) =>
+            CancelLoopVideo = new ActionCommand(() => videoLoopTokenSource?.Cancel());
+            PauseVideoCommand = new ActionCommand(() =>
             {
-                MessengerInstance.Send<bool>(true, "PauseVideoToken");
+                MessengerInstance.Send(true, "PauseVideoToken");
+                videoLoopTokenSource?.Cancel();
             });
-            StopVideoCommand = new ActionCommand((x) =>
+            StopVideoCommand = new ActionCommand(() => MessengerInstance.Send(true, "StopVideoToken"));
+            PlayVideoCommand = new ActionCommand(() => MessengerInstance.Send(true, "PlayVideoToken"));
+            TogglePlayVideo = new ActionCommand(() =>
             {
-                MessengerInstance.Send<bool>(true, "StopVideoToken");
-            });
-            PlayVideoCommand = new ActionCommand((x) =>
-            {
-                MessengerInstance.Send<bool>(true, "PlayVideoToken");
+                MessengerInstance.Send(true, "ToggleVideoToken");
+                videoLoopTokenSource?.Cancel();
             });
 
-            TogglePlayVideo = new ActionCommand(() => MessengerInstance.Send<bool>(true, "PlayVideoToken"));
-
-
+            MessengerInstance.Register<bool>(this, "CancelLoopVideoToken", (x) => videoLoopTokenSource?.Cancel());
         }
 
         public bool isPlaying;
@@ -125,10 +125,7 @@ namespace VoiceSubtitle.ViewModel
 
         public void BeginLoopVideo(int loop, TimeSpan from, TimeSpan to)
         {
-            if (videoLoopTokenSource != null)
-            {
-                videoLoopTokenSource.Cancel();
-            }
+            videoLoopTokenSource?.Cancel();
             videoLoopTokenSource = new CancellationTokenSource();
 
             Task.Factory.StartNew(() => LoopListening(loop, from, to, videoLoopTokenSource));
@@ -154,7 +151,7 @@ namespace VoiceSubtitle.ViewModel
                     });
 
                     ct.ThrowIfCancellationRequested();
-                    await Task.Delay(to - from,ct);
+                    await Task.Delay(to - from, ct);
                     ct.ThrowIfCancellationRequested();
                     if (i == loop - 1 && !settingViewModel.PlayAfterEndingLoop)
                     {

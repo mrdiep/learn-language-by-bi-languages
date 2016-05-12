@@ -58,6 +58,14 @@ namespace VoiceSubtitle
             {
                 MediaPlayer.Play();
             });
+            Messenger.Default.Register<bool>(this, "ToggleVideoToken", (x) =>
+            {
+                if (MediaPlayer.IsPlaying)
+                    MediaPlayer.Pause();
+                else
+                    MediaPlayer.Play();
+            });
+
             Messenger.Default.Register<bool>(this, "PauseVideoToken", (x) =>
             {
                 MediaPlayer.Pause();

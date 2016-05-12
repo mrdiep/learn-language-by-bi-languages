@@ -43,6 +43,13 @@
                                             Grid.Row="1"
                                             Visibility="Collapsed">
                                     <StackPanel Orientation="Horizontal">
+                                        <CheckBox x:Name="syncCheckbox" Style="{StaticResource TextCheckBox}"
+                                                  Content="Sync" 
+                                                  IsChecked="False"
+                                                  Foreground="#FF707070"
+                                                  VerticalAlignment="Center"
+                                                  HorizontalAlignment="Left"
+                                                  FontSize="10" />
                                         <Button Command="{Binding FavoriteViewModel.AddFavorite,Source={StaticResource Locator}}"
                                                 CommandParameter="{Binding ElementName=textHolding,Path=Text}"
                                                 Template="{StaticResource LinkButton}"
@@ -64,6 +71,20 @@
                                     </StackPanel>
                                     <Grid Height="15"
                                           Visibility="{Binding Prononciations.Count,Converter={StaticResource IntGreaterZeroToVisibleConverter}}">
+                                    </Grid>
+                                    <Grid Visibility="{Binding ElementName=syncCheckbox,Path=IsChecked,Converter={StaticResource BoolToVisibleConverter}}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition />
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock Grid.Column="0" Margin="5" Text="Start" />
+                                        <TextBlock Grid.Column="2" Margin="5" Text="End" />
+
+                                        <Slider Margin="5" Grid.Column="1" />
+                                        <Slider Margin="5" Grid.Column="3" />
                                     </Grid>
                                     <StackPanel Margin="10,0,10,0"
                                                 Orientation="Horizontal">
