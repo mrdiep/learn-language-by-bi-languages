@@ -20,6 +20,8 @@ namespace VoiceSubtitle.ViewModel
         public ICommand PauseVideoCommand { get; }
         public ICommand PlayVideoCommand { get; }
 
+        public ICommand TogglePlayVideo { get; set; }
+
         static VideoViewModel()
         {
             var ext = ".webm|.mkv|.flv|.vob|.ogv|.ogg|.drc|.avi|.mov|.qt|.wmv|.rm|.rmvb|.mp4|.m4p|.m4v|.mpg|.mp2|.mpeg|.mpe|.mpv|.mpg|.mpeg|.m2v|.3gp|.3g2|.mxf|.roq|.nsv|.flv|.f4v|.f4p|.f4a|.f4b";
@@ -44,6 +46,10 @@ namespace VoiceSubtitle.ViewModel
             {
                 MessengerInstance.Send<bool>(true, "PlayVideoToken");
             });
+
+            TogglePlayVideo = new ActionCommand(() => { });
+
+
         }
 
         public bool isPlaying;
