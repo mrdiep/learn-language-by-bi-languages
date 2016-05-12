@@ -47,7 +47,7 @@ namespace VoiceSubtitle.ViewModel
                 MessengerInstance.Send<bool>(true, "PlayVideoToken");
             });
 
-            TogglePlayVideo = new ActionCommand(() => { });
+            TogglePlayVideo = new ActionCommand(() => MessengerInstance.Send<bool>(true, "PlayVideoToken"));
 
 
         }

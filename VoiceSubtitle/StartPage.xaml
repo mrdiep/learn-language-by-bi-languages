@@ -20,6 +20,12 @@
                       GlowBrush="{DynamicResource {x:Static SystemColors.HotTrackBrushKey}}"
                       BorderBrush="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}"
                       Icon="pig.png">
+
+    <Controls:MetroWindow.InputBindings>
+        <KeyBinding Modifiers="Control"
+                    Key="E"
+                    Command="{Binding PlayerViewModel.Pause, Source={StaticResource Locator}}" />
+    </Controls:MetroWindow.InputBindings>
     <Controls:MetroWindow.Resources>
         <DataTemplate x:Key="CaptionFiles">
             <Grid Height="Auto"
