@@ -16,11 +16,12 @@ namespace VoiceSubtitle.ViewModel
     {
         public ICommand RecordPressedCommand { get; }
         public ICommand ListenAgain { get; }
+
         public RecordViewModel()
         {
             RecordPressedCommand = new ActionCommand(() =>
             {
-                if(!IsRecord && IsShowPanel)
+                if (!IsRecord && IsShowPanel)
                 {
                     IsShowPanel = false;
                     return;
@@ -40,7 +41,20 @@ namespace VoiceSubtitle.ViewModel
             playVoiceMedia.LoadedBehavior = MediaState.Manual;
             playVoiceMedia.UnloadedBehavior = MediaState.Manual;
 
-            ListenAgain = new ActionCommand(() => {
+            ListenAgain = new ActionCommand(() =>
+            {
+                try
+                {
+                    var waveOut = new WaveOutEvent();
+                    var mp3Reader = new WaveFileReader(writer);
+                    waveOut.Init(mp3Reader);
+                    waveOut.Play();
+                    return;
+                }
+                catch (Exception ex)
+                {
+                }
+
                 playVoiceMedia.Source = new Uri(fileName, UriKind.RelativeOrAbsolute);
                 playVoiceMedia.Play();
             });
@@ -53,6 +67,7 @@ namespace VoiceSubtitle.ViewModel
         private DispatcherTimer timer;
         private WasapiCapture capture;
         private string fileName;
+
         private void Record()
         {
             try
@@ -98,10 +113,10 @@ namespace VoiceSubtitle.ViewModel
                 return;
 
             IsRecord = false;
-            writer.Dispose();
-            writer = null;
-            capture.Dispose();
-            capture = null;
+            //writer.Dispose();
+            //writer = null;
+            //capture.Dispose();
+            //capture = null;
         }
 
         private bool isShowPanel;
