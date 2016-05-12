@@ -9,6 +9,7 @@ namespace VoiceSubtitle.ViewModel
         {
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
 
+            SimpleIoc.Default.Register<FavoriteViewModel>();
             SimpleIoc.Default.Register<SettingViewModel>();
             SimpleIoc.Default.Register<VideoViewModel>();
             SimpleIoc.Default.Register<DispatchService>();
@@ -17,10 +18,12 @@ namespace VoiceSubtitle.ViewModel
             SimpleIoc.Default.Register<MainViewModel>();
             SimpleIoc.Default.Register<NotifyViewModel>();
             SimpleIoc.Default.Register<SubtitleDownloaderViewModel>();
-
+            
             SimpleIoc.Default.Register<CambridgeDictionaryViewModel>();
         }
-
+        
+                    public CambridgeDictionaryViewModel CambridgeDictionaryViewModel => ServiceLocator.Current.GetInstance<CambridgeDictionaryViewModel>();
+        public FavoriteViewModel FavoriteViewModel => ServiceLocator.Current.GetInstance<FavoriteViewModel>();
         public NotifyViewModel NotifyViewModel => ServiceLocator.Current.GetInstance<NotifyViewModel>();
         public SubtitleDownloaderViewModel SubtitleDownloaderViewModel => ServiceLocator.Current.GetInstance<SubtitleDownloaderViewModel>();
         public SettingViewModel SettingViewModel => ServiceLocator.Current.GetInstance<SettingViewModel>();

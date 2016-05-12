@@ -22,6 +22,8 @@ namespace VoiceSubtitle.ViewModel
                 "English",
                 "Vietnamese"
             };
+
+            MessengerInstance.Register<bool>(this, "CloseAllFlyoutToken", (x) => IsShowPanel = false);
         }
 
         private void Load()
@@ -40,7 +42,19 @@ namespace VoiceSubtitle.ViewModel
             settings["DisplayCaptionWhilePlaying"] = DisplayCaptionWhilePlaying.ToString();
             settings.Save();
         }
+        private bool isShowPanel;
 
+        public bool IsShowPanel
+        {
+            get
+            {
+                return isShowPanel;
+            }
+            set
+            {
+                Set(ref isShowPanel, value);
+            }
+        }
         public ObservableCollection<string> DownloadCaptionLanguage { get; }
 
         private bool playAfterEndingLoop;

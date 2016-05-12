@@ -62,6 +62,11 @@ namespace VoiceSubtitle
             {
                 MediaPlayer.Pause();
             });
+
+            Messenger.Default.Register<bool>(this, "StopVideoToken", (x) =>
+            {
+                MediaPlayer.Stop();
+            });
         }
 
         private void MediaPlayer_Stopped(object sender, Vlc.DotNet.Core.VlcMediaPlayerStoppedEventArgs e)

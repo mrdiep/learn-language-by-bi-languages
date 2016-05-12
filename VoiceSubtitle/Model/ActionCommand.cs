@@ -7,12 +7,19 @@ namespace VoiceSubtitle.Model
     {
         private Action<object> action;
         Func<object, bool> canExe;
+
+        private Action action2;
+        Func< bool> canExe2;
         public ActionCommand(Action<object> action,Func<object,bool> canExe=null)
         {
             this.action = action;
             this.canExe = canExe;
         }
-
+        public ActionCommand(Action action, Func<bool> canExe = null)
+        {
+            this.action2 = action;
+            this.canExe2 = canExe;
+        }
         public event EventHandler CanExecuteChanged;
 
         public bool CanExecute(object parameter)
@@ -20,12 +27,17 @@ namespace VoiceSubtitle.Model
             if (canExe == null)
                 return true;
 
-            return canExe(parameter);
+            bool? value =  canExe?.Invoke(parameter);
+            if (!value.HasValue)
+                return canExe2.Invoke();
+
+            return value.Value;
         }
 
         public void Execute(object parameter)
         {
-            action(parameter);
+            action?.Invoke(parameter);
+            action2?.Invoke();
         }
     }
 }
