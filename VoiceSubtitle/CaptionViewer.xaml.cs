@@ -11,29 +11,10 @@ using System.Linq;
 namespace VoiceSubtitle
 {
     public partial class CaptionViewer : UserControl
-    {
-        private VideoViewModel videoViewModel;
-
-        bool isPlayingLast = false;
+    {       
         public CaptionViewer()
         {
             InitializeComponent();
-            videoViewModel = ServiceLocator.Current.GetInstance<VideoViewModel>();
-
-            
-            Messenger.Default.Register<bool>(this, "StopOrResumeVideoToken", (isOpen) =>
-            {
-                viewViewer.Visibility = isOpen ? Visibility.Collapsed : Visibility.Visible;
-                if (isOpen)
-                {
-                    isPlayingLast = videoViewModel.IsPlaying;
-                    videoViewModel.PauseVideoCommand.Execute(null);
-                }
-                else if(isPlayingLast)
-                {
-                    videoViewModel.PlayVideoCommand.Execute(null);
-                }
-            });
         }
 
         private void ScrollToSelected(object sender, SelectionChangedEventArgs e)

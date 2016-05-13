@@ -130,7 +130,7 @@
 
                                             <Button IsHitTestVisible="True"
                                                     Margin="16,-5,10,5"
-                                                    Command="{Binding PlayerViewModel.PlayVoice, Source={StaticResource Locator}}"
+                                                    Command="{Binding PlayerViewModel.PlayCambridgeWord, Source={StaticResource Locator}}"
                                                     CommandParameter="{Binding UKVoiceLink}">
                                                 <Button.Content>
                                                     <StackPanel Orientation="Horizontal">
@@ -149,7 +149,7 @@
                                                        FontSize="14" />
 
                                             <Button Margin="20,-5,10,5"
-                                                    Command="{Binding PlayerViewModel.PlayVoice, Source={StaticResource Locator}}"
+                                                    Command="{Binding PlayerViewModel.PlayCambridgeWord, Source={StaticResource Locator}}"
                                                     CommandParameter="{Binding USVoiceLink}">
                                                 <Button.Content>
                                                     <StackPanel Orientation="Horizontal">
@@ -319,7 +319,7 @@
                              Width="210"
                              Text="{Binding SubtitleDownloaderViewModel.SearchText, Source={StaticResource Locator},Mode=TwoWay}"
                              Controls:TextBoxHelper.SelectAllOnFocus="True"
-                             Controls:TextBoxHelper.Watermark="Search subtitle online ..."
+                             Controls:TextBoxHelper.Watermark="SEARCH SUBTITLE ONLINE ..."
                              Controls:TextBoxHelper.ClearTextButton="True" />
                     <Button Command="{Binding SubtitleDownloaderViewModel.SearchCaptionOnline, Source={StaticResource Locator}}"
                             CommandParameter="{Binding ElementName=captionOnlineText,Path=Text}">
@@ -347,7 +347,8 @@
                           Grid.Column="1"
                           HorizontalAlignment="Stretch"
                           d:IsHidden="True" />
-            <StackPanel Orientation="Horizontal">
+            <StackPanel Orientation="Horizontal"
+                        VerticalAlignment="Top">
                 <TextBlock Text="ENGLISH CAPTION"
                            Margin="5"
                            FontFamily="Segoe UI Light"
@@ -377,19 +378,25 @@
                 HorizontalAlignment="Right"
                     VerticalAlignment="Bottom"
                     Height="Auto"
-                    Width="270"
+                    
                     Margin="0,0,16,0"
                     Opacity="0.8"
-                    Visibility="{Binding PrimaryCaption.Count,Converter={StaticResource IntGreaterZeroToVisibleConverter}}">
-                <Grid Margin="3">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <Controls:NumericUpDown x:Name="syncSubPrimaryText"
-                                            Controls:TextBoxHelper.Watermark="Sync sub..." />
+                    Visibility="{Binding PrimaryCaption.Count,Converter={StaticResource IntGreaterZeroToVisibleConverter}}"
+                    Background="#FFF1F1F1">
+                <StackPanel Margin="3" Orientation="Horizontal" FlowDirection="RightToLeft">
+
+                    <Controls:NumericUpDown x:Name="expandEnd"
+                                            Value="{Binding VideoViewModel.ExpandEnd, Source={StaticResource Locator}}"
+                                            FlowDirection="LeftToRight"
+                                            Controls:TextBoxHelper.Watermark="End" />
+                    <Controls:NumericUpDown x:Name="expandStart"
+                                            Value="{Binding VideoViewModel.ExpandStart, Source={StaticResource Locator}}"
+                                            Controls:TextBoxHelper.Watermark="Start" />
+                    <TextBlock Text="Expand"
+                               VerticalAlignment="Center"
+                               Margin="3,0,20,0"
+                               Foreground="#FF109EBD"
+                               FontSize="13" />
                     <Button Grid.Column="1"
                             Command="{Binding SyncPrimaryCaptionCommand}"
                             CommandParameter="{Binding ElementName=syncSubPrimaryText,Path=Value}">
@@ -403,6 +410,11 @@
                             </Rectangle>
                         </Button.Content>
                     </Button>
+                    <Controls:NumericUpDown x:Name="syncSubPrimaryText"
+                                            FlowDirection="LeftToRight"
+                                            Controls:TextBoxHelper.Watermark="SYNC SUB..."
+                                            Margin="0,0,10,0" />
+
                     <Button Grid.Column="2"
                             Command="{Binding SaveCaptionFile}"
                             CommandParameter="PrimaryCaption">
@@ -427,7 +439,7 @@
                                        Foreground="#FF006595" />
                         </Button.Content>
                     </Button>
-                </Grid>
+                </StackPanel>
             </Border>
 
             <Border AllowDrop="True"
@@ -460,7 +472,7 @@
                              KeyDown="PrimarySearch_KeyDown"
                              MinWidth="120"
                              Controls:TextBoxHelper.SelectAllOnFocus="True"
-                             Controls:TextBoxHelper.Watermark="Search..."
+                             Controls:TextBoxHelper.Watermark="SEARCH..."
                              Controls:TextBoxHelper.ClearTextButton="True" />
                     <Button Command="{Binding SearchBack}"
                             CommandParameter="{Binding ElementName=searchBox,Path=Text}">
@@ -498,7 +510,7 @@
                             DataContext="{Binding RecordViewModel, Source={StaticResource Locator}}"
                             Visibility="{Binding IsShowPanel,Converter={StaticResource BoolToVisibleConverter}}"
                             Margin="5">
-                    <Button Width="130"
+                    <Button Width="110"
                             Height="30"
                             Command="{Binding StartRecordCommand}"
                             Background="Transparent">
@@ -520,8 +532,30 @@
                                            Margin="-5,0,5,0"
                                            Foreground="Red" />
                                 
-                                <TextBlock Margin="30,0,0,0" FontSize="14"
-                                           Text="Record (X)"
+                                <TextBlock Margin="10,0,0,0" FontSize="14"
+                                           Text="RECORD (F6)"
+                                           Foreground="#FF0361B0"
+                                           HorizontalAlignment="Left" />
+                            </Grid>
+                        </Button.Content>
+                    </Button>
+                    <Button Width="100"
+                            Height="30"
+                            Command="{Binding StartRecordCommand}"
+                            Background="Transparent">
+                        <Button.Content>
+                            <Grid>
+                                <TextBlock FontFamily="Segoe UI Symbol"
+                                           Text="&#xE15D;"
+                                           HorizontalAlignment="Left"
+                                           VerticalAlignment="Center"
+                                           FontSize="20"
+                                           Margin="-5,0,5,0"
+                                           Foreground="#FF0095CD" />
+                                
+                                <TextBlock Margin="20,0,0,0"
+                                           FontSize="14"
+                                           Text="PLAY (F7)"
                                            Foreground="#FF0361B0"
                                            HorizontalAlignment="Left" />
                             </Grid>
@@ -580,7 +614,7 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <Controls:NumericUpDown x:Name="syncSubTranslatedText"
-                                                Controls:TextBoxHelper.Watermark="Sync sub..." />
+                                                Controls:TextBoxHelper.Watermark="SYNC SUB..." />
                         <Button Grid.Column="1"
                                 Command="{Binding SyncTranslatedCaptionCommand}"
                                 CommandParameter="{Binding ElementName=syncSubTranslatedText,Path=Value}">
@@ -638,9 +672,12 @@
                                HorizontalAlignment="Center" />
                 </Border>
 
-                <local:VideoViewer x:Name="viewViewer"
-                                   Grid.Row="2" />
-
+                <Border Grid.Row="2"
+                        Background="#FF0E0E0E">
+                <local:VideoViewer 
+                    
+                     />
+                </Border>
                 <Border AllowDrop="True"
                         Grid.Row="2"
                         Drop="VideoPathDrop"

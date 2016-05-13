@@ -24,9 +24,15 @@ namespace VoiceSubtitle.ViewModel
             if (!settings.HasFile)
                 Save();
 
-            PlayAfterEndingLoop = Convert.ToBoolean(settings["PlayAfterEndingLoop"]);
-            DisplayCaptionWhilePlaying = Convert.ToBoolean(settings["DisplayCaptionWhilePlaying"]);
+            playAfterEndingLoop = Convert.ToBoolean(settings["PlayAfterEndingLoop"] ?? "False");
+            displayCaptionWhilePlaying = Convert.ToBoolean(settings["DisplayCaptionWhilePlaying"]??"False");
+            pauseEachLoop = Convert.ToDouble(settings["PauseEachLoop"]??"0");
+
             DownloadCaptionLanguage = settings["DownloadCaptionLanguage"].Split(",".ToCharArray());
+
+            RaisePropertyChanged("PlayAfterEndingLoop");
+            RaisePropertyChanged("DisplayCaptionWhilePlaying");
+            RaisePropertyChanged("PauseEachLoop");
         }
 
         private void Save()
@@ -34,6 +40,7 @@ namespace VoiceSubtitle.ViewModel
             settings["PlayAfterEndingLoop"] = PlayAfterEndingLoop.ToString();
             settings["DisplayCaptionWhilePlaying"] = DisplayCaptionWhilePlaying.ToString();
             settings["DownloadCaptionLanguage"] = string.Join(",", DownloadCaptionLanguage);
+            settings["PauseEachLoop"] = PauseEachLoop.ToString();
 
             settings.Save();
         }
@@ -83,5 +90,23 @@ namespace VoiceSubtitle.ViewModel
                 Save();
             }
         }
+
+        private double pauseEachLoop;
+
+        public double PauseEachLoop
+        {
+            get
+            {
+                return pauseEachLoop;
+            }
+            set
+            {
+                Set(ref pauseEachLoop, value);
+                Save();
+            }
+        }
+
+
+        
     }
 }

@@ -16,6 +16,8 @@ namespace VoiceSubtitle.ViewModel
         public ICommand CancelEditSource { get; }
         public ICommand DeleteSource { get; }
 
+        public ICommand EditSource { get; }
+
         public MainViewModel(AppDataContext appDataContext, DispatchService dispatchService, NotifyViewModel notifyViewModel)
         {
             this.appDataContext = appDataContext;
@@ -39,6 +41,15 @@ namespace VoiceSubtitle.ViewModel
                 {
                     notifyViewModel.ShowMessageBox("Failing to save");
                 }
+            });
+
+            EditSource = new ActionCommand((x) =>
+            {
+                SourcePath source = x as SourcePath;
+                if (source == null)
+                    return;
+
+                EditCurrent = source;
             });
             DeleteSource = new ActionCommand((x) =>
             {
@@ -69,7 +80,6 @@ namespace VoiceSubtitle.ViewModel
 
         public ObservableCollection<SourcePath> SourcePaths { get; }
 
-
         private bool isShowProjectPanel;
 
         public bool IsShowProjectPanel
@@ -83,7 +93,6 @@ namespace VoiceSubtitle.ViewModel
                 Set(ref isShowProjectPanel, value);
             }
         }
-
 
         private SourcePath editCurrent;
 

@@ -58,11 +58,17 @@ namespace VoiceSubtitle
             }
 
             ServiceLocator.Current.GetInstance<PlayerViewModel>().SwitchSource.Execute(source);
+
+            newCaption.VideoName = string.Empty;
+            newCaption.SubEngPath = string.Empty;
+            newCaption.SubOtherPath = string.Empty;
+            newCaption.VideoPath = string.Empty;
         }
 
         private void SettingFlyout_IsOpenChanged(object sender, RoutedEventArgs e)
         {
-            Messenger.Default.Send(ProjectFlyout.IsOpen || SettingFlyout.IsOpen || CaptionSeacherFlyout.IsOpen || FavoriteFlyout.IsOpen || CambridgeFlyout.IsOpen, "StopOrResumeVideoToken");
+            bool allIsClose = !ProjectFlyout.IsOpen && !SettingFlyout.IsOpen && !CaptionSeacherFlyout.IsOpen && !FavoriteFlyout.IsOpen && !CambridgeFlyout.IsOpen;            
+            Messenger.Default.Send(allIsClose, "InteruptWindowToggleToken");
         }
     }
 }

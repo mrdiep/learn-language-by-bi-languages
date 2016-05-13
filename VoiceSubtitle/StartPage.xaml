@@ -85,6 +85,12 @@
                                 Command="{Binding Main.DeleteSource,Source={StaticResource Locator}}"
                                 CommandParameter="{Binding}"
                                 Template="{DynamicResource LinkButton}" />
+                        <Button Content="Edit"
+                                Foreground="IndianRed"
+                                HorizontalAlignment="Right"
+                                Command="{Binding Main.EditSource,Source={StaticResource Locator}}"
+                                CommandParameter="{Binding}"
+                                Template="{DynamicResource LinkButton}" />
                     </StackPanel>
                 </StackPanel>
             </Grid>
@@ -100,7 +106,7 @@
 
             <CheckBox Style="{StaticResource TextCheckBox}"
                       Content="Project"
-                      Visibility="{Binding ElementName=captionViewer,Path=Visibility}"
+                      Visibility="{Binding PlayerViewModel.IsShowViewer,Converter={StaticResource BoolToVisibleConverter},Source={StaticResource Locator}}"
                       IsChecked="{Binding Main.IsShowProjectPanel, Source={StaticResource Locator},Mode=TwoWay}" />
 
             <CheckBox Style="{StaticResource ShowHomePageCheckBox}"
@@ -273,7 +279,7 @@
                                     <Button BorderThickness="0"
                                             Margin="3,0,3,0"
                                             Background="Transparent"
-                                            Command="{Binding PlayerViewModel.PlayVoice, Source={StaticResource Locator}}"
+                                            Command="{Binding PlayerViewModel.PlayCambridgeWord, Source={StaticResource Locator}}"
                                             CommandParameter="{Binding UKVoiceLink}">
                                         <Button.Style>
                                             <Style>
@@ -311,7 +317,7 @@
                                     <Button BorderThickness="0"
                                             Margin="3,0,3,0"
                                             Background="Transparent"
-                                            Command="{Binding PlayerViewModel.PlayVoice, Source={StaticResource Locator}}"
+                                            Command="{Binding PlayerViewModel.PlayCambridgeWord, Source={StaticResource Locator}}"
                                             CommandParameter="{Binding USVoiceLink}">
                                         <Button.Style>
                                             <Style>
@@ -392,6 +398,13 @@
                             </StackPanel>
                         </Grid>
 
+                        <TextBlock Text="PAUSE EACH LOOP"
+                                   Foreground="#FFEEEEEE"
+                                   FontWeight="Bold" />
+                        <Controls:NumericUpDown x:Name="syncSubPrimaryText"
+                                                Value="{Binding PauseEachLoop}"
+                                                Controls:TextBoxHelper.Watermark="SYNC SUB..." />
+
                         <Grid Grid.Row="1">
                             <StackPanel Margin="20,35,20,0">
                                 <TextBlock Text="KEYBOARD MAPPING"
@@ -421,7 +434,7 @@
         <Border Background="#44F3F3F3"
                 BorderThickness="0,0,0,1"
                 BorderBrush="Gray"
-                Visibility="{Binding ElementName=captionViewer,Path=Visibility,Converter={StaticResource VisibleInvertConverter}}">
+                Visibility="{Binding PlayerViewModel.IsShowViewer,Converter={StaticResource BoolToCollapsedConverter},Source={StaticResource Locator}}">
 
             <Grid>
                 <Grid.RowDefinitions>
@@ -464,7 +477,6 @@
                         <ListBox Grid.Column="0"
                                  Grid.Row="1"
                                  Margin="10,20,0,0"
-                                 SelectedItem="{Binding EditCurrent}"
                                  HorizontalAlignment="Stretch"
                                  ItemsSource="{Binding SourcePaths}"
                                  ItemTemplate="{StaticResource CaptionFiles}"
@@ -573,7 +585,7 @@
                 </Grid>
             </Grid>
         </Border>
-        <local:CaptionViewer x:Name="captionViewer"
-                             Visibility="{Binding PlayerViewModel.IsShowViewer,Converter={StaticResource BoolToVisibleConverter},Source={StaticResource Locator}}" />
+        <local:CaptionViewer 
+            Visibility="{Binding PlayerViewModel.IsShowViewer,Converter={StaticResource BoolToVisibleConverter},Source={StaticResource Locator}}" />
     </Grid>
 </Controls:MetroWindow>

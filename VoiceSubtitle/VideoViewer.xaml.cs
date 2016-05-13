@@ -21,6 +21,7 @@ namespace VoiceSubtitle
         private bool isChangeBySetter = false;
         private long totalVideoLength;
         private long currentPosition;
+        bool isPlayingLast = false;
 
         public VideoViewer()
         {
@@ -45,24 +46,56 @@ namespace VoiceSubtitle
 
                 MediaPlayer.TimeChanged += MediaPlayer_TimeChanged;
                 realSlider.ValueChanged += RealSlider_ValueChanged;
+              
+
+                Messenger.Default.Register<bool>(this, "InteruptWindowToggleToken", (isOpen) =>
+                {
+                    if (!isOpen)
+                    {
+                        isPlayingLast = MediaPlayer.IsPlaying;
+
+                        if(MediaPlayer.IsPlaying) 
+                            MediaPlayer.Pause();
+
+                        videoViewModel.IsShowVideo = false;
+                    }
+                    else if (isPlayingLast)
+                    {
+                        if (!MediaPlayer.IsPlaying)
+                            MediaPlayer.Play();
+
+                        videoViewModel.IsShowVideo = true;
+                    }
+                });
 
                 Messenger.Default.Register<string>(this, "SetSourceVideoToken", (videoPath) =>
                 {
+
                     MediaPlayer.SetMedia(new Uri(videoPath, UriKind.RelativeOrAbsolute));
                     MediaPlayer.Play();
                 });
 
                 Messenger.Default.Register<long>(this, "PlayToPositionVideoToken", (x) =>
                 {
+                    if (!playerViewModel.IsShowViewer)
+                        return;
+
                     MediaPlayer.Time = x;
                     MediaPlayer.Play();
                 });
                 Messenger.Default.Register<bool>(this, "PlayVideoToken", (x) =>
                 {
-                    MediaPlayer.Play();
+                    if (!playerViewModel.IsShowViewer)
+                        return;
+
+                    if (!MediaPlayer.IsPlaying)
+                        MediaPlayer.Play();
                 });
                 Messenger.Default.Register<bool>(this, "ToggleVideoToken", (x) =>
                 {
+                    if (!playerViewModel.IsShowViewer)
+                        return;
+
                     if (MediaPlayer.IsPlaying)
                         MediaPlayer.Pause();
                     else
@@ -71,11 +104,18 @@ namespace VoiceSubtitle
 
                 Messenger.Default.Register<bool>(this, "PauseVideoToken", (x) =>
                 {
-                    MediaPlayer.Pause();
+                    if (!playerViewModel.IsShowViewer)
+                        return;
+
+                    if (MediaPlayer.IsPlaying)
+                        MediaPlayer.Pause();
                 });
 
                 Messenger.Default.Register<bool>(this, "StopVideoToken", (x) =>
                 {
+                    if (!playerViewModel.IsShowViewer)
+                        return;
+
                     MediaPlayer.Stop();
                 });
             }

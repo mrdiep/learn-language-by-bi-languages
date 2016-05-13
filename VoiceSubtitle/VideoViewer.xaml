@@ -8,8 +8,7 @@
              DataContext="{Binding VideoViewModel, Source={StaticResource Locator}}"
              d:DesignHeight="300"
              d:DesignWidth="300">
-    <Grid  Background="Black"
-           xmlns:converter="clr-namespace:VoiceSubtitle.Converter">
+    <Grid  xmlns:converter="clr-namespace:VoiceSubtitle.Converter">
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition Height="45" />
@@ -20,6 +19,7 @@
         </Grid.Resources>
 
         <Grid x:Name="mediaGrid"
+              Visibility="{Binding VideoViewModel.IsShowVideo,Source={StaticResource Locator},Converter={StaticResource BoolToVisibleConverter}}"
               xmlns:vlc="clr-namespace:Vlc.DotNet.Wpf;assembly=Vlc.DotNet.Wpf">
             <vlc:VlcControl x:Name="myControl" />
         </Grid>

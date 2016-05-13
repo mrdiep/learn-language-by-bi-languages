@@ -56,6 +56,20 @@ namespace VoiceSubtitle.ViewModel
             MessengerInstance.Register<bool>(this, "CancelLoopVideoToken", (x) => videoLoopTokenSource?.Cancel());
         }
 
+        public bool isShowVideo = true;
+
+        public bool IsShowVideo
+        {
+            get
+            {
+                return isShowVideo;
+            }
+            set
+            {
+                Set(ref isShowVideo, value);
+            }
+        }
+
         public bool isPlaying;
 
         public bool IsPlaying
@@ -112,7 +126,7 @@ namespace VoiceSubtitle.ViewModel
             }
         }
 
-        public void PlayVoice(string url)
+        public void PlayCambridge(string url)
         {
             try
             {
@@ -126,6 +140,10 @@ namespace VoiceSubtitle.ViewModel
 
         public void BeginLoopVideo(int loop, TimeSpan from, TimeSpan to)
         {
+
+            from = from - TimeSpan.FromMilliseconds(ExpandStart);
+            to = to + TimeSpan.FromMilliseconds(ExpandEnd);
+
             videoLoopTokenSource?.Cancel();
             videoLoopTokenSource = new CancellationTokenSource();
 
@@ -159,7 +177,12 @@ namespace VoiceSubtitle.ViewModel
                         MessengerInstance.Send(true, "PauseVideoToken");
                     }
 
-                    await Task.Delay(TimeSpan.FromSeconds(0));
+                    if (settingViewModel.PauseEachLoop > 0 && i !=loop - 1)
+                    {
+                        notifyViewModel.Text = "Wait...";
+                        MessengerInstance.Send(true, "PauseVideoToken");
+                        await Task.Delay(TimeSpan.FromMilliseconds(settingViewModel.PauseEachLoop));
+                    }
                 }
             }
             catch
@@ -170,6 +193,28 @@ namespace VoiceSubtitle.ViewModel
             {
                 videoLoopTokenSource = null;
                 VideoStatus = string.Empty;
+            }
+        }
+
+        private double expanStart;
+
+        public double ExpandStart
+        {
+            get { return expanStart; }
+            set
+            {
+                Set(ref expanStart, value);
+            }
+        }
+
+        private double expanEnd;
+
+        public double ExpandEnd
+        {
+            get { return expanEnd; }
+            set
+            {
+                Set(ref expanEnd, value);
             }
         }
 

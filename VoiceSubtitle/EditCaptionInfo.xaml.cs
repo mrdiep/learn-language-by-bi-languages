@@ -64,7 +64,7 @@ namespace VoiceSubtitle
                     VideoPath = file;
                     if(string.IsNullOrEmpty(VideoName))
                     {
-                        VideoName = Path.GetFileName(file);
+                        VideoName = Path.GetFileNameWithoutExtension(file);
                     }
                 }
                 else if (name == "englishsub" && ext == ".srt")

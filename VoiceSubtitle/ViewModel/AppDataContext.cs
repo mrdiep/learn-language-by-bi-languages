@@ -26,14 +26,14 @@ namespace VoiceSubtitle.ViewModel
         {
             try
             {
-                var lines = File.ReadAllLines(filepath);
+                var lines = File.ReadAllText(filepath).Split('\n');
                 var source = new SourcePath()
                 {
                     Path = filepath,
-                    VideoName = lines[0],
-                    Video = lines[1],
-                    PrimaryCaption = lines[2],
-                    TranslatedCaption = lines[3],
+                    VideoName = lines[0].Trim(),
+                    Video = lines[1].Trim(),
+                    PrimaryCaption = lines[2].Trim(),
+                    TranslatedCaption = lines[3].Trim(),
                 };
 
                 return source;

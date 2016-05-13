@@ -7,7 +7,6 @@ using System.Windows.Input;
 using VoiceSubtitle.Model;
 using System.Linq;
 using static VoiceSubtitle.Helper.ConverterExtensions;
-using GalaSoft.MvvmLight.Messaging;
 using System.IO;
 using System.Diagnostics;
 using Microsoft.Win32;
@@ -24,7 +23,7 @@ namespace VoiceSubtitle.ViewModel
         public SourcePath CurrentSource { get; private set; }
 
         public ICommand Listen { get; }
-        public ICommand PlayVoice { get; }
+        public ICommand PlayCambridgeWord { get; }
         public ICommand SwitchSource { get; }
         public ICommand SearchBack { get; }
         public ICommand SearchNext { get; }
@@ -50,6 +49,9 @@ namespace VoiceSubtitle.ViewModel
 
             SaveCaptionFile = new ActionCommand((x) =>
             {
+                if (!IsShowViewer)
+                    return;
+
                 string type = x as string;
                 string newline = "\r\n";
                 string content = "";
@@ -85,6 +87,9 @@ namespace VoiceSubtitle.ViewModel
 
             SaveAsCaptionFile = new ActionCommand((x) =>
             {
+                if (!IsShowViewer)
+                    return;
+
                 string type = x as string;
                 string newline = "\r\n";
                 string content = "";
@@ -115,11 +120,17 @@ namespace VoiceSubtitle.ViewModel
 
             SearchBack = new ActionCommand((text) =>
             {
+                if (!IsShowViewer)
+                    return;
+
                 SearchPrimaryCaption(text as string, false);
             });
 
             OpenExternalPath = new ActionCommand((x) =>
             {
+                if (!IsShowViewer)
+                    return;
+
                 try
                 {
                     Process.Start(Path.GetDirectoryName(VideoPath));
@@ -135,14 +146,20 @@ namespace VoiceSubtitle.ViewModel
                 SearchPrimaryCaption(text as string);
             });
 
-            PlayVoice = new ActionCommand((link) =>
+            PlayCambridgeWord = new ActionCommand((link) =>
             {
+                if (!IsShowViewer)
+                    return;
+
                 string url = link as string;
-                this.videoViewModel.PlayVoice(url);
+                this.videoViewModel.PlayCambridge(url);
             });
 
             Listen = new ActionCommand(loop =>
             {
+                if (!IsShowViewer)
+                    return;
+
                 if (SelectedPrimaryCaption == null)
                     return;
 
@@ -298,7 +315,7 @@ namespace VoiceSubtitle.ViewModel
             set
             {
                 Set(ref isShowViewer, value);
-                Messenger.Default.Send(!value, "StopOrResumeVideoToken");
+                MessengerInstance.Send(value, "InteruptWindowToggleToken");
             }
         }
 

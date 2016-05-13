@@ -67,7 +67,7 @@ namespace VoiceSubtitle.Helper
                 if (dictData.TryGetValue(key, out value))
                     return value;
 
-                return string.Empty;
+                return null;
             }
             set
             {

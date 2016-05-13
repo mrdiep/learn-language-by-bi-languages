@@ -12,39 +12,58 @@ namespace VoiceSubtitle.ViewModel
 {
     public class RecordViewModel : ViewModelBase
     {
-        public ICommand RecordPressedCommand { get; }
-        public ICommand ListenAgain { get; }
-
+        private NotifyViewModel notifyViewModel;
+        private PlayerViewModel playerViewModel;
         private DispatcherTimer timer;
         private WasapiCapture capture;
         private string fileName;
+        private WaveFileWriter writer;
 
-        public RecordViewModel()
+        public ICommand RecordPressedCommand { get; }
+        public ICommand ListenAgain { get; }
+
+
+        public RecordViewModel(NotifyViewModel notifyViewModel, PlayerViewModel playerViewModel)
         {
+            this.notifyViewModel = notifyViewModel;
+            this.playerViewModel = playerViewModel;
+
             MessengerInstance.Register<bool>(this, "OnAppShutdownToken", OnAppShutdown);
             RecordPressedCommand = new ActionCommand(() =>
             {
-                if (!IsRecord && IsShowPanel)
+                try
                 {
-                    IsShowPanel = false;
-                    return;
+                    if (!playerViewModel.IsShowViewer)
+                        return;
+
+                    if (!IsRecord && IsShowPanel)
+                    {
+                        IsShowPanel = false;
+                        return;
+                    }
+
+                    IsShowPanel = true;
+
+                    if (IsRecord)
+                    {
+                        IsRecord = false;
+                        capture.StopRecording();
+
+                        return;
+                    }
+
+                    Record();
                 }
-
-                IsShowPanel = true;
-
-                if (IsRecord)
+                catch
                 {
-                    IsRecord = false;
-                    capture.StopRecording();
-
-                    return;
                 }
-
-                Record();
             });
 
             ListenAgain = new ActionCommand(() =>
             {
+                if (!playerViewModel.IsShowViewer)
+                    return;
+
                 WaveFileReader waveFileReader = null;
                 WaveOutEvent waveOut = null;
                 try
@@ -107,10 +126,14 @@ namespace VoiceSubtitle.ViewModel
             catch (Exception e)
             {
                 IsRecord = false;
+                writer?.Dispose();
+                writer = null;
+                capture?.Dispose();
+                capture = null;
+
+                notifyViewModel.ShowMessageBox("Can not record. Please check your cable.");
             }
         }
-
-        private WaveFileWriter writer;
 
         private void CaptureOnDataAvailable(object sender, WaveInEventArgs waveInEventArgs)
         {
@@ -155,7 +178,10 @@ namespace VoiceSubtitle.ViewModel
                 if (value)
                     timer.Start();
                 else
+                {
                     timer.Stop();
+                    BlinkRed = true;
+                }
             }
         }
 
