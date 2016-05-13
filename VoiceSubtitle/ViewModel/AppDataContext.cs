@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using VoiceSubtitle.Model;
 
 namespace VoiceSubtitle.ViewModel
@@ -11,12 +10,8 @@ namespace VoiceSubtitle.ViewModel
         public List<SourcePath> LoadCaptions()
         {
             var items = new List<SourcePath>();
-            string folder = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + @"\captions";
 
-            if (!Directory.Exists(folder))
-                Directory.CreateDirectory(folder);
-
-            string[] filePaths = Directory.GetFiles(folder, "*.cap");
+            string[] filePaths = Directory.GetFiles(FolderManager.FolderCaptionPath, "*.cap");
             foreach (var filepath in filePaths)
             {
                 SourcePath source = ParseSource(filepath);
@@ -40,6 +35,7 @@ namespace VoiceSubtitle.ViewModel
                     PrimaryCaption = lines[2],
                     TranslatedCaption = lines[3],
                 };
+
                 return source;
             }
             catch (Exception ex)

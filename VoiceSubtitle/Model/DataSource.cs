@@ -1,7 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
 using System.IO;
 using System;
-using System.Reflection;
 
 namespace VoiceSubtitle.Model
 {
@@ -16,7 +15,6 @@ namespace VoiceSubtitle.Model
             get { return videoName; }
             set { Set(ref videoName, value); }
         }
-
 
         private string video;
 
@@ -47,15 +45,14 @@ namespace VoiceSubtitle.Model
 
         public void Save()
         {
-            string content = $"{this.VideoName}\r\n{this.Video}\r\n{this.PrimaryCaption}\r\n{this.TranslatedCaption}";
-            if(!string.IsNullOrEmpty(Path) && File.Exists(Path))
+            string content = $"{VideoName}\r\n{Video}\r\n{PrimaryCaption}\r\n{TranslatedCaption}";
+            if (!string.IsNullOrEmpty(Path) && File.Exists(Path))
             {
                 File.WriteAllText(Path, content);
                 return;
             }
 
-            string folder = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + @"\captions";
-            string file = folder + $@"\{DateTime.Now.Ticks}.cap";
+            string file = FolderManager.FolderCaptionPath + $@"\{DateTime.Now.Ticks}.cap";
             File.WriteAllText(file, content);
             Path = file;
         }

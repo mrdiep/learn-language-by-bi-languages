@@ -12,7 +12,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Ionic.Zip;
 using static VoiceSubtitle.Helper.ConverterExtensions;
-using System.Reflection;
 using Microsoft.Practices.ServiceLocation;
 
 namespace VoiceSubtitle.ViewModel
@@ -198,11 +197,7 @@ namespace VoiceSubtitle.ViewModel
                 return null; ;
             }
 
-            string folder = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + @"\temp captions";
-            if (!Directory.Exists(folder))
-                Directory.CreateDirectory(folder);
-
-            string captionFile = folder + $@"\{info.Title}.srt";
+            string captionFile = $@"{FolderManager.FolderTempDownloadCaptionPath}\{info.Title}.srt";
             File.WriteAllText(captionFile, captionText);
             return captionFile;
         }

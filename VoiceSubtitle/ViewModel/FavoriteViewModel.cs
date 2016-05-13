@@ -23,6 +23,7 @@ namespace VoiceSubtitle.ViewModel
         private NotifyViewModel notifyViewModel;
         private DispatchService dispatchService;
 
+        readonly string connectionString = $@"Data Source={FolderManager.AssemblyPath}\favorites.db;Version=3;";
         public FavoriteViewModel(NotifyViewModel notifyViewModel, DispatchService dispatchService)
         {
             this.notifyViewModel = notifyViewModel;
@@ -108,7 +109,6 @@ namespace VoiceSubtitle.ViewModel
         private void FetchData()
         {
             var items = new List<FavoriteModel>();
-            string connectionString = $@"Data Source={Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\favorites.db;Version=3;";
             using (SQLiteConnection connection = new SQLiteConnection(connectionString))
             {
                 using (var command = connection.CreateCommand())
@@ -137,7 +137,6 @@ namespace VoiceSubtitle.ViewModel
 
         private void Add(FavoriteModel model)
         {
-            string connectionString = $@"Data Source={Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\favorites.db;Version=3;";
             using (SQLiteConnection connection = new SQLiteConnection(connectionString))
             {
                 using (var command = connection.CreateCommand())
@@ -156,7 +155,6 @@ namespace VoiceSubtitle.ViewModel
 
         private void Remove(FavoriteModel model)
         {
-            string connectionString = $@"Data Source={Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\favorites.db;Version=3;";
             using (SQLiteConnection connection = new SQLiteConnection(connectionString))
             {
                 using (var command = connection.CreateCommand())

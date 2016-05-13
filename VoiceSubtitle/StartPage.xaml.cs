@@ -14,6 +14,12 @@ namespace VoiceSubtitle
         {
             InitializeComponent();
             Closed += StartPage_Closed;
+            Closing += StartPage_Closing;
+        }
+
+        private void StartPage_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            Messenger.Default.Send(true, "OnAppShutdownToken");
         }
 
         private void StartPage_Closed(object sender, System.EventArgs e)

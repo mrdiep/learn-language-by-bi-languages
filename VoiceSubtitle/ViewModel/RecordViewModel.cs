@@ -4,8 +4,6 @@ using NAudio.Wave;
 using System;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
 using VoiceSubtitle.Model;
@@ -17,8 +15,13 @@ namespace VoiceSubtitle.ViewModel
         public ICommand RecordPressedCommand { get; }
         public ICommand ListenAgain { get; }
 
+        private DispatcherTimer timer;
+        private WasapiCapture capture;
+        private string fileName;
+
         public RecordViewModel()
         {
+            MessengerInstance.Register<bool>(this, "OnAppShutdownToken", OnAppShutdown);
             RecordPressedCommand = new ActionCommand(() =>
             {
                 if (!IsRecord && IsShowPanel)
@@ -26,37 +29,43 @@ namespace VoiceSubtitle.ViewModel
                     IsShowPanel = false;
                     return;
                 }
+
                 IsShowPanel = true;
+
                 if (IsRecord)
                 {
                     IsRecord = false;
                     capture.StopRecording();
+
                     return;
                 }
 
                 Record();
             });
 
-            var playVoiceMedia = new MediaElement();
-            playVoiceMedia.LoadedBehavior = MediaState.Manual;
-            playVoiceMedia.UnloadedBehavior = MediaState.Manual;
-
             ListenAgain = new ActionCommand(() =>
             {
+                WaveFileReader waveFileReader = null;
+                WaveOutEvent waveOut = null;
                 try
                 {
-                    var waveOut = new WaveOutEvent();
-                    var mp3Reader = new WaveFileReader(writer);
-                    waveOut.Init(mp3Reader);
-                    waveOut.Play();
-                    return;
-                }
-                catch (Exception ex)
-                {
-                }
+                    waveFileReader = new WaveFileReader(fileName);
+                    waveOut = new WaveOutEvent();
 
-                playVoiceMedia.Source = new Uri(fileName, UriKind.RelativeOrAbsolute);
-                playVoiceMedia.Play();
+                    waveOut.Init(waveFileReader);
+                    waveOut.Play();
+                    waveOut.PlaybackStopped += (s, e) =>
+                    {
+                        waveFileReader.Dispose();
+                        waveFileReader.Close();
+                    };
+                }
+                catch
+                {
+                    waveFileReader?.Dispose();
+                    waveFileReader?.Close();
+                    waveOut?.Dispose();
+                }
             });
 
             timer = new DispatcherTimer();
@@ -64,9 +73,14 @@ namespace VoiceSubtitle.ViewModel
             timer.Tick += (s, e) => BlinkRed = !BlinkRed;
         }
 
-        private DispatcherTimer timer;
-        private WasapiCapture capture;
-        private string fileName;
+        private void OnAppShutdown(bool obj)
+        {
+            var files = Directory.GetFiles(FolderManager.FolderRecordPath);
+            foreach (var file in files)
+            {
+                File.Delete(file);
+            }
+        }
 
         private void Record()
         {
@@ -81,13 +95,9 @@ namespace VoiceSubtitle.ViewModel
                 capture.ShareMode = AudioClientShareMode.Shared;
                 capture.WaveFormat = WaveFormat.CreateIeeeFloatWaveFormat(48000, 2);
 
-                string folderRecordPath = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + $@"\records";
-                if (!Directory.Exists(folderRecordPath))
-                {
-                    Directory.CreateDirectory(folderRecordPath);
-                }
                 IsRecord = true;
-                fileName = folderRecordPath + $@"\{Guid.NewGuid().ToString("N").ToLower()}.wmv";
+                fileName = FolderManager.FolderRecordPath + $@"\{Guid.NewGuid().ToString("N").ToLower()}.wmv";
+
                 writer = new WaveFileWriter(fileName, capture.WaveFormat);
 
                 capture.StartRecording();
@@ -109,14 +119,11 @@ namespace VoiceSubtitle.ViewModel
 
         private void OnRecordingStopped(object sender, StoppedEventArgs e)
         {
-            if (!IsRecord)
-                return;
-
             IsRecord = false;
-            //writer.Dispose();
-            //writer = null;
-            //capture.Dispose();
-            //capture = null;
+            writer?.Dispose();
+            writer = null;
+            capture?.Dispose();
+            capture = null;
         }
 
         private bool isShowPanel;

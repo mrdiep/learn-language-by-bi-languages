@@ -50,7 +50,7 @@ namespace VoiceSubtitle.ViewModel
         private void FetchData()
         {
             DateTime time = DateTime.Now;
-            string connectionString = $@"Data Source={Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\Dict\dict.db;Version=3;";
+            string connectionString = $@"Data Source={FolderManager.FolderDictionaryPath}\dict.db;Version=3;";
             using (SQLiteConnection connection = new SQLiteConnection(connectionString))
             {
                 using (var command = connection.CreateCommand())

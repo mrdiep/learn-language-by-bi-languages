@@ -177,6 +177,7 @@
     <Compile Include="Model\DataSource.cs" />
     <Compile Include="Model\DbContext.cs" />
     <Compile Include="Model\FavoriteModel.cs" />
+    <Compile Include="Model\FolderManager.cs" />
     <Compile Include="Model\PartialCaption.cs" />
     <Compile Include="Model\SubtitleOnline.cs" />
     <Compile Include="Model\WordPronunciation.cs" />

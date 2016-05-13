@@ -1,9 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
 using System;
-using System.Collections.ObjectModel;
-using System.IO;
-using System.Reflection;
 using VoiceSubtitle.Helper;
+using VoiceSubtitle.Model;
 
 namespace VoiceSubtitle.ViewModel
 {
@@ -14,7 +12,7 @@ namespace VoiceSubtitle.ViewModel
 
         public SettingViewModel()
         {
-            FileSetting = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + @"\settings.ini";
+            FileSetting = FolderManager.AssemblyPath + @"\settings.ini";
             Load();
 
             MessengerInstance.Register<bool>(this, "CloseAllFlyoutToken", (x) => IsShowPanel = false);
@@ -54,7 +52,7 @@ namespace VoiceSubtitle.ViewModel
             }
         }
 
-        public string[] DownloadCaptionLanguage { get; set; } = { "Vietnamese","English" };
+        public string[] DownloadCaptionLanguage { get; set; } = { "Vietnamese", "English" };
 
         private bool playAfterEndingLoop;
 

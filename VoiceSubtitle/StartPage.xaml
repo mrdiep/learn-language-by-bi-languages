@@ -22,16 +22,15 @@
                       Icon="pig.png">
 
     <Controls:MetroWindow.InputBindings>
-        <KeyBinding Key="P"
+
+        <KeyBinding Key="F5"
                     Command="{Binding VideoViewModel.TogglePlayVideo, Source={StaticResource Locator}}" />
 
-        <KeyBinding Key="R"
+        <KeyBinding Key="F6"
                     Command="{Binding RecordViewModel.RecordPressedCommand, Source={StaticResource Locator}}" />
-        <KeyBinding Key="T"
-                    Command="{Binding RecordViewModel.ListenAgain, Source={StaticResource Locator}}" />
 
-        <KeyBinding Key="Space"
-                    Command="{Binding VideoViewModel.TogglePlayVideo, Source={StaticResource Locator}}" />
+        <KeyBinding Key="F7"
+                    Command="{Binding RecordViewModel.ListenAgain, Source={StaticResource Locator}}" />
 
         <KeyBinding Key="F1"
                     Command="{Binding PlayerViewModel.Listen, Source={StaticResource Locator}}"
@@ -45,24 +44,6 @@
         <KeyBinding Key="F4"
                     Command="{Binding PlayerViewModel.Listen, Source={StaticResource Locator}}"
                     CommandParameter="4" />
-        <KeyBinding Key="F5"
-                    Command="{Binding PlayerViewModel.Listen, Source={StaticResource Locator}}"
-                    CommandParameter="5" />
-        <KeyBinding Key="F6"
-                    Command="{Binding PlayerViewModel.Listen, Source={StaticResource Locator}}"
-                    CommandParameter="6" />
-        <KeyBinding Key="F7"
-                    Command="{Binding PlayerViewModel.Listen, Source={StaticResource Locator}}"
-                    CommandParameter="7" />
-        <KeyBinding Key="F8"
-                    Command="{Binding PlayerViewModel.Listen, Source={StaticResource Locator}}"
-                    CommandParameter="8" />
-        <KeyBinding Key="F9"
-                    Command="{Binding PlayerViewModel.Listen, Source={StaticResource Locator}}"
-                    CommandParameter="9" />
-        <KeyBinding Key="F10"
-                    Command="{Binding PlayerViewModel.Listen, Source={StaticResource Locator}}"
-                    CommandParameter="10" />
 
         <KeyBinding Key="Esc"
                     Command="{Binding PlayerViewModel.CancelLoopVideo, Source={StaticResource Locator}}" />
@@ -251,7 +232,8 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition />
                     </Grid.RowDefinitions>
-                    <Grid Grid.Row="0" Margin="5">
+                    <Grid Grid.Row="0"
+                          Margin="5">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
                             <ColumnDefinition Width="Auto" />
@@ -395,21 +377,41 @@
                                                IsChecked="{Binding DisplayCaptionWhilePlaying}"
                                                OnLabel="Yes"
                                                OffLabel="No" />
+
+                        <Grid Grid.Row="1">
+                            <StackPanel Margin="20,5,20,0">
+                                <TextBlock Text="Developer"
+                                           Foreground="#FFEEEEEE"
+                                           FontWeight="Bold" />
+                                <TextBlock Text="mr.vdiep@gmail.com"
+                                           Margin="20,0,0,0"
+                                           Foreground="#FFE2E2E2" />
+
+                                <TextBlock Text="Software version: Beta 1.0.1"
+                                           Foreground="#FFE2E2E2" />
+                            </StackPanel>
+                        </Grid>
+
+                        <Grid Grid.Row="1">
+                            <StackPanel Margin="20,35,20,0">
+                                <TextBlock Text="KEYBOARD MAPPING"
+                                           Foreground="#FFEEEEEE"
+                                           FontWeight="Bold" />
+
+                                <TextBlock Text="F1->F4: Loop video 1-5"
+                                           Foreground="#FFE2E2E2" />
+
+                                <TextBlock Text="F5: Pause/Play Video"
+                                           Foreground="#FFE2E2E2" />
+
+                                <TextBlock Text="F6: Toggle Record Voice"
+                                           Foreground="#FFE2E2E2" />
+
+                                <TextBlock Text="F7: Listen voice again"
+                                           Foreground="#FFE2E2E2" />
+                            </StackPanel>
+                        </Grid>
                     </StackPanel>
-
-                    <Grid Grid.Row="1">
-                        <StackPanel Margin="20,5,20,0">
-                            <TextBlock Text="Developer"
-                                       Foreground="#FFEEEEEE"
-                                       FontWeight="Bold" />
-                            <TextBlock Text="mr.vdiep@gmail.com"
-                                       Margin="20,0,0,0"
-                                       Foreground="#FFE2E2E2" />
-
-                            <TextBlock Text="Software version: Beta 1.0.1"
-                                       Foreground="#FFE2E2E2" />
-                        </StackPanel>
-                    </Grid>
                 </Grid>
             </Controls:Flyout>
         </Controls:FlyoutsControl>
