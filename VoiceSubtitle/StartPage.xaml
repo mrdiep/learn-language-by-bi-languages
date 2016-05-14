@@ -32,6 +32,9 @@
         <KeyBinding Key="F7"
                     Command="{Binding RecordViewModel.ListenAgain, Source={StaticResource Locator}}" />
 
+        <KeyBinding Key="F8"
+                    Command="{Binding PlayerViewModel.ToggleSync, Source={StaticResource Locator}}" />
+
         <KeyBinding Key="F1"
                     Command="{Binding PlayerViewModel.Listen, Source={StaticResource Locator}}"
                     CommandParameter="1" />
@@ -383,47 +386,49 @@
                                                IsChecked="{Binding DisplayCaptionWhilePlaying}"
                                                OnLabel="Yes"
                                                OffLabel="No" />
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="PAUSE EACH LOOP"
+                                       Foreground="#FFEEEEEE"
+                                       FontWeight="Bold"
+                                       VerticalAlignment="Center" />
+                            <Controls:NumericUpDown x:Name="syncSubPrimaryText"
+                                                    Value="{Binding PauseEachLoop}"
+                                                    Controls:TextBoxHelper.Watermark="SYNC SUB..."
+                                                    HorizontalAlignment="Right" />
+                        </StackPanel>
 
-                        <Grid Grid.Row="1">
-                            <StackPanel Margin="20,5,20,0">
-                                <TextBlock Text="Developer"
-                                           Foreground="#FFEEEEEE"
-                                           FontWeight="Bold" />
-                                <TextBlock Text="mr.vdiep@gmail.com"
-                                           Margin="20,0,0,0"
-                                           Foreground="#FFE2E2E2" />
 
-                                <TextBlock Text="Software version: Beta 1.0.1"
-                                           Foreground="#FFE2E2E2" />
-                            </StackPanel>
-                        </Grid>
 
-                        <TextBlock Text="PAUSE EACH LOOP"
-                                   Foreground="#FFEEEEEE"
-                                   FontWeight="Bold" />
-                        <Controls:NumericUpDown x:Name="syncSubPrimaryText"
-                                                Value="{Binding PauseEachLoop}"
-                                                Controls:TextBoxHelper.Watermark="SYNC SUB..." />
 
-                        <Grid Grid.Row="1">
-                            <StackPanel Margin="20,35,20,0">
-                                <TextBlock Text="KEYBOARD MAPPING"
-                                           Foreground="#FFEEEEEE"
-                                           FontWeight="Bold" />
+                        <StackPanel Margin="0,35,0,0">
+                            <TextBlock Text="KEYBOARD MAPPING"
+                                       Foreground="#FFEEEEEE"
+                                       FontWeight="Bold" />
 
-                                <TextBlock Text="F1->F4: Loop video 1-5"
-                                           Foreground="#FFE2E2E2" />
+                            <TextBlock Text="F1->F4: Loop video 1-5"
+                                       Foreground="#FFE2E2E2" />
 
-                                <TextBlock Text="F5: Pause/Play Video"
-                                           Foreground="#FFE2E2E2" />
+                            <TextBlock Text="F5: Pause/Play Video"
+                                       Foreground="#FFE2E2E2" />
 
-                                <TextBlock Text="F6: Toggle Record Voice"
-                                           Foreground="#FFE2E2E2" />
+                            <TextBlock Text="F6: Toggle Record Voice"
+                                       Foreground="#FFE2E2E2" />
 
-                                <TextBlock Text="F7: Listen voice again"
-                                           Foreground="#FFE2E2E2" />
-                            </StackPanel>
-                        </Grid>
+                            <TextBlock Text="F7: Listen voice again"
+                                       Foreground="#FFE2E2E2" />
+                            <TextBlock Text="F8: Toggle Sync"
+                                       Foreground="#FFE2E2E2" />
+                        </StackPanel>
+
+
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="DEVELOPER"
+                                       Foreground="#FFEEEEEE"
+                                       FontWeight="Bold" />
+                            <TextBlock Text="mr.vdiep@gmail.com"
+                                       Margin="20,0,0,0"
+                                       Foreground="#FFE2E2E2" />
+                        </StackPanel>
                     </StackPanel>
                 </Grid>
             </Controls:Flyout>
@@ -585,7 +590,6 @@
                 </Grid>
             </Grid>
         </Border>
-        <local:CaptionViewer 
-            Visibility="{Binding PlayerViewModel.IsShowViewer,Converter={StaticResource BoolToVisibleConverter},Source={StaticResource Locator}}" />
+        <local:CaptionViewer Visibility="{Binding PlayerViewModel.IsShowViewer,Converter={StaticResource BoolToVisibleConverter},Source={StaticResource Locator}}" />
     </Grid>
 </Controls:MetroWindow>

@@ -22,6 +22,7 @@ namespace VoiceSubtitle.ViewModel
 
         public SourcePath CurrentSource { get; private set; }
 
+        public ICommand ToggleSync { get; }
         public ICommand Listen { get; }
         public ICommand PlayCambridgeWord { get; }
         public ICommand SwitchSource { get; }
@@ -46,44 +47,47 @@ namespace VoiceSubtitle.ViewModel
 
             PrimaryCaption = new ObservableCollection<PartialCaption>();
             TranslateCaption = new ObservableCollection<PartialCaption>();
-
-            SaveCaptionFile = new ActionCommand((x) =>
+            ToggleSync = new ActionCommand(() =>
             {
-                if (!IsShowViewer)
-                    return;
-
-                string type = x as string;
-                string newline = "\r\n";
-                string content = "";
-                if (type == "PrimaryCaption")
-                {
-                    content = string.Join("", PrimaryCaption.Select(c => $@"{c.Index}{newline}{c.From.ToString(@"hh\:mm\:ss\,fff")} --> {c.To.ToString(@"hh\:mm\:ss\,fff")}{newline}{c.Text}{newline}{newline}"));
-                    try
-                    {
-                        File.WriteAllText(CurrentSource.PrimaryCaption, content);
-                    }
-                    catch
-                    {
-                        notifyViewModel.ShowMessageBox("Can not save.");
-                    }
-                }
-                else if (type == "TranslateCaption")
-                {
-                    content = string.Join("", TranslateCaption.Select(c => $@"{c.Index}{newline}{c.From.ToString(@"hh\:mm\:ss\,fff")} --> {c.To.ToString(@"hh\:mm\:ss\,fff")}{newline}{c.Text}{newline}{newline}"));
-                    try
-                    {
-                        File.WriteAllText(CurrentSource.TranslatedCaption, content);
-                    }
-                    catch
-                    {
-                        notifyViewModel.ShowMessageBox("Can not save.");
-                    }
-                }
-                else
-                {
-                    return;
-                }
+                IsOpenSync = !IsOpenSync;
             });
+            SaveCaptionFile = new ActionCommand((x) =>
+             {
+                 if (!IsShowViewer)
+                     return;
+
+                 string type = x as string;
+                 string newline = "\r\n";
+                 string content = "";
+                 if (type == "PrimaryCaption")
+                 {
+                     content = string.Join("", PrimaryCaption.Select(c => $@"{c.Index}{newline}{c.From.ToString(@"hh\:mm\:ss\,fff")} --> {c.To.ToString(@"hh\:mm\:ss\,fff")}{newline}{c.Text}{newline}{newline}"));
+                     try
+                     {
+                         File.WriteAllText(CurrentSource.PrimaryCaption, content);
+                     }
+                     catch
+                     {
+                         notifyViewModel.ShowMessageBox("Can not save.");
+                     }
+                 }
+                 else if (type == "TranslateCaption")
+                 {
+                     content = string.Join("", TranslateCaption.Select(c => $@"{c.Index}{newline}{c.From.ToString(@"hh\:mm\:ss\,fff")} --> {c.To.ToString(@"hh\:mm\:ss\,fff")}{newline}{c.Text}{newline}{newline}"));
+                     try
+                     {
+                         File.WriteAllText(CurrentSource.TranslatedCaption, content);
+                     }
+                     catch
+                     {
+                         notifyViewModel.ShowMessageBox("Can not save.");
+                     }
+                 }
+                 else
+                 {
+                     return;
+                 }
+             });
 
             SaveAsCaptionFile = new ActionCommand((x) =>
             {
@@ -316,6 +320,17 @@ namespace VoiceSubtitle.ViewModel
             {
                 Set(ref isShowViewer, value);
                 MessengerInstance.Send(value, "InteruptWindowToggleToken");
+            }
+        }
+
+        private bool isOpenSync;
+
+        public bool IsOpenSync
+        {
+            get { return isOpenSync; }
+            set
+            {
+                Set(ref isOpenSync, value);
             }
         }
 
