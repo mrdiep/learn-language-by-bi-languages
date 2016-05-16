@@ -21,11 +21,11 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition />
-            <RowDefinition Height="35"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <TextBlock Text="{Binding ElementName=metroWindow,Path=Text}" FontSize="13" Foreground="Brown" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         <Grid Grid.Row="1">
-            <Button Content="OK" Width="120" Margin="4" Click="Button_Click"/>
+            <Button Content="OK" Width="120" Margin="0,0,0,20" Click="Button_Click"/>
         </Grid>
     </Grid>
 </Controls:MetroWindow>

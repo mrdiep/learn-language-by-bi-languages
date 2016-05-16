@@ -32,40 +32,56 @@
               Background="#55808080">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-
+            
             <Button Width="45"
                     Height="45"
-                    Visibility="{Binding IsPlaying,Converter={StaticResource BoolToCollapsedConverter}}"
-                    Command="{Binding PlayVideoCommand}"
+                    Command="{Binding Path=PlayerViewModel.GoToNearPosition, Source={StaticResource Locator}}"
+                    CommandParameter="{Binding TimePosition}"
                     Style="{DynamicResource MetroCircleButtonStyle}">
                 <TextBlock FontFamily="Segoe UI Symbol"
-                           Text="&#xE102;"
+                           Text="&#xE148;"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center"
-                           FontSize="25"
+                           FontSize="20"
                            Foreground="#FFF1F1F1" />
             </Button>
-            <Button Width="45"
-                    Height="45"
-                    Visibility="{Binding IsPlaying,Converter={StaticResource BoolToVisibleConverter}}"
-                    Command="{Binding PauseVideoCommand}"
-                    Style="{DynamicResource MetroCircleButtonStyle}">
-                <TextBlock FontFamily="Segoe UI Symbol"
-                           Text="&#xE103;"
-                           HorizontalAlignment="Left"
-                           VerticalAlignment="Center"
-                           FontSize="25"
-                           Foreground="#FFF1F1F1" />
-            </Button>
-            <Grid Grid.Column="1"
+            
+            <Grid Grid.Column="1">
+                <Button Width="45"
+                        Height="45"
+                        Visibility="{Binding IsPlaying,Converter={StaticResource BoolToCollapsedConverter}}"
+                        Command="{Binding PlayVideoCommand}"
+                        Style="{DynamicResource MetroCircleButtonStyle}">
+                    <TextBlock FontFamily="Segoe UI Symbol"
+                               Text="&#xE102;"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               FontSize="25"
+                               Foreground="#FFF1F1F1" />
+                </Button>
+                <Button Width="45"
+                        Height="45"
+                        Visibility="{Binding IsPlaying,Converter={StaticResource BoolToVisibleConverter}}"
+                        Command="{Binding PauseVideoCommand}"
+                        Style="{DynamicResource MetroCircleButtonStyle}">
+                    <TextBlock FontFamily="Segoe UI Symbol"
+                               Text="&#xE103;"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Center"
+                               FontSize="25"
+                               Foreground="#FFF1F1F1" />
+                </Button>
+            </Grid>
+
+            <Grid Grid.Column="2"
                   Height="10"
                   VerticalAlignment="Center"
                   Background="#FF535353"
-                  x:Name="staticSlider"
-                  >
+                  x:Name="staticSlider">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition x:Name="position"
                                       Width="1*" />
@@ -81,20 +97,18 @@
                       Background="#FF10B5F3">
                 </Grid>
             </Grid>
-            <Slider
-            x:Name="realSlider"
+            <Slider x:Name="realSlider"
                     Visibility="Collapsed"
-                    Grid.Column="1"
+                    Grid.Column="2"
                     Height="Auto"
                     Orientation="Horizontal"
                     Minimum="0"
                     VerticalAlignment="Center"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Stretch" />
-
             <StackPanel Orientation="Horizontal"
                         VerticalAlignment="Center"
-                        Grid.Column="2">
+                        Grid.Column="3">
                 <TextBlock HorizontalAlignment="Center"
                            VerticalAlignment="Center"
                            FontWeight="Bold"
