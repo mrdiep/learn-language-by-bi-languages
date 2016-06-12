@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using Vlc.DotNet.Forms;
 using VoiceSubtitle.ViewModel;
 using System.Linq;
+using System.Drawing.Text;
 
 namespace VoiceSubtitle
 {
@@ -31,7 +32,9 @@ namespace VoiceSubtitle
             playerViewModel = ServiceLocator.Current.GetInstance<PlayerViewModel>();
             settingViewModel = ServiceLocator.Current.GetInstance<SettingViewModel>();
             notifyViewModel = ServiceLocator.Current.GetInstance<NotifyViewModel>();
-
+            if (!IsFontInstalled("Segoe UI Symbol")) {
+                MessageBox.Show("Please install font 'Segoe UI Symbol'");
+            }
             try
             {
                 myControl.MediaPlayer.VlcLibDirectoryNeeded += OnVlcControlNeedsLibDirectory;
@@ -43,7 +46,7 @@ namespace VoiceSubtitle
                 MediaPlayer.Paused += (x, s) => { videoViewModel.IsPlaying = false; };
                 MediaPlayer.Stopped += MediaPlayer_Stopped;
                 MediaPlayer.LengthChanged += MediaPlayer_LengthChanged;
-
+                
                 MediaPlayer.TimeChanged += MediaPlayer_TimeChanged;
                 realSlider.ValueChanged += RealSlider_ValueChanged;
               
@@ -125,6 +128,15 @@ namespace VoiceSubtitle
             }
         }
 
+        private static bool IsFontInstalled(string name)
+        {
+            using (InstalledFontCollection fontsCollection = new InstalledFontCollection())
+            {
+                return fontsCollection.Families
+                    .Any(x => x.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase));
+            }
+        }
+
         private void MediaPlayer_Stopped(object sender, Vlc.DotNet.Core.VlcMediaPlayerStoppedEventArgs e)
         {
         }
@@ -145,6 +157,7 @@ namespace VoiceSubtitle
 
         private void MediaPlayer_TimeChanged(object sender, Vlc.DotNet.Core.VlcMediaPlayerTimeChangedEventArgs e)
         {
+            //var ee = MediaPlayer.SubTitles.Current;
             currentPosition = e.NewTime;
 
             if (settingViewModel.DisplayCaptionWhilePlaying)

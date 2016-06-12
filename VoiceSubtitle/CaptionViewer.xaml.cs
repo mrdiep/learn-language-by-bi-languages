@@ -20,6 +20,7 @@ namespace VoiceSubtitle
         private void ScrollToSelected(object sender, SelectionChangedEventArgs e)
         {
             ListBox listBox = sender as ListBox;
+            
             if (listBox.SelectedItem != null)
             {
                 listBox.UpdateLayout();
@@ -72,12 +73,12 @@ namespace VoiceSubtitle
         private void VideoPathDrop(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
-            {
+            {                
                 string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
                 string file = files[0];
                 string ext = Path.GetExtension(file);
 
-                if (VideoViewModel.VideoExtenstionSupported.Contains(ext))
+                if (VideoViewModel.VideoExtenstionSupported.Contains(ext.ToLower()))
                 {
                     ServiceLocator.Current.GetInstance<PlayerViewModel>().UpdateVideoPath(file);
                 }

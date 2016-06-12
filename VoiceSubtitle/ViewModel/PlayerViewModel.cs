@@ -35,6 +35,7 @@ namespace VoiceSubtitle.ViewModel
         public ICommand SaveAsCaptionFile { get; }
 
         public ICommand GoToNearPosition { get; }
+        public ICommand OpenVLC { get; }
 
         public PlayerViewModel(DispatchService dispatchService,
             CambridgeDictionaryViewModel cambridgeDictionaryViewModel,
@@ -50,11 +51,27 @@ namespace VoiceSubtitle.ViewModel
             PrimaryCaption = new ObservableCollection<PartialCaption>();
             TranslateCaption = new ObservableCollection<PartialCaption>();
 
-            GoToNearPosition = new ActionCommand((x)=> {
-                TimeSpan time = (TimeSpan)x;
-                var caption = PrimaryCaption.OrderBy(t => Math.Abs( (time - t.From).TotalMilliseconds)).FirstOrDefault();
-                SelectedPrimaryCaption = caption;
+            OpenVLC = new ActionCommand(() =>
+            {
+                string pathVlc = $@"{Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86)}\VideoLAN\VLC\vlc.exe";
+                if (File.Exists(pathVlc))
+                {
+                    Process.Start(pathVlc, $"'{VideoPath}' --sub-file='{CurrentSource.PrimaryCaption}'");
+                    return;
+                }
 
+                pathVlc = $@"{Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles)}\VideoLAN\VLC\vlc.exe";
+                if (File.Exists(pathVlc))
+                {
+                   // Process.Start(pathVlc, $"{VideoPath} --sub-file={CurrentSource.PrimaryCaption}");
+                    return;
+                }
+            });
+            GoToNearPosition = new ActionCommand((x) =>
+            {
+                TimeSpan time = (TimeSpan)x;
+                var caption = PrimaryCaption.OrderBy(t => Math.Abs((time - t.From).TotalMilliseconds)).FirstOrDefault();
+                SelectedPrimaryCaption = caption;
             });
 
             ToggleSync = new ActionCommand(() =>

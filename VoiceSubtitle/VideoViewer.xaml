@@ -35,6 +35,7 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             
             <Button Width="45"
@@ -130,6 +131,18 @@
                            Foreground="#FFECECEC"
                            FontSize="10" />
             </StackPanel>
+            <!--<Button Width="45"
+                    Height="45"
+                    Grid.Column="4"
+                    Command="{Binding Path=PlayerViewModel.OpenVLC, Source={StaticResource Locator}}"
+                    Style="{DynamicResource MetroCircleButtonStyle}">
+                <TextBlock FontFamily="Segoe UI"
+                           Text="VLC"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           FontSize="9"
+                           Foreground="#FFF1F1F1" />
+            </Button>-->
         </Grid>
     </Grid>
 </UserControl>

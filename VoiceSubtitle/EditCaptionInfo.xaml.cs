@@ -59,7 +59,7 @@ namespace VoiceSubtitle
                 string file = files[0];
                 string ext = Path.GetExtension(file);
 
-                if (VideoViewModel.VideoExtenstionSupported.Contains(ext))
+                if (VideoViewModel.VideoExtenstionSupported.Contains(ext.ToLower()))
                 {
                     VideoPath = file;
                     if(string.IsNullOrEmpty(VideoName))
@@ -67,20 +67,15 @@ namespace VoiceSubtitle
                         VideoName = Path.GetFileNameWithoutExtension(file);
                     }
                 }
-                else if (name == "englishsub" && ext == ".srt")
+                else if (name == "englishsub" && ext.ToLower() == ".srt")
                 {
                     SubEngPath = file;
                 }
-                else if (name == "othersub" && ext == ".srt")
+                else if (name == "othersub" && ext.ToLower() == ".srt")
                 {
                     SubOtherPath = file;
                 }
             }
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-
         }
     }
 }

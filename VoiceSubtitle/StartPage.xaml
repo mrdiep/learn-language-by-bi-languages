@@ -390,6 +390,7 @@
                             <TextBlock Text="PAUSE EACH LOOP"
                                        Foreground="#FFEEEEEE"
                                        FontWeight="Bold"
+                                       Margin="10,0,20,0"
                                        VerticalAlignment="Center" />
                             <Controls:NumericUpDown x:Name="syncSubPrimaryText"
                                                     Value="{Binding PauseEachLoop}"

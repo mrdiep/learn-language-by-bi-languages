@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight;
+using Microsoft.Practices.ServiceLocation;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -46,14 +47,29 @@ namespace VoiceSubtitle.ViewModel
                 videoLoopTokenSource?.Cancel();
             });
             StopVideoCommand = new ActionCommand(() => MessengerInstance.Send(true, "StopVideoToken"));
-            PlayVideoCommand = new ActionCommand(() => MessengerInstance.Send(true, "PlayVideoToken"));
+            PlayVideoCommand = new ActionCommand(() =>
+            {
+                MessengerInstance.Send(true, "PlayVideoToken");
+                ShowVideo();
+            });
             TogglePlayVideo = new ActionCommand(() =>
             {
                 MessengerInstance.Send(true, "ToggleVideoToken");
                 videoLoopTokenSource?.Cancel();
+                ShowVideo();
             });
 
             MessengerInstance.Register<bool>(this, "CancelLoopVideoToken", (x) => videoLoopTokenSource?.Cancel());
+        }
+
+        private static void ShowVideo()
+        {
+            ServiceLocator.Current.GetInstance<CambridgeDictionaryViewModel>().IsShowPanel = false;
+            ServiceLocator.Current.GetInstance<FavoriteViewModel>().IsShowPanel = false;
+            ServiceLocator.Current.GetInstance<MainViewModel>().IsShowProjectPanel = false;
+            ServiceLocator.Current.GetInstance<SettingViewModel>().IsShowPanel = false;
+            ServiceLocator.Current.GetInstance<SubtitleDownloaderViewModel>().IsShowPanel = false;
+            ServiceLocator.Current.GetInstance<VideoViewModel>().IsShowVideo = true;
         }
 
         public bool isShowVideo = true;
