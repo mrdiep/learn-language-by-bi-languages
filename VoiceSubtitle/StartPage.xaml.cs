@@ -29,7 +29,7 @@ namespace VoiceSubtitle
 
         private void StartSub(object sender, RoutedEventArgs e)
         {
-            Button button = sender as Button;
+            var button = sender as Button;
 
             if (string.IsNullOrWhiteSpace(newCaption.VideoName))
             {
@@ -67,7 +67,7 @@ namespace VoiceSubtitle
 
         private void SettingFlyout_IsOpenChanged(object sender, RoutedEventArgs e)
         {
-            bool allIsClose = !ProjectFlyout.IsOpen && !SettingFlyout.IsOpen && !CaptionSeacherFlyout.IsOpen && !FavoriteFlyout.IsOpen && !CambridgeFlyout.IsOpen;            
+            var allIsClose = !ProjectFlyout.IsOpen && !SettingFlyout.IsOpen && !CaptionSeacherFlyout.IsOpen && !FavoriteFlyout.IsOpen && !CambridgeFlyout.IsOpen;            
             Messenger.Default.Send(allIsClose, "InteruptWindowToggleToken");
         }
     }

@@ -11,7 +11,7 @@ namespace VoiceSubtitle.Converter
         {
             if (value is int)
             {
-                int v = (int)value;
+                var v = (int)value;
                 if (v > 0)
                     return Visibility.Collapsed;
                 else

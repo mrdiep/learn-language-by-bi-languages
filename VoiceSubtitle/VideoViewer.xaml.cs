@@ -51,7 +51,7 @@ namespace VoiceSubtitle
                 realSlider.ValueChanged += RealSlider_ValueChanged;
               
 
-                Messenger.Default.Register<bool>(this, "InteruptWindowToggleToken", (isOpen) =>
+                Messenger.Default.Register<bool>(this, "InteruptWindowToggleToken", isOpen =>
                 {
                     if (!isOpen)
                     {
@@ -71,14 +71,14 @@ namespace VoiceSubtitle
                     }
                 });
 
-                Messenger.Default.Register<string>(this, "SetSourceVideoToken", (videoPath) =>
+                Messenger.Default.Register<string>(this, "SetSourceVideoToken", videoPath =>
                 {
 
                     MediaPlayer.SetMedia(new Uri(videoPath, UriKind.RelativeOrAbsolute));
                     MediaPlayer.Play();
                 });
 
-                Messenger.Default.Register<long>(this, "PlayToPositionVideoToken", (x) =>
+                Messenger.Default.Register<long>(this, "PlayToPositionVideoToken", x =>
                 {
                     if (!playerViewModel.IsShowViewer)
                         return;
@@ -86,7 +86,7 @@ namespace VoiceSubtitle
                     MediaPlayer.Time = x;
                     MediaPlayer.Play();
                 });
-                Messenger.Default.Register<bool>(this, "PlayVideoToken", (x) =>
+                Messenger.Default.Register<bool>(this, "PlayVideoToken", x =>
                 {
                     if (!playerViewModel.IsShowViewer)
                         return;
@@ -94,7 +94,7 @@ namespace VoiceSubtitle
                     if (!MediaPlayer.IsPlaying)
                         MediaPlayer.Play();
                 });
-                Messenger.Default.Register<bool>(this, "ToggleVideoToken", (x) =>
+                Messenger.Default.Register<bool>(this, "ToggleVideoToken", x =>
                 {
                     if (!playerViewModel.IsShowViewer)
                         return;
@@ -105,7 +105,7 @@ namespace VoiceSubtitle
                         MediaPlayer.Play();
                 });
 
-                Messenger.Default.Register<bool>(this, "PauseVideoToken", (x) =>
+                Messenger.Default.Register<bool>(this, "PauseVideoToken", x =>
                 {
                     if (!playerViewModel.IsShowViewer)
                         return;
@@ -114,7 +114,7 @@ namespace VoiceSubtitle
                         MediaPlayer.Pause();
                 });
 
-                Messenger.Default.Register<bool>(this, "StopVideoToken", (x) =>
+                Messenger.Default.Register<bool>(this, "StopVideoToken", x =>
                 {
                     if (!playerViewModel.IsShowViewer)
                         return;
@@ -130,7 +130,7 @@ namespace VoiceSubtitle
 
         private static bool IsFontInstalled(string name)
         {
-            using (InstalledFontCollection fontsCollection = new InstalledFontCollection())
+            using (var fontsCollection = new InstalledFontCollection())
             {
                 return fontsCollection.Families
                     .Any(x => x.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase));
@@ -151,7 +151,7 @@ namespace VoiceSubtitle
         {
             totalVideoLength = MediaPlayer.Length;
 
-            TimeSpan totalTime = TimeSpan.FromMilliseconds(MediaPlayer.Length);
+            var totalTime = TimeSpan.FromMilliseconds(MediaPlayer.Length);
             videoViewModel.VideoDuration = totalTime;
         }
 
@@ -162,7 +162,7 @@ namespace VoiceSubtitle
 
             if (settingViewModel.DisplayCaptionWhilePlaying)
             {
-                TimeSpan currentTime = TimeSpan.FromMilliseconds(e.NewTime);
+                var currentTime = TimeSpan.FromMilliseconds(e.NewTime);
                 var currentVideoCaption = playerViewModel.PrimaryCaption.Where(x => x.From <= currentTime && currentTime <= x.To).FirstOrDefault();
                 if (currentVideoCaption != playerViewModel.SelectedPrimaryCaption)
                     playerViewModel.SelectedPrimaryCaption = currentVideoCaption;

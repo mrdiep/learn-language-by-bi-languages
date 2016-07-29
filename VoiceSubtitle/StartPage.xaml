@@ -398,8 +398,15 @@
                                                     HorizontalAlignment="Right" />
                         </StackPanel>
 
-
-
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Zoom UI"
+                                       Foreground="#FFEEEEEE"
+                                       FontWeight="Bold"
+                                       Margin="10,0,20,0"
+                                       VerticalAlignment="Center" />
+                            <Controls:NumericUpDown Value="{Binding PrimaryCaptionZoom}"
+                                                    HorizontalAlignment="Right" />
+                        </StackPanel>
 
                         <StackPanel Margin="0,35,0,0">
                             <TextBlock Text="KEYBOARD MAPPING"
@@ -420,7 +427,6 @@
                             <TextBlock Text="F8: Toggle Sync"
                                        Foreground="#FFE2E2E2" />
                         </StackPanel>
-
 
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="DEVELOPER"

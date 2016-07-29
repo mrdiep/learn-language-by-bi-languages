@@ -12,12 +12,12 @@ namespace VoiceSubtitle.ViewModel
 {
     public class RecordViewModel : ViewModelBase
     {
-        private NotifyViewModel notifyViewModel;
-        private PlayerViewModel playerViewModel;
-        private DispatcherTimer timer;
-        private WasapiCapture capture;
-        private string fileName;
-        private WaveFileWriter writer;
+        private NotifyViewModel _notifyViewModel;
+        private PlayerViewModel _playerViewModel;
+        private DispatcherTimer _timer;
+        private WasapiCapture _capture;
+        private string _fileName;
+        private WaveFileWriter _writer;
 
         public ICommand RecordPressedCommand { get; }
         public ICommand ListenAgain { get; }
@@ -25,8 +25,8 @@ namespace VoiceSubtitle.ViewModel
 
         public RecordViewModel(NotifyViewModel notifyViewModel, PlayerViewModel playerViewModel)
         {
-            this.notifyViewModel = notifyViewModel;
-            this.playerViewModel = playerViewModel;
+            this._notifyViewModel = notifyViewModel;
+            this._playerViewModel = playerViewModel;
 
             MessengerInstance.Register<bool>(this, "OnAppShutdownToken", OnAppShutdown);
             RecordPressedCommand = new ActionCommand(() =>
@@ -47,7 +47,7 @@ namespace VoiceSubtitle.ViewModel
                     if (IsRecord)
                     {
                         IsRecord = false;
-                        capture.StopRecording();
+                        _capture.StopRecording();
 
                         return;
                     }
@@ -68,7 +68,7 @@ namespace VoiceSubtitle.ViewModel
                 WaveOutEvent waveOut = null;
                 try
                 {
-                    waveFileReader = new WaveFileReader(fileName);
+                    waveFileReader = new WaveFileReader(_fileName);
                     waveOut = new WaveOutEvent();
 
                     waveOut.Init(waveFileReader);
@@ -87,9 +87,9 @@ namespace VoiceSubtitle.ViewModel
                 }
             });
 
-            timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromMilliseconds(500);
-            timer.Tick += (s, e) => BlinkRed = !BlinkRed;
+            _timer = new DispatcherTimer();
+            _timer.Interval = TimeSpan.FromMilliseconds(500);
+            _timer.Tick += (s, e) => BlinkRed = !BlinkRed;
         }
 
         private void OnAppShutdown(bool obj)
@@ -106,96 +106,96 @@ namespace VoiceSubtitle.ViewModel
             try
             {
                 var enumerator = new MMDeviceEnumerator();
-                var CaptureDevices = enumerator.EnumerateAudioEndPoints(DataFlow.Capture, DeviceState.Active);
+                var captureDevices = enumerator.EnumerateAudioEndPoints(DataFlow.Capture, DeviceState.Active);
                 var defaultDevice = enumerator.GetDefaultAudioEndpoint(DataFlow.Capture, Role.Console);
-                var SelectedDevice = CaptureDevices.FirstOrDefault(c => c.ID == defaultDevice.ID);
-                capture = new WasapiCapture(SelectedDevice);
+                var selectedDevice = captureDevices.FirstOrDefault(c => c.ID == defaultDevice.ID);
+                _capture = new WasapiCapture(selectedDevice);
 
-                capture.ShareMode = AudioClientShareMode.Shared;
-                capture.WaveFormat = WaveFormat.CreateIeeeFloatWaveFormat(48000, 2);
+                _capture.ShareMode = AudioClientShareMode.Shared;
+                _capture.WaveFormat = WaveFormat.CreateIeeeFloatWaveFormat(48000, 2);
 
                 IsRecord = true;
-                fileName = FolderManager.FolderRecordPath + $@"\{Guid.NewGuid().ToString("N").ToLower()}.wmv";
+                _fileName = FolderManager.FolderRecordPath + $@"\{Guid.NewGuid().ToString("N").ToLower()}.wmv";
 
-                writer = new WaveFileWriter(fileName, capture.WaveFormat);
+                _writer = new WaveFileWriter(_fileName, _capture.WaveFormat);
 
-                capture.StartRecording();
-                capture.RecordingStopped += OnRecordingStopped;
-                capture.DataAvailable += CaptureOnDataAvailable;
+                _capture.StartRecording();
+                _capture.RecordingStopped += OnRecordingStopped;
+                _capture.DataAvailable += CaptureOnDataAvailable;
             }
             catch (Exception e)
             {
                 IsRecord = false;
-                writer?.Dispose();
-                writer = null;
-                capture?.Dispose();
-                capture = null;
+                _writer?.Dispose();
+                _writer = null;
+                _capture?.Dispose();
+                _capture = null;
 
-                notifyViewModel.ShowMessageBox("Can not record. Please check your cable.");
+                _notifyViewModel.ShowMessageBox("Can not record. Please check your cable.");
             }
         }
 
         private void CaptureOnDataAvailable(object sender, WaveInEventArgs waveInEventArgs)
         {
-            writer.Write(waveInEventArgs.Buffer, 0, waveInEventArgs.BytesRecorded);
+            _writer.Write(waveInEventArgs.Buffer, 0, waveInEventArgs.BytesRecorded);
         }
 
         private void OnRecordingStopped(object sender, StoppedEventArgs e)
         {
             IsRecord = false;
-            writer?.Dispose();
-            writer = null;
-            capture?.Dispose();
-            capture = null;
+            _writer?.Dispose();
+            _writer = null;
+            _capture?.Dispose();
+            _capture = null;
         }
 
-        private bool isShowPanel;
+        private bool _isShowPanel;
 
         public bool IsShowPanel
         {
             get
             {
-                return isShowPanel;
+                return _isShowPanel;
             }
             set
             {
-                Set(ref isShowPanel, value);
+                Set(ref _isShowPanel, value);
             }
         }
 
-        private bool isRecord;
+        private bool _isRecord;
 
         public bool IsRecord
         {
             get
             {
-                return isRecord;
+                return _isRecord;
             }
             set
             {
-                Set(ref isRecord, value);
+                Set(ref _isRecord, value);
 
                 if (value)
-                    timer.Start();
+                    _timer.Start();
                 else
                 {
-                    timer.Stop();
+                    _timer.Stop();
                     BlinkRed = true;
                 }
             }
         }
 
-        private bool blinkRed;
+        private bool _blinkRed;
 
         public bool BlinkRed
         {
             get
             {
-                return blinkRed;
+                return _blinkRed;
             }
             set
             {
-                Set(ref blinkRed, value);
+                Set(ref _blinkRed, value);
             }
         }
     }

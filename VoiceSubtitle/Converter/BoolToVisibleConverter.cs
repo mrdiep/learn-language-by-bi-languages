@@ -11,7 +11,7 @@ namespace VoiceSubtitle.Converter
         {
             if (value is bool)
             {
-                bool v = (bool)value;
+                var v = (bool)value;
                 if (v) return Visibility.Visible; else return Visibility.Collapsed;
             }
 

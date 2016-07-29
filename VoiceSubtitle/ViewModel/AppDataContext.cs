@@ -11,10 +11,10 @@ namespace VoiceSubtitle.ViewModel
         {
             var items = new List<SourcePath>();
 
-            string[] filePaths = Directory.GetFiles(FolderManager.FolderCaptionPath, "*.cap");
+            var filePaths = Directory.GetFiles(FolderManager.FolderCaptionPath, "*.cap");
             foreach (var filepath in filePaths)
             {
-                SourcePath source = ParseSource(filepath);
+                var source = ParseSource(filepath);
                 if (source != null)
                     items.Add(source);
             }

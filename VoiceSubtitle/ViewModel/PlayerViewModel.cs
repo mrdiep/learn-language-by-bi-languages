@@ -15,10 +15,10 @@ namespace VoiceSubtitle.ViewModel
 {
     public class PlayerViewModel : ViewModelBase
     {
-        private DispatchService dispatchService;
-        private CambridgeDictionaryViewModel cambridgeDictionaryViewModel;
-        private VideoViewModel videoViewModel;
-        private NotifyViewModel notifyViewModel;
+        private DispatchService _dispatchService;
+        private CambridgeDictionaryViewModel _cambridgeDictionaryViewModel;
+        private VideoViewModel _videoViewModel;
+        private NotifyViewModel _notifyViewModel;
 
         public SourcePath CurrentSource { get; private set; }
 
@@ -35,7 +35,7 @@ namespace VoiceSubtitle.ViewModel
         public ICommand SaveAsCaptionFile { get; }
 
         public ICommand GoToNearPosition { get; }
-        public ICommand OpenVLC { get; }
+        public ICommand OpenVlc { get; }
 
         public PlayerViewModel(DispatchService dispatchService,
             CambridgeDictionaryViewModel cambridgeDictionaryViewModel,
@@ -43,15 +43,15 @@ namespace VoiceSubtitle.ViewModel
             NotifyViewModel notifyViewModel
             )
         {
-            this.dispatchService = dispatchService;
-            this.cambridgeDictionaryViewModel = cambridgeDictionaryViewModel;
-            this.videoViewModel = videoViewModel;
-            this.notifyViewModel = notifyViewModel;
+            this._dispatchService = dispatchService;
+            this._cambridgeDictionaryViewModel = cambridgeDictionaryViewModel;
+            this._videoViewModel = videoViewModel;
+            this._notifyViewModel = notifyViewModel;
 
             PrimaryCaption = new ObservableCollection<PartialCaption>();
             TranslateCaption = new ObservableCollection<PartialCaption>();
 
-            OpenVLC = new ActionCommand(() =>
+            OpenVlc = new ActionCommand(() =>
             {
                 string pathVlc = $@"{Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86)}\VideoLAN\VLC\vlc.exe";
                 if (File.Exists(pathVlc))
@@ -67,9 +67,9 @@ namespace VoiceSubtitle.ViewModel
                     return;
                 }
             });
-            GoToNearPosition = new ActionCommand((x) =>
+            GoToNearPosition = new ActionCommand(x =>
             {
-                TimeSpan time = (TimeSpan)x;
+                var time = (TimeSpan)x;
                 var caption = PrimaryCaption.OrderBy(t => Math.Abs((time - t.From).TotalMilliseconds)).FirstOrDefault();
                 SelectedPrimaryCaption = caption;
             });
@@ -78,14 +78,14 @@ namespace VoiceSubtitle.ViewModel
             {
                 IsOpenSync = !IsOpenSync;
             });
-            SaveCaptionFile = new ActionCommand((x) =>
+            SaveCaptionFile = new ActionCommand(x =>
              {
                  if (!IsShowViewer)
                      return;
 
-                 string type = x as string;
-                 string newline = "\r\n";
-                 string content = "";
+                 var type = x as string;
+                 var newline = "\r\n";
+                 var content = "";
                  if (type == "PrimaryCaption")
                  {
                      content = string.Join("", PrimaryCaption.Select(c => $@"{c.Index}{newline}{c.From.ToString(@"hh\:mm\:ss\,fff")} --> {c.To.ToString(@"hh\:mm\:ss\,fff")}{newline}{c.Text}{newline}{newline}"));
@@ -110,20 +110,16 @@ namespace VoiceSubtitle.ViewModel
                          notifyViewModel.ShowMessageBox("Can not save.");
                      }
                  }
-                 else
-                 {
-                     return;
-                 }
              });
 
-            SaveAsCaptionFile = new ActionCommand((x) =>
+            SaveAsCaptionFile = new ActionCommand(x =>
             {
                 if (!IsShowViewer)
                     return;
 
-                string type = x as string;
-                string newline = "\r\n";
-                string content = "";
+                var type = x as string;
+                var newline = "\r\n";
+                var content = "";
                 if (type == "PrimaryCaption")
                 {
                     content = string.Join("", PrimaryCaption.Select(c => $@"{c.Index}{newline}{c.From.ToString(@"hh\:mm\:ss\,fff")} --> {c.To.ToString(@"hh\:mm\:ss\,fff")}{newline}{c.Text}{newline}{newline}"));
@@ -144,12 +140,12 @@ namespace VoiceSubtitle.ViewModel
 
                 if (dialog.ShowDialog() == true)
                 {
-                    string fileName = dialog.FileName;
+                    var fileName = dialog.FileName;
                     File.WriteAllText(fileName, content);
                 }
             });
 
-            SearchBack = new ActionCommand((text) =>
+            SearchBack = new ActionCommand(text =>
             {
                 if (!IsShowViewer)
                     return;
@@ -157,7 +153,7 @@ namespace VoiceSubtitle.ViewModel
                 SearchPrimaryCaption(text as string, false);
             });
 
-            OpenExternalPath = new ActionCommand((x) =>
+            OpenExternalPath = new ActionCommand(x =>
             {
                 if (!IsShowViewer)
                     return;
@@ -172,18 +168,18 @@ namespace VoiceSubtitle.ViewModel
                 }
             });
 
-            SearchNext = new ActionCommand((text) =>
+            SearchNext = new ActionCommand(text =>
             {
                 SearchPrimaryCaption(text as string);
             });
 
-            PlayCambridgeWord = new ActionCommand((link) =>
+            PlayCambridgeWord = new ActionCommand(link =>
             {
                 if (!IsShowViewer)
                     return;
 
-                string url = link as string;
-                this.videoViewModel.PlayCambridge(url);
+                var url = link as string;
+                this._videoViewModel.PlayCambridge(url);
             });
 
             Listen = new ActionCommand(loop =>
@@ -194,27 +190,27 @@ namespace VoiceSubtitle.ViewModel
                 if (SelectedPrimaryCaption == null)
                     return;
 
-                int timeLoop = Convert.ToInt32(loop as string);
+                var timeLoop = Convert.ToInt32(loop as string);
 
-                this.videoViewModel.BeginLoopVideo(timeLoop, SelectedPrimaryCaption.From, SelectedPrimaryCaption.To);
+                this._videoViewModel.BeginLoopVideo(timeLoop, SelectedPrimaryCaption.From, SelectedPrimaryCaption.To);
             });
 
             Action<ObservableCollection<PartialCaption>, object> syncCaption = (list, timeInMs) =>
             {
-                long time = Convert.ToInt64(timeInMs);
+                var time = Convert.ToInt64(timeInMs);
                 var timegap = TimeSpan.FromMilliseconds(time);
                 foreach (var caption in list)
                 {
                     caption.From = caption.From.Add(timegap);
                     caption.To = caption.To.Add(timegap);
                 }
-                string w = time > 0 ? "forward" : "back";
-                this.notifyViewModel.Text = $"Sync {w} {timegap.ToString(@"ss\.fff")} seconds";
+                var w = time > 0 ? "forward" : "back";
+                this._notifyViewModel.Text = $"Sync {w} {timegap.ToString(@"ss\.fff")} seconds";
             };
 
-            SyncPrimaryCaptionCommand = new ActionCommand((x) => syncCaption.Invoke(PrimaryCaption, x));
+            SyncPrimaryCaptionCommand = new ActionCommand(x => syncCaption.Invoke(PrimaryCaption, x));
 
-            SyncTranslatedCaptionCommand = new ActionCommand((x) => syncCaption.Invoke(TranslateCaption, x));
+            SyncTranslatedCaptionCommand = new ActionCommand(x => syncCaption.Invoke(TranslateCaption, x));
 
             SwitchSource = new ActionCommand(async x =>
             {
@@ -281,7 +277,7 @@ namespace VoiceSubtitle.ViewModel
 
         public void UpdateVideoPath(string fileVideo)
         {
-            videoViewModel.LoadVideo(VideoPath);
+            _videoViewModel.LoadVideo(VideoPath);
 
             CurrentSource.Video = fileVideo;
             CurrentSource.Save();
@@ -290,112 +286,112 @@ namespace VoiceSubtitle.ViewModel
         public ObservableCollection<PartialCaption> PrimaryCaption { get; private set; }
         public ObservableCollection<PartialCaption> TranslateCaption { get; private set; }
 
-        private string status;
+        private string _status;
 
         public string Status
         {
-            get { return status; }
+            get { return _status; }
             set
             {
-                Set(ref status, value);
+                Set(ref _status, value);
             }
         }
 
-        private string videoPath;
+        private string _videoPath;
 
         public string VideoPath
         {
-            get { return videoPath; }
+            get { return _videoPath; }
             set
             {
-                Set(ref videoPath, value);
+                Set(ref _videoPath, value);
             }
         }
 
-        private string videoName;
+        private string _videoName;
 
         public string VideoName
         {
             get
             {
-                return videoName;
+                return _videoName;
             }
             set
             {
-                Set(ref videoName, value);
+                Set(ref _videoName, value);
             }
         }
 
-        private LanguageDetail languageDetail;
+        private LanguageDetail _languageDetail;
 
         public LanguageDetail LanguageDetail
         {
             get
-            { return languageDetail; }
+            { return _languageDetail; }
             set
             {
-                Set(ref languageDetail, value);
+                Set(ref _languageDetail, value);
             }
         }
 
-        private bool isShowViewer;
+        private bool _isShowViewer;
 
         public bool IsShowViewer
         {
-            get { return isShowViewer; }
+            get { return _isShowViewer; }
             set
             {
-                Set(ref isShowViewer, value);
+                Set(ref _isShowViewer, value);
                 MessengerInstance.Send(value, "InteruptWindowToggleToken");
             }
         }
 
-        private bool isOpenSync;
+        private bool _isOpenSync;
 
         public bool IsOpenSync
         {
-            get { return isOpenSync; }
+            get { return _isOpenSync; }
             set
             {
-                Set(ref isOpenSync, value);
+                Set(ref _isOpenSync, value);
             }
         }
 
-        private PartialCaption selectedPrimaryCaption;
+        private PartialCaption _selectedPrimaryCaption;
 
         public PartialCaption SelectedPrimaryCaption
         {
             get
             {
-                return selectedPrimaryCaption;
+                return _selectedPrimaryCaption;
             }
             set
             {
-                Set(ref selectedPrimaryCaption, value);
+                Set(ref _selectedPrimaryCaption, value);
                 if (value == null)
                     return;
 
-                selectedTranslateCaption = ReflectCaptionHandler(value, TranslateCaption);
+                _selectedTranslateCaption = ReflectCaptionHandler(value, TranslateCaption);
                 RaisePropertyChanged("SelectedTranslateCaption");
                 RaiseChangePrononce();
             }
         }
 
-        private PartialCaption selectedTranslateCaption;
+        private PartialCaption _selectedTranslateCaption;
 
         public PartialCaption SelectedTranslateCaption
         {
             get
             {
-                return selectedTranslateCaption;
+                return _selectedTranslateCaption;
             }
             set
             {
-                Set(ref selectedTranslateCaption, value);
+                Set(ref _selectedTranslateCaption, value);
                 if (value == null)
                     return;
 
-                selectedPrimaryCaption = ReflectCaptionHandler(value, PrimaryCaption);
+                _selectedPrimaryCaption = ReflectCaptionHandler(value, PrimaryCaption);
                 RaisePropertyChanged("SelectedPrimaryCaption");
                 RaiseChangePrononce();
             }
@@ -403,15 +399,15 @@ namespace VoiceSubtitle.ViewModel
 
         private void RaiseChangePrononce()
         {
-            if (selectedPrimaryCaption == null)
+            if (_selectedPrimaryCaption == null)
             {
                 LanguageDetail = null;
                 return;
             }
             Task.Factory.StartNew(() =>
             {
-                var prononce = cambridgeDictionaryViewModel.Prononce(selectedPrimaryCaption.Text);
-                LanguageDetail = new LanguageDetail(selectedPrimaryCaption.Text, prononce.Where(x => x != null).ToList());
+                var prononce = _cambridgeDictionaryViewModel.Prononce(_selectedPrimaryCaption.Text);
+                LanguageDetail = new LanguageDetail(_selectedPrimaryCaption.Text, prononce.Where(x => x != null).ToList());
             });
         }
 
@@ -431,8 +427,8 @@ namespace VoiceSubtitle.ViewModel
 
         #region Search Text
 
-        private string lastSearch = string.Empty;
-        private int searchTime;
+        private string _lastSearch = string.Empty;
+        private int _searchTime;
 
         public void SearchPrimaryCaption(string text, bool searchDown = true, bool restart = false)
         {
@@ -440,48 +436,48 @@ namespace VoiceSubtitle.ViewModel
 
             if (text == string.Empty)
             {
-                lastSearch = string.Empty;
+                _lastSearch = string.Empty;
                 return;
             }
 
             if (restart)
             {
-                lastSearch = string.Empty;
+                _lastSearch = string.Empty;
             }
 
-            if (lastSearch != text)
+            if (_lastSearch != text)
             {
-                searchTime = -1;
+                _searchTime = -1;
             }
 
-            lastSearch = text;
+            _lastSearch = text;
             text = text.ToLower();
             var matches = PrimaryCaption.Where(x => x.Text.ToLower().Contains(text));
-            int matchCount = matches.Count();
+            var matchCount = matches.Count();
 
             if (searchDown)
             {
-                searchTime++;
-                if (searchTime > matchCount)
-                    searchTime = 0;
+                _searchTime++;
+                if (_searchTime > matchCount)
+                    _searchTime = 0;
             }
             else
             {
-                searchTime--;
-                if (searchTime < 0)
-                    searchTime = matchCount - 1;
+                _searchTime--;
+                if (_searchTime < 0)
+                    _searchTime = matchCount - 1;
             }
 
-            var caption = matches.Skip(searchTime).Take(1)?.FirstOrDefault();
+            var caption = matches.Skip(_searchTime).Take(1)?.FirstOrDefault();
             if (caption == null)
             {
-                searchTime = 0;
+                _searchTime = 0;
                 caption = matches.Take(1)?.FirstOrDefault();
             }
 
             if (caption == null)
             {
-                notifyViewModel.ShowMessageBox("No word found");
+                _notifyViewModel.ShowMessageBox("No word found");
                 return;
             }
             Status = $"Search {matchCount} Matches";

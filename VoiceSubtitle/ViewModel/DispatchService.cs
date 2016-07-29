@@ -8,7 +8,7 @@ namespace VoiceSubtitle.ViewModel
     {
         public void Invoke(Action action)
         {
-            Dispatcher dispatchObject = Application.Current.Dispatcher;
+            var dispatchObject = Application.Current.Dispatcher;
             if (dispatchObject == null || dispatchObject.CheckAccess())
             {
                 action();

@@ -19,8 +19,8 @@ namespace VoiceSubtitle.Model
 
         private string AddSpace(int length)
         {
-            StringBuilder builder = new StringBuilder();
-            for (int i = 0; i < length; i++)
+            var builder = new StringBuilder();
+            for (var i = 0; i < length; i++)
             {
                 builder.Append(" ");
             }

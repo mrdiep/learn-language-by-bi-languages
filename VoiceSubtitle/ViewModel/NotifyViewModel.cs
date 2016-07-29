@@ -7,29 +7,29 @@ namespace VoiceSubtitle.ViewModel
 {
     public class NotifyViewModel : ViewModelBase
     {
-        private CancellationTokenSource tokenSource;
-        private string text;
+        private CancellationTokenSource _tokenSource;
+        private string _text;
 
         public string Text
         {
             get
             {
-                return text;
+                return _text;
             }
             set
             {
-                Set(ref text, value);
-                if (tokenSource != null)
-                    tokenSource.Cancel();
+                Set(ref _text, value);
+                if (_tokenSource != null)
+                    _tokenSource.Cancel();
 
-                tokenSource = new CancellationTokenSource();
+                _tokenSource = new CancellationTokenSource();
 
-                CancellationToken ct = tokenSource.Token;
+                var ct = _tokenSource.Token;
                 Task.Factory.StartNew(async ()=> {
                     try
                     {
                         await Task.Delay(4000, ct);
-                        text = "";
+                        _text = "";
                         RaisePropertyChanged("Text");
                     }
                     catch
@@ -38,7 +38,7 @@ namespace VoiceSubtitle.ViewModel
                     }
                     finally
                     {
-                        tokenSource = null;
+                        _tokenSource = null;
                     }
                 });
             }

@@ -16,10 +16,10 @@ namespace VoiceSubtitle.Helper
     {
         public void CrawToDatabase()
         {
-            SQLiteConnection connection = new SQLiteConnection(@"Data Source=C:\Users\diepnguyenv\Downloads\anh_viet\anh_viet\anh_viet.db;Version=3;");
-            List<string> words = new List<string>();
-            Regex regex = new Regex(@"^[a-zA-Z]*$");
-            string allword = string.Empty;
+            var connection = new SQLiteConnection(@"Data Source=C:\Users\diepnguyenv\Downloads\anh_viet\anh_viet\anh_viet.db;Version=3;");
+            var words = new List<string>();
+            var regex = new Regex(@"^[a-zA-Z]*$");
+            var allword = string.Empty;
             using (var command = connection.CreateCommand())
             {
                 connection.Open();
@@ -28,7 +28,7 @@ namespace VoiceSubtitle.Helper
                 {
                     while (reader.Read())
                     {
-                        string a = reader[0] as string;
+                        var a = reader[0] as string;
                         if (regex.Match(a).Success && !(new Regex("^[A-Z]*$").Match(a).Success))
                         {
                             words.Add(a);

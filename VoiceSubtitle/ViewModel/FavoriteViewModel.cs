@@ -20,20 +20,20 @@ namespace VoiceSubtitle.ViewModel
         public ICommand RemoveCommand { get; }
         public ICommand SwitchToProject { get; }
 
-        private NotifyViewModel notifyViewModel;
-        private DispatchService dispatchService;
+        private NotifyViewModel _notifyViewModel;
+        private DispatchService _dispatchService;
 
-        readonly string connectionString = $@"Data Source={FolderManager.AssemblyPath}\favorites.db;Version=3;";
+        readonly string _connectionString = $@"Data Source={FolderManager.AssemblyPath}\favorites.db;Version=3;";
         public FavoriteViewModel(NotifyViewModel notifyViewModel, DispatchService dispatchService)
         {
-            this.notifyViewModel = notifyViewModel;
-            this.dispatchService = dispatchService;
+            this._notifyViewModel = notifyViewModel;
+            this._dispatchService = dispatchService;
             Items = new ObservableCollection<FavoriteModel>();
-            MessengerInstance.Register<bool>(this, "CloseAllFlyoutToken", (x) => IsShowPanel = false);
+            MessengerInstance.Register<bool>(this, "CloseAllFlyoutToken", x => IsShowPanel = false);
             Task.Factory.StartNew(FetchData);
-            AddFavorite = new ActionCommand((x) =>
+            AddFavorite = new ActionCommand(x =>
             {
-                string text = x as string;
+                var text = x as string;
                 var currentSource = ServiceLocator.Current.GetInstance<PlayerViewModel>().CurrentSource;
                 var model = new FavoriteModel()
                 {
@@ -78,38 +78,38 @@ namespace VoiceSubtitle.ViewModel
             });
         }
 
-        private bool isShowPanel;
+        private bool _isShowPanel;
 
         public bool IsShowPanel
         {
             get
             {
-                return isShowPanel;
+                return _isShowPanel;
             }
             set
             {
-                Set(ref isShowPanel, value);
+                Set(ref _isShowPanel, value);
             }
         }
 
-        private FavoriteModel selected;
+        private FavoriteModel _selected;
 
         public FavoriteModel Selected
         {
             get
             {
-                return selected;
+                return _selected;
             }
             set
             {
-                Set(ref selected, value);
+                Set(ref _selected, value);
             }
         }
 
         private void FetchData()
         {
             var items = new List<FavoriteModel>();
-            using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+            using (var connection = new SQLiteConnection(_connectionString))
             {
                 using (var command = connection.CreateCommand())
                 {
@@ -132,12 +132,12 @@ namespace VoiceSubtitle.ViewModel
                 }
             }
 
-            dispatchService.Invoke(() => items.ForEach(x => Items.Add(x)));
+            _dispatchService.Invoke(() => items.ForEach(x => Items.Add(x)));
         }
 
         private void Add(FavoriteModel model)
         {
-            using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+            using (var connection = new SQLiteConnection(_connectionString))
             {
                 using (var command = connection.CreateCommand())
                 {
@@ -155,7 +155,7 @@ namespace VoiceSubtitle.ViewModel
 
         private void Remove(FavoriteModel model)
         {
-            using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+            using (var connection = new SQLiteConnection(_connectionString))
             {
                 using (var command = connection.CreateCommand())
                 {

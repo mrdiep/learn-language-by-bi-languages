@@ -17,7 +17,7 @@ namespace VoiceSubtitle.Converter
 
             if(value is Duration)
             {
-                Duration duration = (Duration)value;
+                var duration = (Duration)value;
                 if (duration.HasTimeSpan)
                     return duration.TimeSpan.Ticks;
             }
@@ -30,7 +30,7 @@ namespace VoiceSubtitle.Converter
             if (value == null)
                 return TimeSpan.FromSeconds(0);
 
-            long tick = System.Convert.ToInt64(value);
+            var tick = System.Convert.ToInt64(value);
             return TimeSpan.FromTicks(tick);
         }
     }

@@ -10,8 +10,8 @@ namespace VoiceSubtitle.ViewModel
 {
     public class MainViewModel : ViewModelBase
     {
-        private AppDataContext appDataContext;
-        private NotifyViewModel notifyViewModel;
+        private AppDataContext _appDataContext;
+        private NotifyViewModel _notifyViewModel;
         public ICommand SaveEditCurrent { get; }
         public ICommand CancelEditSource { get; }
         public ICommand DeleteSource { get; }
@@ -20,13 +20,13 @@ namespace VoiceSubtitle.ViewModel
 
         public MainViewModel(AppDataContext appDataContext, DispatchService dispatchService, NotifyViewModel notifyViewModel)
         {
-            this.appDataContext = appDataContext;
-            this.notifyViewModel = notifyViewModel;
-            MessengerInstance.Register<bool>(this, "CloseAllFlyoutToken", (x) => IsShowProjectPanel = false);
-            CancelEditSource = new ActionCommand((x) => EditCurrent = null);
-            SaveEditCurrent = new ActionCommand((x) =>
+            this._appDataContext = appDataContext;
+            this._notifyViewModel = notifyViewModel;
+            MessengerInstance.Register<bool>(this, "CloseAllFlyoutToken", x => IsShowProjectPanel = false);
+            CancelEditSource = new ActionCommand(x => EditCurrent = null);
+            SaveEditCurrent = new ActionCommand(x =>
             {
-                SourcePath source = x as SourcePath;
+                var source = x as SourcePath;
                 if (source == null)
                     return;
 
@@ -43,17 +43,17 @@ namespace VoiceSubtitle.ViewModel
                 }
             });
 
-            EditSource = new ActionCommand((x) =>
+            EditSource = new ActionCommand(x =>
             {
-                SourcePath source = x as SourcePath;
+                var source = x as SourcePath;
                 if (source == null)
                     return;
 
                 EditCurrent = source;
             });
-            DeleteSource = new ActionCommand((x) =>
+            DeleteSource = new ActionCommand(x =>
             {
-                SourcePath source = x as SourcePath;
+                var source = x as SourcePath;
                 if (source == null)
                     return;
 
@@ -80,31 +80,31 @@ namespace VoiceSubtitle.ViewModel
 
         public ObservableCollection<SourcePath> SourcePaths { get; }
 
-        private bool isShowProjectPanel;
+        private bool _isShowProjectPanel;
 
         public bool IsShowProjectPanel
         {
             get
             {
-                return isShowProjectPanel;
+                return _isShowProjectPanel;
             }
             set
             {
-                Set(ref isShowProjectPanel, value);
+                Set(ref _isShowProjectPanel, value);
             }
         }
 
-        private SourcePath editCurrent;
+        private SourcePath _editCurrent;
 
         public SourcePath EditCurrent
         {
             get
             {
-                return editCurrent;
+                return _editCurrent;
             }
             set
             {
-                Set(ref editCurrent, value);
+                Set(ref _editCurrent, value);
             }
         }
 

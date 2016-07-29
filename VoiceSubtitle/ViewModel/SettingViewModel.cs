@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
 using System;
+using System.Globalization;
 using VoiceSubtitle.Helper;
 using VoiceSubtitle.Model;
 
@@ -7,28 +8,28 @@ namespace VoiceSubtitle.ViewModel
 {
     public class SettingViewModel : ViewModelBase
     {
-        private readonly string FileSetting;
-        private IniFile settings;
+        private readonly string _fileSetting;
+        private IniFile _settings;
 
         public SettingViewModel()
         {
-            FileSetting = FolderManager.AssemblyPath + @"\settings.ini";
+            _fileSetting = FolderManager.AssemblyPath + @"\settings.ini";
             Load();
 
-            MessengerInstance.Register<bool>(this, "CloseAllFlyoutToken", (x) => IsShowPanel = false);
+            MessengerInstance.Register<bool>(this, "CloseAllFlyoutToken", x => IsShowPanel = false);
         }
 
         private void Load()
         {
-            settings = new IniFile(FileSetting);
-            if (!settings.HasFile)
+            _settings = new IniFile(_fileSetting);
+            if (!_settings.HasFile)
                 Save();
 
-            playAfterEndingLoop = Convert.ToBoolean(settings["PlayAfterEndingLoop"] ?? "False");
-            displayCaptionWhilePlaying = Convert.ToBoolean(settings["DisplayCaptionWhilePlaying"]??"False");
-            pauseEachLoop = Convert.ToDouble(settings["PauseEachLoop"]??"0");
+            _playAfterEndingLoop = Convert.ToBoolean(_settings["PlayAfterEndingLoop"] ?? "False");
+            _displayCaptionWhilePlaying = Convert.ToBoolean(_settings["DisplayCaptionWhilePlaying"] ?? "False");
+            _pauseEachLoop = Convert.ToDouble(_settings["PauseEachLoop"] ?? "0");
 
-            DownloadCaptionLanguage = settings["DownloadCaptionLanguage"].Split(",".ToCharArray());
+            DownloadCaptionLanguage = _settings["DownloadCaptionLanguage"].Split(",".ToCharArray());
 
             RaisePropertyChanged("PlayAfterEndingLoop");
             RaisePropertyChanged("DisplayCaptionWhilePlaying");
@@ -37,76 +38,101 @@ namespace VoiceSubtitle.ViewModel
 
         private void Save()
         {
-            settings["PlayAfterEndingLoop"] = PlayAfterEndingLoop.ToString();
-            settings["DisplayCaptionWhilePlaying"] = DisplayCaptionWhilePlaying.ToString();
-            settings["DownloadCaptionLanguage"] = string.Join(",", DownloadCaptionLanguage);
-            settings["PauseEachLoop"] = PauseEachLoop.ToString();
+            _settings["PlayAfterEndingLoop"] = PlayAfterEndingLoop.ToString();
+            _settings["DisplayCaptionWhilePlaying"] = DisplayCaptionWhilePlaying.ToString();
+            _settings["DownloadCaptionLanguage"] = string.Join(",", DownloadCaptionLanguage);
+            _settings["PauseEachLoop"] = PauseEachLoop.ToString(CultureInfo.InvariantCulture);
+            _settings["PrimaryCaptionZoom"] = PrimaryCaptionZoom.ToString(CultureInfo.InvariantCulture);
 
-            settings.Save();
+            _settings.Save();
         }
 
-        private bool isShowPanel;
+        private bool _isShowPanel;
 
         public bool IsShowPanel
         {
             get
             {
-                return isShowPanel;
+                return _isShowPanel;
             }
             set
             {
-                Set(ref isShowPanel, value);
+                Set(ref _isShowPanel, value);
             }
         }
 
         public string[] DownloadCaptionLanguage { get; set; } = { "Vietnamese", "English" };
 
-        private bool playAfterEndingLoop;
+        private bool _playAfterEndingLoop;
 
         public bool PlayAfterEndingLoop
         {
             get
             {
-                return playAfterEndingLoop;
+                return _playAfterEndingLoop;
             }
             set
             {
-                Set(ref playAfterEndingLoop, value);
+                Set(ref _playAfterEndingLoop, value);
                 Save();
             }
         }
 
-        private bool displayCaptionWhilePlaying;
+        private bool _displayCaptionWhilePlaying;
 
         public bool DisplayCaptionWhilePlaying
         {
             get
             {
-                return displayCaptionWhilePlaying;
+                return _displayCaptionWhilePlaying;
             }
             set
             {
-                Set(ref displayCaptionWhilePlaying, value);
+                Set(ref _displayCaptionWhilePlaying, value);
                 Save();
             }
         }
 
-        private double pauseEachLoop;
+        private double _pauseEachLoop;
 
         public double PauseEachLoop
         {
             get
             {
-                return pauseEachLoop;
+                return _pauseEachLoop;
             }
             set
             {
-                Set(ref pauseEachLoop, value);
+                Set(ref _pauseEachLoop, value);
                 Save();
             }
         }
 
+        private double _primaryCaptionZoom = 1.3;
 
-        
+        public double PrimaryCaptionZoom
+        {
+            get
+            {
+                if (_primaryCaptionZoom <= 0.5)
+                    _primaryCaptionZoom = 0.5;
+
+                if (_primaryCaptionZoom >= 3)
+                    _primaryCaptionZoom = 3;
+
+                return _primaryCaptionZoom;
+            }
+            set
+            {
+                if (_primaryCaptionZoom <= 0.5)
+                    _primaryCaptionZoom = 0.5;
+
+                if (_primaryCaptionZoom >= 3)
+                    _primaryCaptionZoom = 3;
+
+                Set(ref _primaryCaptionZoom, value);
+                Save();
+            }
+        }
     }
 }

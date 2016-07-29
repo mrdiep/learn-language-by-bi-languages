@@ -51,13 +51,13 @@ namespace VoiceSubtitle
 
         private void TextBox_Drop(object sender, DragEventArgs e)
         {
-            Button button = sender as Button;
-            string name = button.Name as string;
+            var button = sender as Button;
+            var name = button.Name as string;
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
-                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-                string file = files[0];
-                string ext = Path.GetExtension(file);
+                var files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                var file = files[0];
+                var ext = Path.GetExtension(file);
 
                 if (VideoViewModel.VideoExtenstionSupported.Contains(ext.ToLower()))
                 {

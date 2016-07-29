@@ -27,7 +27,7 @@ namespace VoiceSubtitle.Model
             if (canExe == null)
                 return true;
 
-            bool? value =  canExe?.Invoke(parameter);
+            var value =  canExe?.Invoke(parameter);
             if (!value.HasValue)
                 return canExe2.Invoke();
 

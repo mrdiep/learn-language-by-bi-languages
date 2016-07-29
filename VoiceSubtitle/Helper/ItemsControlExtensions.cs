@@ -44,16 +44,16 @@ namespace VoiceSubtitle.Helper
                 presenter;
 
             // Compute the center point of the container relative to the scrollInfo
-            Size size = container.RenderSize;
-            Point center = container.TransformToAncestor((Visual)scrollInfo).Transform(new Point(size.Width / 2, size.Height / 2));
+            var size = container.RenderSize;
+            var center = container.TransformToAncestor((Visual)scrollInfo).Transform(new Point(size.Width / 2, size.Height / 2));
             center.Y += scrollInfo.VerticalOffset;
             center.X += scrollInfo.HorizontalOffset;
 
             // Adjust for logical scrolling
             if (scrollInfo is StackPanel || scrollInfo is VirtualizingStackPanel)
             {
-                double logicalCenter = itemsControl.ItemContainerGenerator.IndexFromContainer(container) + 0.5;
-                Orientation orientation = scrollInfo is StackPanel ? ((StackPanel)scrollInfo).Orientation : ((VirtualizingStackPanel)scrollInfo).Orientation;
+                var logicalCenter = itemsControl.ItemContainerGenerator.IndexFromContainer(container) + 0.5;
+                var orientation = scrollInfo is StackPanel ? ((StackPanel)scrollInfo).Orientation : ((VirtualizingStackPanel)scrollInfo).Orientation;
                 if (orientation == Orientation.Horizontal)
                     center.X = logicalCenter;
                 else

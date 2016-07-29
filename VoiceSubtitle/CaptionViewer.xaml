@@ -54,8 +54,7 @@
                                        FontSize="12" />
                         </StackPanel>
                         <Grid Height="15"
-                              Visibility="{Binding Prononciations.Count,Converter={StaticResource IntGreaterZeroToVisibleConverter}}">
-                        </Grid>
+                              Visibility="{Binding Prononciations.Count,Converter={StaticResource IntGreaterZeroToVisibleConverter}}" />
                         <Grid Visibility="{Binding ElementName=syncCheckbox,Path=IsChecked,Converter={StaticResource BoolToVisibleConverter}}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
@@ -529,7 +528,14 @@
                          SelectionChanged="ScrollToSelected"
                          ItemsSource="{Binding PrimaryCaption}"
                          SelectedItem="{Binding SelectedPrimaryCaption}"
-                         ItemContainerStyle="{DynamicResource ListBoxItemStyle1}" />
+                         ItemContainerStyle="{DynamicResource ListBoxItemStyle1}">
+                    <ListBox.LayoutTransform>
+                        <ScaleTransform ScaleX="{Binding SettingViewModel.PrimaryCaptionZoom, Source={StaticResource Locator}}" ScaleY="{Binding SettingViewModel.PrimaryCaptionZoom, Source={StaticResource Locator}}">
+                            
+                        </ScaleTransform>
+                    </ListBox.LayoutTransform>
+                    </ListBox>
+                
                 <Grid HorizontalAlignment="Right"
                       VerticalAlignment="Top"
                       Opacity="0.4"

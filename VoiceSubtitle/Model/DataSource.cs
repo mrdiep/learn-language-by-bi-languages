@@ -52,7 +52,7 @@ namespace VoiceSubtitle.Model
                 return;
             }
 
-            string file = FolderManager.FolderCaptionPath + $@"\{DateTime.Now.Ticks}.cap";
+            var file = FolderManager.FolderCaptionPath + $@"\{DateTime.Now.Ticks}.cap";
             File.WriteAllText(file, content);
             Path = file;
         }

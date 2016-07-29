@@ -36,8 +36,8 @@ namespace VoiceSubtitle.Helper
             foreach (var line in lines)
             {
                 var indexSpliter = line.IndexOf("=");
-                string key = line.Substring(0, indexSpliter);
-                string value = line.Substring(indexSpliter + 1, line.Length - indexSpliter - 1);
+                var key = line.Substring(0, indexSpliter);
+                var value = line.Substring(indexSpliter + 1, line.Length - indexSpliter - 1);
                 if (dictData.ContainsKey(key))
                     continue;
 
@@ -47,7 +47,7 @@ namespace VoiceSubtitle.Helper
 
         public void Save()
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             foreach(var e in dictData)
             {
                 sb.AppendLine($"{e.Key}={e.Value}");
